@@ -1,12 +1,14 @@
 import express from 'express'
+import {config} from "./config/config";
 
 const app = express()
-const port = 5000;
+const port = config.app.port
+const name = config.app.name
 
 app.get('/', (request, response) => {
     response.send('Hello world')
 });
 
 app.listen(port, () => {
-    console.log(`Express is listening at http://localhost:${port}`);
+    console.log(`${name} started at http://localhost:${port}`);
 });
