@@ -8,10 +8,10 @@
     "start:dev": "npx nodemon",
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node build/index.js",
-    "knex": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/knex.config.ts'",
-    "migrate:make": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/knex.config.ts' migrate:make",
-    "migrate:latest": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/knex.config.ts' migrate:latest",
-    "migrate:rollback": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/knex.config.ts' migrate:rollback"
+    "knex": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/knexfile.ts'",
+    "migrate:make": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/kenxfile.ts' migrate:make",
+    "migrate:latest": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/kenxfile.ts' migrate:latest",
+    "migrate:rollback": "ts-node -r ./node_modules/dotenv/config ./node_modules/.bin/knex  --knexfile='src/config/kenxfile.ts' migrate:rollback"
   },
   "author": "Adira",
   "license": "ISC",
