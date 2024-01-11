@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer'
+
 import { deleteImage, getImage, patchImage, postImage } from './image.controller';
 const router = express.Router();
 
