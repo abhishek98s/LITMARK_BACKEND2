@@ -49,14 +49,14 @@ export const postImage = async (req: Request, res: Response) => {
         const imgPath = req.file!.path;
 
         req.body.url = await uploadImage(imgPath)
-        const { url, type, name } = req.body;
+        const { url, type, name, user } = req.body;
 
         if (!url || !type || !name) throw new Error('url, type or name properties is required');
 
         isValidType(req.body);
         validateImageType(req.file!.originalname)
 
-        const result = await saveImage({ type, url, name });
+        const result = await saveImage({ type, url, name }, user.id);
 
         res.status(200).json({ data: result })
     } catch (error) {
@@ -68,16 +68,19 @@ export const postImage = async (req: Request, res: Response) => {
 export const patchImage = async (req: Request, res: Response) => {
     try {
         const imageId: number = parseInt(req.params.id);
-        const currentImageData = await findImage(imageId);
-        
+
+        const { url, type, name, user } = req.body;
+
+        if (!url && !type && !name) throw new Error('url, type or name properties is required');
+
+        isValidType(req.body);
+
         if (req.file) {
             const imgPath = req.file!.path;
             req.body.url = await uploadImage(imgPath)
         }
 
-        isValidType(req.body);
-
-        const result = await updateImage({ ...currentImageData, ...req.body }, imageId)
+        const result: ImageModel = await updateImage({ url, type, name }, imageId, user.id)
 
         res.status(200).json({ data: result })
     } catch (error) {
