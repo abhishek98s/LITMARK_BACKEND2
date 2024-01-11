@@ -25,6 +25,11 @@ import { ImageModel } from './image.model';
 //     },
 // ];
 
+interface JWTModel {
+    id: number,
+    role: string,
+    username: string
+}
 
 export const findImage = async (imageId: number): Promise<ImageModel> => {
     const image: ImageModel = await knex('images').select().where('id', imageId).first();
@@ -34,20 +39,28 @@ export const findImage = async (imageId: number): Promise<ImageModel> => {
 }
 
 
-export const saveImage = async (imageData: ImageModel) => {
+export const saveImage = async (imageData: ImageModel, userId?: number) => {
+    const decodedJWTUserRole: JWTModel = await knex('users').select('role').where('id', userId).first();
+    const userRole = await decodedJWTUserRole.role;
+
     const newImage: ImageModel = {
         ...imageData,
-        created_by: 'admin',
-        updated_by: 'admin',
+        created_by: userRole,
+        updated_by: userRole,
     }
     return await knex('images').insert(newImage);
 }
 
-export const updateImage = async (newImageData: ImageModel, imageId: number): Promise<ImageModel> => {
-    const currentImage: ImageModel = await knex('images').column('name', 'url', 'type').select().where('id', imageId).first();
-    if (!currentImage) throw new Error(`image with id ${imageId} doesnot exist`);
+export const updateImage = async (newImageData: ImageModel, imageId: number, userId?: number): Promise<ImageModel> => {
+    const decodedJWTUsername: JWTModel = await knex('users').select('username').where('id', userId).first();
+    const username = await decodedJWTUsername.username;
+    
+    const currentImage: ImageModel = await knex('images').select('url', 'type').where('id', imageId).first();
+    if (!currentImage) throw new Error(`Image with id ${imageId} doesnot exist`);
 
-    const updatedImage = { ...currentImage, ...newImageData };
+    const updatedImage: ImageModel = { ...currentImage, ...newImageData,
+        updated_by: username,
+    };
 
     return await knex('images').where('id', imageId).update(updatedImage);
 }
