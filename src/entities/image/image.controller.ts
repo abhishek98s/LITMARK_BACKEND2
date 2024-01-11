@@ -10,9 +10,9 @@ const isValidType = ({ type }: ImageModel) => {
     return true;
 }
 
-const uploadImage = async (imgPath: string) => {
+export const uploadImage = async (imgPath: string) => {
     // const imgUrl = (await cloudinary.v2.uploader.upload(imgPath, { folder: 'litmark' })).secure_url;
-    const imgUrl = 'https://sre.im/gale/tep.png' || imgPath;   //dummy url
+    const imgUrl = imgPath || 'https://sre.im/gale/tep.png';   //dummy url
 
     if (!imgUrl) throw new Error('Failed to upload image');
 
@@ -50,7 +50,6 @@ export const postImage = async (req: Request, res: Response) => {
 
         req.body.url = await uploadImage(imgPath)
         const { url, type, name } = req.body;
-
 
         if (!url || !type || !name) throw new Error('url, type or name properties is required');
 
