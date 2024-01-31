@@ -7,6 +7,9 @@ const name = config.app.name
 app.use(express.json())
 
 import imageRoutes from './entities/image/image.routes'
+import { logMiddleware } from './logger/logger';
+
+app.use(logMiddleware)
 
 app.use('/api/image', imageRoutes);
 
