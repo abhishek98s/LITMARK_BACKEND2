@@ -7,8 +7,8 @@ import { FolderModel } from './folder.model'
  * an array of `FolderModel` objects.
  * @returns an array of FolderModel objects.
  */
-export const findAllFolders = async (): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await knex('folders').select('*');
+export const findAllFolders = async (user_id:number): Promise<FolderModel[]> => {
+    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id);
     if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
 
     return folders
@@ -22,7 +22,7 @@ export const findAllFolders = async (): Promise<FolderModel[]> => {
  * @returns a Promise that resolves to a FolderModel object.
  */
 export const findFolderById = async (folderId: number): Promise<FolderModel> => {
-    const folder: FolderModel = await knex('folders').select('name', 'user_id', 'image_id', 'folder_id').where('id', folderId).first();
+    const folder: FolderModel = await knex('folders').select('*').where('id', folderId).first();
     if (!folder) throw new Error(folderExceptionMessages.FOLDER_NOT_FOUND);
 
     return folder;
@@ -38,7 +38,9 @@ export const addFolders = async (folderData: FolderModel) => {
     const folder = await knex('folders').insert(folderData);
     if (!folder) throw new Error(folderExceptionMessages.ADD_FAILED)
 
-    return folder;
+    const [folder_Id ]= folder;
+
+    return await findFolderById(folder_Id);
 }
 
 /**
@@ -54,7 +56,7 @@ export const updateFolder = async (folderData: FolderModel, folderId: number) =>
     const folder = await knex('folders').where('id', folderId).update(folderData);
     if (!folder) throw new Error(folderExceptionMessages.UPDATE_FOLDER)
 
-    return folder;
+    return await findFolderById(folderId);
 }
 
 /**
@@ -70,5 +72,5 @@ export const removeFolder = async (folderId: number) => {
     const folder: FolderModel = await knex('folders').select('*').where('id', folderId).del();
     if (!folder) throw new Error('Failed to delete folder')
 
-    return folder;
+    return currentFolder;
 }

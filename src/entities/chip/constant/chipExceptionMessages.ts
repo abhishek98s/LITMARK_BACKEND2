@@ -1,5 +1,5 @@
 export const chipExceptionMessages = {
-    ID_NAME_REQUIRED: 'Name, image ID, and folder ID are required.',
+    Folder_NAME_REQUIRED: 'Name and folder ID are required.',
     INVALID_ID: 'Invalid ID.',
     HAME_REQUIRED: 'Name is required.',
     CHIP_NOTFOUND: 'Chip does not exist.',

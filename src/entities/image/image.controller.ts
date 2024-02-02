@@ -131,18 +131,25 @@ export const patchImage = async (req: Request, res: Response) => {
     try {
         const imageId: number = parseInt(req.params.id);
 
-        const { url, type, name, user } = req.body;
+        const { name, user } = req.body;
 
-        if (!url && !type && !name) throw new Error(imageExceptionMessages.URL_TYPE_NAME_REQUIRED);
+        if (!name) throw new Error(imageExceptionMessages.NAME_REQUIRED);
 
         isValidType(req.body);
+
+        const currentImage = await findImage(imageId);
 
         if (req.file) {
             const imgPath = req.file!.path;
             req.body.url = await uploadImage(imgPath)
         }
 
-        const result: ImageModel = await updateImage({ url, type, name }, imageId, user.id)
+        // const result: ImageModel = await updateImage({ url, type, name }, imageId, user.id)
+        const result: ImageModel = await updateImage({
+            ...currentImage,
+            updated_by: user.username,
+            url: req.body.url ? req.body.url : currentImage.url
+        }, imageId)
 
         res.status(StatusCodes.OK).json({ data: result })
     } catch (error) {

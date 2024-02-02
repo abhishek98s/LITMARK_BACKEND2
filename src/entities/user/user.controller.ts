@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import validator from 'validator';
 
 import { addUser, getUserById, removeUser, updateUser } from './user.service';
-import { UserModel } from './user.model';
 import { saveImage } from '../image/image.service';
 import { uploadImage, validateImageType } from '../image/image.controller';
 import { userExceptionMessages } from './constant/folderExceptionMessages';
@@ -44,7 +43,7 @@ export const getUser = async (req: Request, res: Response) => {
  */
 export const postUser = async (req: Request, res: Response) => {
     try {
-        const { username, email, password, role }: UserModel = req.body;
+        const { username, email, password, role, user } = req.body;
 
         if (!username || !email || !password) {
             throw new Error(userExceptionMessages.USER_CREDENTIALS_REQUIRED);
@@ -61,7 +60,7 @@ export const postUser = async (req: Request, res: Response) => {
             const imageName = req.file.filename;
 
             const image = await saveImage({ url: imageUrl, type: 'user', name: imageName }, username)
-            req.body.image_id = image[0];
+            req.body.image_id = image.id;
         } else {
             req.body.image_id = 0;
         }
@@ -72,6 +71,8 @@ export const postUser = async (req: Request, res: Response) => {
             password,
             image_id: req.body.image_id,
             role: role === 'admin' ? role : 'normal',
+            created_by: user.username,
+            updated_by: user.username,
         });
 
         return res.json({ data: result })
@@ -96,7 +97,7 @@ export const patchUser = async (req: Request, res: Response) => {
 
         if (!userId) throw new Error(userExceptionMessages.INVALID_ID)
 
-        const { username, password } = req.body;
+        const { username, password, user } = req.body;
 
         if (!username || !password) {
             throw new Error(userExceptionMessages.USERNAME_PASS_REQUIRED);
@@ -118,7 +119,7 @@ export const patchUser = async (req: Request, res: Response) => {
 
             const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename }, username)
 
-            req.body.image_id = image[0];
+            req.body.image_id = image.id;
         }
 
         const result = await updateUser(userId, {
@@ -126,6 +127,7 @@ export const patchUser = async (req: Request, res: Response) => {
             username,
             password,
             image_id: req.file ? req.body.image_id : currentUser.image_id,
+            updated_by: user.username,
         });
 
         return res.json({ data: result })

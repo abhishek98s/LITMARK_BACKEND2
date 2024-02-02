@@ -57,7 +57,7 @@ export const registerHandler = async (req: Request, res: Response) => {
             const imageName = req.file.filename;
 
             const image = await saveImage({ url: imageUrl, type: 'user', name: imageName }, username)
-            req.body.image_id = image[0];
+            req.body.image_id = image.id;
         } else {
             req.body.image_id = 0;
         }
