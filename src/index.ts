@@ -11,12 +11,15 @@ import chipRoutes from './entities/chip/chip.routes'
 import folderRoutes from './entities/folder/folder.routes'
 import userRoutes from './entities/user/user.routes'
 import authRoutes from './auth/routes/auth.routes'
+import { swagger } from './docs/swagger';
 
 app.use('/api/image', imageRoutes);
 app.use('/api/chip', chipRoutes);
 app.use('/api/folder', folderRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+
+swagger(app)
 
 app.get('/', (request, response) => {
     response.send('Hello world')
