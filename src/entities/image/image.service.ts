@@ -57,7 +57,7 @@ export const updateImage = async (newImageData: ImageModel, imageId: number): Pr
 
     const image = await knex('images').where('id', imageId).update(newImageData);
 
-    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND); // update the comment
+    if (!image) throw new Error(imageExceptionMessages.UPLOAD_FAILED); // update the comment
 
     return await findImage(imageId)
 }
@@ -70,7 +70,8 @@ export const updateImage = async (newImageData: ImageModel, imageId: number): Pr
  */
 export const removeImage = async (imageId: number): Promise<ImageModel> => {
     const image = await findImage(imageId);
-    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND)
-
-    return await knex('images').select('*').where('id', imageId).del();
+    
+    await knex('images').select('*').where('id', imageId).del();
+    
+    return image
 }
