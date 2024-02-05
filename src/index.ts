@@ -1,5 +1,6 @@
 import express from 'express'
 import {config} from './config/config';
+import { swagger } from './docs/swagger';
 
 const app = express()
 const port = config.app.port
@@ -7,11 +8,18 @@ const name = config.app.name
 app.use(express.json())
 
 import imageRoutes from './entities/image/image.routes'
+
 import { logMiddleware } from './logger/logger';
 
 app.use(logMiddleware)
 
 app.use('/api/image', imageRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/chip', chipRoutes);
+app.use('/api/folder', folderRoutes);
+app.use('/api/auth', authRoutes);
+
+swagger(app)
 
 app.get('/', (request, response) => {
     response.send('Hello world')

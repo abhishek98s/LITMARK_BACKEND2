@@ -16,7 +16,7 @@ import { chipExceptionMessages } from './constant/chipExceptionMessages';
  */
 export const getAllChips = async (req: Request, res: Response) => {
     try {
-        const result: ChipModel[] = await findAllChips();
+        const result: ChipModel[] = await findAllChips(req.body.user.id);
 
         res.status(200).json({ data: result })
     } catch (error) {
@@ -38,10 +38,10 @@ export const getAllChips = async (req: Request, res: Response) => {
  */
 export const postChip = async (req: Request, res: Response) => {
     try {
-        const { name, user_id, folder_id, user } = req.body;
+        const { name, folder_id, user } = req.body;
 
-        if (!name || !user_id || !folder_id) {
-            throw new Error(chipExceptionMessages.ID_NAME_REQUIRED)
+        if (!name|| !folder_id) {
+            throw new Error(chipExceptionMessages.Folder_NAME_REQUIRED)
         }
 
         const result: ChipModel = await addChip({

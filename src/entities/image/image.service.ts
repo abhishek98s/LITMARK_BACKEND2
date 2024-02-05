@@ -32,7 +32,9 @@ export const saveImage = async (imageData: ImageModel, username: string) => {
         created_by: username,
         updated_by: username,
     }
-    return await knex('images').insert(newImage);
+    const image = await knex('images').insert(newImage);
+    const [image_id] = image;
+    return await findImage(image_id)
 }
 
 /**
@@ -46,16 +48,18 @@ export const saveImage = async (imageData: ImageModel, username: string) => {
  * user who is updating the image.
  * @returns a Promise that resolves to an ImageModel object.
  */
-export const updateImage = async (newImageData: ImageModel, imageId: number, username: string): Promise<ImageModel> => {
-    const currentImage: ImageModel = await knex('images').select('url', 'type').where('id', imageId).first();
-    if (!currentImage) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
+export const updateImage = async (newImageData: ImageModel, imageId: number): Promise<ImageModel> => {
+    // const currentImage: ImageModel = await knex('images').select('url', 'type').where('id', imageId).first();
 
-    const updatedImage: ImageModel = {
-        ...currentImage, ...newImageData,
-        updated_by: username,
-    };
+    // const updatedImage: ImageModel = {
+    //     ...newImageData, ...newImageData,
+    // };
 
-    return await knex('images').where('id', imageId).update(updatedImage);
+    const image = await knex('images').where('id', imageId).update(newImageData);
+
+    if (!image) throw new Error(imageExceptionMessages.UPLOAD_FAILED); // update the comment
+
+    return await findImage(imageId)
 }
 
 /**
@@ -66,7 +70,8 @@ export const updateImage = async (newImageData: ImageModel, imageId: number, use
  */
 export const removeImage = async (imageId: number): Promise<ImageModel> => {
     const image = await findImage(imageId);
-    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND)
-
-    return await knex('images').select('*').where('id', imageId).del();
+    
+    await knex('images').select('*').where('id', imageId).del();
+    
+    return image
 }

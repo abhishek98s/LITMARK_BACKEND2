@@ -4,7 +4,9 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('folders', (table) => {
         table.increments('id').primary();
         table.string('name').notNullable();
-        table.string('image_id').notNullable();
+        
+        table.integer('image_id').notNullable();
+        table.foreign('image_id').references('images.id');
 
         table.integer('user_id').unsigned().notNullable();
         table.foreign('user_id').references('users.id');

@@ -5,6 +5,6 @@ export const imageExceptionMessages = {
     IMAGE_NOT_FOUND: 'Image doesnot exist',
     FILE_REQUIRED: 'File should be provided',
     TYPE_REQUIRED: 'Type is required',
-    URL_TYPE_NAME_REQUIRED: 'url, type or name properties is required',
+    NAME_REQUIRED: 'Name is required',
     INVALID_ID: 'id not valid',
 } 

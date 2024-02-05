@@ -17,7 +17,7 @@ import { folderExceptionMessages } from './constant/folderExceptionMessages';
  */
 export const getAllFolders = async (req: Request, res: Response) => {
     try {
-        const result: FolderModel[] = await findAllFolders();
+        const result: FolderModel[] = await findAllFolders(req.body.user.id);
 
         res.status(200).json({ data: result })
     } catch (error) {
@@ -49,7 +49,7 @@ export const postFolders = async (req: Request, res: Response) => {
 
             const image = await saveImage({ url: imageUrl, type: 'folder', name: req.file.filename }, user.username)
 
-            req.body.image_id = image[0];
+            req.body.image_id = image.id;
         }
 
         const folderData: FolderModel = {
@@ -96,7 +96,7 @@ export const patchFolders = async (req: Request, res: Response) => {
 
             const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename }, user.username)
 
-            req.body.image_id = image[0];
+            req.body.image_id = image.id;
         }
 
         const currentFolder: FolderModel = await findFolderById(folderId)

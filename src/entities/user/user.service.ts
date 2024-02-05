@@ -31,10 +31,12 @@ export const addUser = async (userInfo: UserModel) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user: UserModel = await knex('users').insert({ ...userInfo, password: hashedPassword });
+    const user = await knex('users').insert({ ...userInfo, password: hashedPassword });
     if (!user) throw new Error('Failed to add user')
 
-    return user;
+    const [userID] = user;
+
+    return await getUserById(userID);
 }
 
 /**
@@ -46,10 +48,13 @@ export const addUser = async (userInfo: UserModel) => {
  * @returns the updated user information.
  */
 export const updateUser = async (userId: number, updatedUserInfo: UserModel) => {
-    const user: UserModel = await knex('users').select('*').where('id', userId).update(updatedUserInfo);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(updatedUserInfo.password, salt);
+
+    const user: UserModel = await knex('users').select('*').where('id', userId).update({ ...updatedUserInfo, password: hashedPassword });
     if (!user) throw new Error('Failed to upadate user')
 
-    return user;
+    return await getUserById(userId);
 }
 
 /**
@@ -65,5 +70,5 @@ export const removeUser = async (userId: number) => {
     const user: UserModel = await knex('users').select('*').where('id', userId).del();
     if (!user) throw new Error('Failed to delete user')
 
-    return user;
+    return currentUser;
 }
