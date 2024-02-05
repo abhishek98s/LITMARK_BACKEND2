@@ -12,6 +12,7 @@ import userRoutes from './entities/user/user.routes'
 import chipRoutes from './entities/chip/chip.routes'
 import folderRoutes from './entities/folder/folder.routes'
 import authRoutes from './auth/routes/auth.routes'
+import { swagger } from './docs/swagger';
 
 app.use('/api/image', imageRoutes);
 app.use('/api/user', userRoutes);
