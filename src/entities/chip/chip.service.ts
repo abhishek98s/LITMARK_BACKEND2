@@ -21,8 +21,9 @@ export const findChipById = async (chipId: number) => {
  * a promise.
  * @returns an array of ChipModel objects.
  */
-export const findAllChips = async (): Promise<ChipModel[]> => {
-    const chips: ChipModel[] = await knex('chips').select('*');
+export const findAllChips = async (user_id: number): Promise<ChipModel[]> => {
+    const chips: ChipModel[] = await knex('chips').select('*').where('user_id', user_id);
+    console.log(chips.length)
     if (!chips) throw new Error(chipExceptionMessages.CHIP_NOT_AVAILABLE);
 
     return chips;
@@ -35,10 +36,12 @@ export const findAllChips = async (): Promise<ChipModel[]> => {
  * @returns a Promise that resolves to a ChipModel object.
  */
 export const addChip = async (chipData: ChipModel) => {
-    const chip: ChipModel = await knex('chips').insert(chipData);
+    const chip = await knex('chips').insert(chipData);
     if (!chip) throw new Error(chipExceptionMessages.ADD_FAILED);
 
-    return chip;
+    const [chipID] = chip
+
+    return await findChipById(chipID);
 }
 
 /**
@@ -55,7 +58,7 @@ export const updateChip = async (chipData: ChipModel, chipId: number) => {
     const chip: ChipModel = await knex('chips').select('*').where('id', chipId).update(chipData);
     if (!chip) throw new Error(chipExceptionMessages.UPDATE_FAILED);
 
-    return chip;
+    return await findChipById(chipId);
 }
 
 /**
@@ -71,5 +74,5 @@ export const removeChip = async (chipId: number) => {
     const chip: ChipModel = await knex('chips').select('*').where('id', chipId).del();
     if (!chip) throw new Error('Failed to delete chip')
 
-    return chip;
+    return currentChip;
 }
