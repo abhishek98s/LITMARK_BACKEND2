@@ -1,20 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+import path from 'path';
 
 // Create a new instance of the Winston logger
 export const logger = winston.createLogger({
     level: 'info',
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-    ),
+    format: winston.format.json(),
     transports: [
-        new winston.transports.File({ filename: 'logs/error/error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/combinedlog.log' }),
+        new DailyRotateFile({
+            filename: path.join('logs', 'application-%DATE%.log'),
+            datePattern: 'YYYY-MM-DD', 
+            maxSize: '5m',
+        }),
     ],
 });
-
-
 
 // Middleware function to log requests and responses
 export const logMiddleware = (req: Request, res: Response, next: NextFunction): void => {
@@ -23,7 +23,6 @@ export const logMiddleware = (req: Request, res: Response, next: NextFunction): 
         message: 'Request received',
         method: req.method,
         url: req.originalUrl,
-        headers: req.headers,
         params: req.params,
         query: req.query,
         body: req.body,
