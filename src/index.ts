@@ -1,4 +1,5 @@
-import express from 'express'
+import express from 'express';
+import cors from 'cors';
 
 import { config } from './config/config';
 import { swagger } from './swagger/swagger';
@@ -10,11 +11,11 @@ import folderRoutes from './entities/folder/folder.routes';
 import authRoutes from './auth/routes/auth.routes';
 
 const app = express()
-const port = config.app.port
-const name = config.app.name
+const port = config.app.port;
+const name = config.app.name;
+app.use(cors());
 
 app.use(express.json())
-
 app.use(logMiddleware)
 
 app.use('/api/image', imageRoutes);
