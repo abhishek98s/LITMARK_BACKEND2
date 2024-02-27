@@ -1,15 +1,19 @@
 import express from 'express'
-import {config} from './config/config';
-import { swagger } from './docs/swagger';
+
+import { config } from './config/config';
+import { swagger } from './swagger/swagger';
+import { logMiddleware } from './logger/logger';
+import imageRoutes from './entities/image/image.routes';
+import userRoutes from './entities/user/user.routes';
+import chipRoutes from './entities/chip/chip.routes';
+import folderRoutes from './entities/folder/folder.routes';
+import authRoutes from './auth/routes/auth.routes';
 
 const app = express()
 const port = config.app.port
 const name = config.app.name
+
 app.use(express.json())
-
-import imageRoutes from './entities/image/image.routes'
-
-import { logMiddleware } from './logger/logger';
 
 app.use(logMiddleware)
 
