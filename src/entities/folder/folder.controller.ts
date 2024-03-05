@@ -18,7 +18,6 @@ import { folderExceptionMessages } from './constant/folderExceptionMessages';
 export const getAllFolders = async (req: Request, res: Response) => {
     try {
         const result: FolderModel[] = await findAllFolders(req.body.user.id);
-        console.log(req.body.user.id)
         res.status(200).json({ data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
@@ -55,7 +54,7 @@ export const postFolders = async (req: Request, res: Response) => {
         const folderData: FolderModel = {
             name,
             user_id: user.id,
-            image_id: req.body.image_id || 0,
+            image_id: req.body.image_id || 1,
             folder_id: folder_id || 0,
             created_by: user.username,
             updated_by: user.username,

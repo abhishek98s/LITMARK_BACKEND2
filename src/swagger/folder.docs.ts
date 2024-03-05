@@ -108,10 +108,8 @@
  *           readOnly: true
  *       required:
  *         - name
- *         - image_id
  *         - folder_id
  *       example:
  *         name: Design
- *         image_id: 0
  *         folder_id: 1
  */
