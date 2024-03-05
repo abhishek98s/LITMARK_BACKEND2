@@ -1,5 +1,4 @@
 export const folderExceptionMessages = {
-    ID_NAME_REQUIRED: 'Name and user ID are required.',
     INVALID_ID: 'Invalid folder ID.',
     NAME_REQUIRED: 'Name is required.',
     FOLDER_EMPTY: 'No folders found.',

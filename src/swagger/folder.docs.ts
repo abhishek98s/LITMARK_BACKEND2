@@ -98,8 +98,6 @@
  *           type: string
  *         image_id:
  *           type: integer
- *         user_id:
- *           type: integer
  *         folder_id:
  *           type: integer
  *         updated_by:
@@ -111,9 +109,9 @@
  *       required:
  *         - name
  *         - image_id
- *         - user_id
+ *         - folder_id
  *       example:
  *         name: Design
  *         image_id: 0
- *         user_id: 1
+ *         folder_id: 1
  */
