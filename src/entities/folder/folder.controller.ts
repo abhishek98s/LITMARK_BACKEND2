@@ -18,7 +18,6 @@ import { folderExceptionMessages } from './constant/folderExceptionMessages';
 export const getAllFolders = async (req: Request, res: Response) => {
     try {
         const result: FolderModel[] = await findAllFolders(req.body.user.id);
-        console.log(req.body.user.id)
         res.status(200).json({ data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
