@@ -23,7 +23,6 @@ export const findChipById = async (chipId: number) => {
  */
 export const findAllChips = async (user_id: number): Promise<ChipModel[]> => {
     const chips: ChipModel[] = await knex('chips').select('*').where('user_id', user_id);
-    console.log(chips.length)
     if (!chips) throw new Error(chipExceptionMessages.CHIP_NOT_AVAILABLE);
 
     return chips;

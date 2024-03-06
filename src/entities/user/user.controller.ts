@@ -132,7 +132,6 @@ export const patchUser = async (req: Request, res: Response) => {
 
         return res.json({ data: result })
     } catch (error) {
-        console.log(error)
         return res.status(500).json({ msg: (error as Error).message });
     }
 }

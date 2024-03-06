@@ -11,7 +11,6 @@ const joiValidationMiddleware = (schema: Schema ) => {
         } else {
             const { details } = error;
             const message = details.map(i => i.message).join(',');
-            console.log(error)
             res.status(422).json({ error: message })
         }
     }
