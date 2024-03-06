@@ -54,7 +54,7 @@ export const postFolders = async (req: Request, res: Response) => {
         const folderData: FolderModel = {
             name,
             user_id: user.id,
-            image_id: req.body.image_id || 0,
+            image_id: req.body.image_id || 1,
             folder_id: folder_id || 0,
             created_by: user.username,
             updated_by: user.username,
