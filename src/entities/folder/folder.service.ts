@@ -7,8 +7,15 @@ import { FolderModel } from './folder.model'
  * an array of `FolderModel` objects.
  * @returns an array of FolderModel objects.
  */
-export const findAllFolders = async (user_id:number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id);
+export const findAllFolders = async (user_id: number): Promise<FolderModel[]> => {
+    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', 0);
+    if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
+
+    return folders
+}
+
+export const findAllNestedFolders = async (user_id: number, parentFolderId: number): Promise<FolderModel[]> => {
+    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', parentFolderId);
     if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
 
     return folders
@@ -38,7 +45,7 @@ export const addFolders = async (folderData: FolderModel) => {
     const folder = await knex('folders').insert(folderData);
     if (!folder) throw new Error(folderExceptionMessages.ADD_FAILED)
 
-    const [folder_Id ]= folder;
+    const [folder_Id] = folder;
 
     return await findFolderById(folder_Id);
 }
@@ -68,7 +75,7 @@ export const updateFolder = async (folderData: FolderModel, folderId: number) =>
 export const removeFolder = async (folderId: number) => {
     const currentFolder = await findFolderById(folderId)
     if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
-    
+
     const folder: FolderModel = await knex('folders').select('*').where('id', folderId).del();
     if (!folder) throw new Error('Failed to delete folder')
 

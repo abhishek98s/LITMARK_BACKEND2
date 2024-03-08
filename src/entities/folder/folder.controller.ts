@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { FolderModel } from './folder.model'
-import { addFolders, findAllFolders, findFolderById, removeFolder, updateFolder } from './folder.service'
+import { addFolders, findAllFolders, findAllNestedFolders, findFolderById, removeFolder, updateFolder } from './folder.service'
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { folderExceptionMessages } from './constant/folderExceptionMessages';
@@ -15,9 +15,28 @@ import { folderExceptionMessages } from './constant/folderExceptionMessages';
  * status, headers, and body. In this code snippet, it is used to send a JSON response with the status
  * code 200
  */
-export const getAllFolders = async (req: Request, res: Response) => {
+export const getAllTopFolders = async (req: Request, res: Response) => {
     try {
         const result: FolderModel[] = await findAllFolders(req.body.user.id);
+        res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+/**
+ * The function `getAllnestedFolders` retrieves all nested folders for a given parent folder ID and
+ * returns the result in a JSON response.
+ * @param {Request} req - Request object containing information about the HTTP request
+ * @param {Response} res - The `res` parameter in the `getAllnestedFolders` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by web frameworks like Express in Node.js. The `res` object
+ * has methods like `status
+ */
+export const getAllnestedFolders = async (req: Request, res: Response) => {
+    try {
+        const parentFolderId: number = parseInt(req.params.id);
+        const result: FolderModel[] = await findAllNestedFolders(req.body.user.id, parentFolderId);
         res.status(200).json({ data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
