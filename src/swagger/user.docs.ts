@@ -5,8 +5,6 @@
  *   post:
  *     tags:
  *       - User
- *     security:
- *       - bearerAuth: []
  *     summary: Create a new user
  *     description: Create a user
  *     requestBody:
