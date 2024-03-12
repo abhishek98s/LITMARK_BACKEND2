@@ -15,11 +15,6 @@ const options = {
         url: 'http://localhost:5000/api',
       },
     ],
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
   },
   apis: [`${__dirname}/*.ts`], // Path to the API routes
 };
