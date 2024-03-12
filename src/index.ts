@@ -8,6 +8,7 @@ import imageRoutes from './entities/image/image.routes';
 import userRoutes from './entities/user/user.routes';
 import chipRoutes from './entities/chip/chip.routes';
 import folderRoutes from './entities/folder/folder.routes';
+import bookmarkRoutes from './entities/bookmark/bookmark.routes';
 import authRoutes from './auth/routes/auth.routes';
 
 const app = express()
@@ -22,6 +23,7 @@ app.use('/api/image', imageRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/chip', chipRoutes);
 app.use('/api/folder', folderRoutes);
+app.use('/api/bookmark', bookmarkRoutes);
 app.use('/api/auth', authRoutes);
 
 swagger(app)
