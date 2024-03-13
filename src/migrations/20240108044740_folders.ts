@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
         table.increments('id').primary();
         table.string('name').notNullable();
         
-        table.integer('image_id').notNullable();
+        table.integer('image_id').unsigned().nullable();
         table.foreign('image_id').references('images.id');
 
         table.integer('user_id').unsigned().notNullable();
