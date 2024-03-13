@@ -1,5 +1,5 @@
 export const bookmarkExceptionMessages = {
-    TITLE_FOLDER_REQUIRED: 'Title and folder ID are required.',
+    LINK_FOLDER_REQUIRED: 'Title and folder ID are required.',
     INVALID_ID: 'Invalid bookmark ID.',
     TITLE_REQUIRED: 'Title is required.',
     BOOKMARK_NOT_FOUND: 'Bookmark does not exist.',

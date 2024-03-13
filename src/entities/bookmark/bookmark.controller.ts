@@ -1,10 +1,79 @@
 import { Request, Response } from 'express';
+import dotenv from 'dotenv'
+import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, removeBookmark, updateBookmark } from './bookmark.service';
-import { uploadImage, validateImageType } from '../image/image.controller';
+import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, removeBookmark, updateBookmark } from './bookmark.service';
+import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
+
+dotenv.config()
+
+/**
+ * The function `getHostnameFromUrl` extracts the hostname from a given URL string.
+ * @param {string} url - The `getHostnameFromUrl` function takes a URL string as input and extracts the
+ * hostname from it. The hostname is the part of the URL that identifies the domain or server.
+ * @returns The function `getHostnameFromUrl` returns the hostname extracted from the provided URL.
+ */
+export const getHostnameFromUrl = (url: string) => {
+    const pattern = /https?:\/\/(?:www\.)?([^/?]+)/i;
+    const match = url.match(pattern);
+    if (match) {
+        return match[1];
+    } else {
+        return null;
+    }
+}
+
+/**
+ * The function `getTitleFromURL` fetches the title of a webpage using Google Custom Search API based
+ * on the provided URL.
+ * @param {string} url - The `url` parameter in the `getTitleFromURL` function is a string representing
+ * the URL from which you want to extract the title.
+ * @returns The function `getTitleFromURL` is returning the title of the first search result from the
+ * Google Custom Search API based on the provided URL. If there is an error during the API call, it
+ * will return the hostname extracted from the URL using the `getHostnameFromUrl` function.
+ */
+async function getTitleFromURL(url: string) {
+    try {
+        const searchAPIKey = 'AIzaSyDvFPrz3tL8mXR3_ezMcdYeDMbbZk3hLLE';
+        const searchID = '2340c7cfc09cf440b';
+
+        const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${searchAPIKey}&cx=${searchID}&q=${url}`);
+        const data = await response.json();
+
+        const title = data.items[0].title;
+        return title;
+    } catch (error) {
+        return getHostnameFromUrl(url);
+    }
+}
+
+/**
+ * The function `getThumbnailFromURL` fetches a thumbnail image from a URL using the Google Custom
+ * Search API, or returns a favicon image if an error occurs.
+ * @param {string} url - The `url` parameter in the `getThumbnailFromURL` function is a string
+ * representing the URL of a webpage from which you want to retrieve a thumbnail image.
+ * @returns The function `getThumbnailFromURL` is returning either the thumbnail image URL extracted
+ * from the Google Custom Search API response based on the input URL, or a Google favicon URL if there
+ * is an error during the API call.
+ */
+async function getThumbnailFromURL(url: string) {
+    try {
+        const searchAPIKey = 'AIzaSyDvFPrz3tL8mXR3_ezMcdYeDMbbZk3hLLE';
+        const searchID = '2340c7cfc09cf440b';
+
+        const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${searchAPIKey}&cx=${searchID}&q=${url}`);
+        const data = await response.json();
+
+        const thumbnail = data.items[0].pagemap.cse_thumbnail[0].src;
+        return thumbnail;
+    } catch (error) {
+        const favicon = `https://www.google.com/s2/favicons?domain=${getHostnameFromUrl(url)}&sz=256`
+        return favicon;
+    }
+}
 
 /**
  * The function `getBookmarks` is an asynchronous function that retrieves bookmarks and sends them as a
@@ -18,7 +87,33 @@ import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages'
  */
 export const getBookmarks = async (req: Request, res: Response) => {
     try {
-        const result: BookmarkModel[] = await findBookmarks();
+        const { user } = req.body;
+
+        const result: BookmarkModel[] = await findBookmarks(user.id);
+
+        res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+/**
+ * The function `getBookmarksByFolderId` retrieves bookmarks by folder ID for a specific user and sends
+ * the result as a JSON response.
+ * @param {Request} req - The `req` parameter in the `getBookmarksByFolderId` function stands for the
+ * HTTP request object. It contains information about the incoming request such as headers, parameters,
+ * body, etc. This parameter is of type `Request` which is typically provided by web frameworks like
+ * Express.js in Node
+ * @param {Response} res - The `res` parameter in the `getBookmarksByFolderId` function is an instance
+ * of the Express Response object. It is used to send a response back to the client making the request.
+ * In this function, we are using `res` to send a JSON response with the bookmarks data or
+ */
+export const getBookmarksByFolderId = async (req: Request, res: Response) => {
+    try {
+        const { user } = req.body;
+        const folder_id = parseInt(req.params.folder_id);
+
+        const result: BookmarkModel[] = await findBookmarksByFolderId(user.id, folder_id);
 
         res.status(200).json({ data: result })
     } catch (error) {
@@ -38,30 +133,29 @@ export const getBookmarks = async (req: Request, res: Response) => {
  */
 export const postBookmark = async (req: Request, res: Response) => {
     try {
-        const { title, folder_id, chips_id, user } = req.body;
+        const { url, folder_id, chips_id, user } = req.body;
 
-        if (!title || !folder_id) {
-            throw new Error(bookmarkExceptionMessages.TITLE_FOLDER_REQUIRED)
+        if (!url || !folder_id) {
+            throw new Error(bookmarkExceptionMessages.LINK_FOLDER_REQUIRED)
         }
 
-        if (req.file) {
-            const imagePath = req.file.path;
+        await getThumbnailFromURL(url)
 
-            validateImageType(req.file.originalname)
+        const imageName = crypto.randomUUID();
 
-            const imageUrl = await uploadImage(imagePath)
+        const imageUrl = await getThumbnailFromURL(url);
 
-            const image = await saveImage({ url: imageUrl, type: 'bookmark', name: req.file.filename }, user.username)
+        const imageFromDB = await saveImage({ url: imageUrl, type: 'bookmark', name: imageName }, user.username)
 
-            req.body.image_id = image.id;
-        }
 
         const bookmarkData: BookmarkModel = {
-            title,
-            date: new Date(),
-            image_id: req.body.image_id || 0,
+            url,
             folder_id,
+            title: await getTitleFromURL(url),
+            image_id: imageFromDB.id || 0,
             chip_id: chips_id || 1,
+            user_id: user.id,
+            date: new Date(),
             created_by: user.username,
             updated_by: user.username,
         }
@@ -93,7 +187,7 @@ export const patchBookmark = async (req: Request, res: Response) => {
         }
 
         const { title, user } = req.body;
-        
+
         if (!title) {
             throw new Error(bookmarkExceptionMessages.TITLE_REQUIRED)
         }
