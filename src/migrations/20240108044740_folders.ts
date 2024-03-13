@@ -5,13 +5,13 @@ export async function up(knex: Knex): Promise<void> {
         table.increments('id').primary();
         table.string('name').notNullable();
         
-        table.integer('image_id').unsigned().nullable();
+        table.integer('image_id').unsigned().notNullable();
         table.foreign('image_id').references('images.id');
 
         table.integer('user_id').unsigned().notNullable();
         table.foreign('user_id').references('users.id');
 
-        table.integer('folder_id').unsigned().notNullable();
+        table.integer('folder_id').unsigned().nullable();
         table.foreign('folder_id').references('folders.id');
 
         table.string('created_by').notNullable();
