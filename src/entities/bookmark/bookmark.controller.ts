@@ -7,6 +7,10 @@ import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, 
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
+import { addChip } from '../chip/chip.service';
+import { findFolderById } from '../folder/folder.service';
+import { FolderModel } from '../folder/folder.model';
+import { ChipModel } from '../chip/chip.model';
 
 dotenv.config()
 
@@ -133,27 +137,34 @@ export const getBookmarksByFolderId = async (req: Request, res: Response) => {
  */
 export const postBookmark = async (req: Request, res: Response) => {
     try {
-        const { url, folder_id, chips_id, user } = req.body;
+        const { url, folder_id, user } = req.body;
 
         if (!url || !folder_id) {
             throw new Error(bookmarkExceptionMessages.LINK_FOLDER_REQUIRED)
         }
 
-        await getThumbnailFromURL(url)
+        const isFolder: FolderModel = await findFolderById(folder_id);
+        if (!isFolder) throw new Error('Folder does\'nt exist.')
 
         const imageName = crypto.randomUUID();
-
         const imageUrl = await getThumbnailFromURL(url);
-
         const imageFromDB = await saveImage({ url: imageUrl, type: 'bookmark', name: imageName }, user.username)
 
+        const chipData = {
+            name: isFolder.name,
+            user_id: user.id,
+            folder_id,
+            created_by: user.username,
+            updated_by: user.username,
+        }
+        const chip: ChipModel = await addChip(chipData)
 
         const bookmarkData: BookmarkModel = {
             url,
             folder_id,
             title: await getTitleFromURL(url),
-            image_id: imageFromDB.id || 0,
-            chip_id: chips_id || 1,
+            image_id: imageFromDB.id || 1,
+            chip_id: chip.id || 1,
             user_id: user.id,
             date: new Date(),
             created_by: user.username,
