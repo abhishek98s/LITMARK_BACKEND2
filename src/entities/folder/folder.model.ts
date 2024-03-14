@@ -3,7 +3,7 @@ export interface FolderModel {
     name: string,
     image_id: number,
     user_id: number,
-    folder_id: number,
+    folder_id: number | null,
     created_by?: string,
     updated_by?: string,
 }

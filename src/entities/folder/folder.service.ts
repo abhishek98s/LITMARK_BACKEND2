@@ -8,7 +8,7 @@ import { FolderModel } from './folder.model'
  * @returns an array of FolderModel objects.
  */
 export const findAllFolders = async (user_id: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', 0);
+    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', null);
     if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
 
     return folders
