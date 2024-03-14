@@ -2,8 +2,21 @@ import { Request, Response } from 'express'
 import { FolderModel } from './folder.model'
 import { addFolders, findAllFolders, findAllNestedFolders, findFolderById, removeFolder, updateFolder } from './folder.service'
 import { uploadImage } from '../image/image.controller';
-import { saveImage } from '../image/image.service';
+import { findImage, saveImage } from '../image/image.service';
 import { folderExceptionMessages } from './constant/folderExceptionMessages';
+import crypto from 'crypto';
+
+const isImage = async (username: string) => {
+    try {
+        await findImage(1);
+        return 1
+
+    } catch (error) {
+        const imageName = crypto.randomUUID();
+        const image = await saveImage({ type: 'folder', url: 'https://res.cloudinary.com/dxsqdqnoe/image/upload/v1709878273/litmark/xo5sncdhybhemuvacf4u.png', name: imageName }, username)
+        return image.id!;
+    }
+}
 
 /**
  * The function `getAllFolders` is an asynchronous function that retrieves all folders and sends the
@@ -73,7 +86,7 @@ export const postFolders = async (req: Request, res: Response) => {
         const folderData: FolderModel = {
             name,
             user_id: user.id,
-            image_id: req.body.image_id || 1,
+            image_id: await isImage(user.username),
             folder_id: folder_id || null,
             created_by: user.username,
             updated_by: user.username,
