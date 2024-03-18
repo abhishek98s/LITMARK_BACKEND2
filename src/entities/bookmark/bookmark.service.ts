@@ -20,8 +20,24 @@ export const findBookmarkById = async (bookmarkId: number) => {
  * The function `findBookmarks` retrieves all bookmarks from a database table and returns them.
  * @returns an array of BookmarkModel objects.
  */
-export const findBookmarks = async () => {
-    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*');
+export const findBookmarks = async (user_id: number) => {
+    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id);
+    if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+
+    return bookmarks;
+}
+
+/**
+ * This function finds bookmarks by folder ID for a specific user.
+ * @param {number} user_id - User ID is a unique identifier for a user in the system. It is used to
+ * associate data and actions with a specific user account.
+ * @param {number} folder_id - The `folder_id` parameter is the unique identifier of the folder for
+ * which you want to find bookmarks.
+ * @returns The function `findBookmarksByFolderId` returns an array of `BookmarkModel` objects that
+ * match the provided `user_id` and `folder_id`.
+ */
+export const findBookmarksByFolderId = async (user_id: number, folder_id: number) => {
+    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('folder_id', folder_id);
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return bookmarks;
