@@ -11,7 +11,7 @@ const upload = multer({ dest: 'temp/' });
 
 router.use(verifyToken)
 
-router.get('/', getAllTopFolders).get('/:id', getAllnestedFolders).post('/', upload.single('litmark_image'), joiValidationMiddleware(folderSchema), verifyToken, postFolders)
+router.get('/', getAllTopFolders).get('/:id', getAllnestedFolders).post('/', joiValidationMiddleware(folderSchema), verifyToken, postFolders)
 router.patch('/:id', upload.single('litmark_image'), verifyToken, patchFolders).delete('/:id', deleteFolders)
 
 export default router;
