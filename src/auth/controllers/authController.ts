@@ -17,7 +17,7 @@ export const loginHandler = async (req: Request, res: Response) => {
         }
 
         const user = await findUserByEmail(email);
-        
+
         const { username, id } = user;
 
         const passordMatched: boolean = await bcrypt.compare(password, user.password);
@@ -68,6 +68,8 @@ export const registerHandler = async (req: Request, res: Response) => {
             password,
             role: req.body.role,
             image_id: req.body.image_id,
+            created_by: username,
+            updated_by: username,
         });
 
         res.json({ data: savedUser })
