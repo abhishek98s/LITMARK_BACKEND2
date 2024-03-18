@@ -76,7 +76,7 @@ export const removeFolder = async (folderId: number) => {
     const currentFolder = await findFolderById(folderId)
     if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
 
-    const folder = await knex.update({...currentFolder, isdeleted:true}).select('*').where('id', folderId);
+    const folder = await knex('folders').where('id', folderId).update({ ...currentFolder, isdeleted:true});
     if (!folder) throw new Error('Failed to delete folder')
 
     return currentFolder;

@@ -11,7 +11,7 @@ import { UserModel } from './user.model'
  * @returns a Promise that resolves to a UserModel object.
  */
 export const getUserById = async (userId: number) => {
-    const user: UserModel = await knex('users').select('*').where('id', userId).first();
+    const user: UserModel = await knex('users').select('*').where('id', userId).andWhere('isdeleted', false).first();
     if (!user) throw new Error('Failed to get user')
 
     return user;
@@ -67,7 +67,7 @@ export const removeUser = async (userId: number) => {
     const currentUser = await getUserById(userId);
     if (!currentUser) throw new Error('User doesnot exist')
 
-    const user: UserModel = await knex('users').select('*').where('id', userId).del();
+    const user = await knex('users').where('id', userId).update({isdeleted:true});
     if (!user) throw new Error('Failed to delete user')
 
     return currentUser;

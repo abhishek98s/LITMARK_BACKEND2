@@ -59,7 +59,7 @@ export const postUser = async (req: Request, res: Response) => {
             const imageUrl = await uploadImage(imagePath)
             const imageName = req.file.filename;
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: imageName }, username)
+            const image = await saveImage({ url: imageUrl, type: 'user', name: imageName, isdeleted: false }, username)
             req.body.image_id = image.id;
         } else {
             req.body.image_id = 0;
@@ -70,6 +70,7 @@ export const postUser = async (req: Request, res: Response) => {
             email,
             password,
             image_id: req.body.image_id,
+            isdeleted: false,
             role: role === 'admin' ? role : 'normal',
             created_by: user.username,
             updated_by: user.username,
@@ -117,7 +118,7 @@ export const patchUser = async (req: Request, res: Response) => {
             const imagePath = req.file!.path;
             const imageUrl = await uploadImage(imagePath)
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename }, username)
+            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename, isdeleted: false }, username)
 
             req.body.image_id = image.id;
         }

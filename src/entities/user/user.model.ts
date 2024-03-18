@@ -5,6 +5,7 @@ export interface UserModel {
     password: string,
     image_id: number,
     role: string,
+    isdeleted: boolean,
     updated_by?: string,
     created_by?: string,
     updated_at?: string,

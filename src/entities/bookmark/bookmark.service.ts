@@ -86,7 +86,6 @@ export const removeBookmark = async (bookmarkId: number) => {
     const currentBookmark: BookmarkModel = await findBookmarkById(bookmarkId);
     if (!currentBookmark) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND);
 
-    // const bookmark = await knex('bookmarks').select('*').where('id', bookmarkId).del();
     const bookmark = await knex('bookmarks').update({ ...currentBookmark, isdeleted: true }).where('id', bookmarkId);
     if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
 
