@@ -88,6 +88,7 @@ export const postFolders = async (req: Request, res: Response) => {
             user_id: user.id,
             image_id: await isImage(user.username),
             folder_id: folder_id || null,
+            isdeleted: false,
             created_by: user.username,
             updated_by: user.username,
         }

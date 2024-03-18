@@ -8,14 +8,14 @@ import { FolderModel } from './folder.model'
  * @returns an array of FolderModel objects.
  */
 export const findAllFolders = async (user_id: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', null);
+    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', null).andWhere('isdeleted', false);
     if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
 
     return folders
 }
 
 export const findAllNestedFolders = async (user_id: number, parentFolderId: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', parentFolderId);
+    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', parentFolderId).andWhere('isdeleted', false);
     if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
 
     return folders
@@ -29,7 +29,7 @@ export const findAllNestedFolders = async (user_id: number, parentFolderId: numb
  * @returns a Promise that resolves to a FolderModel object.
  */
 export const findFolderById = async (folderId: number): Promise<FolderModel> => {
-    const folder: FolderModel = await knex('folders').select('*').where('id', folderId).first();
+    const folder: FolderModel = await knex('folders').select('*').where('id', folderId).andWhere('isdeleted', false).first();
     if (!folder) throw new Error(folderExceptionMessages.FOLDER_NOT_FOUND);
 
     return folder;
@@ -76,7 +76,7 @@ export const removeFolder = async (folderId: number) => {
     const currentFolder = await findFolderById(folderId)
     if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
 
-    const folder: FolderModel = await knex('folders').select('*').where('id', folderId).del();
+    const folder = await knex.update({...currentFolder, isdeleted:true}).select('*').where('id', folderId);
     if (!folder) throw new Error('Failed to delete folder')
 
     return currentFolder;
