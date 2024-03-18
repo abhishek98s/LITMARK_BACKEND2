@@ -37,6 +37,26 @@
  *               $ref: '#/components/schemas/Folder'
  *
  * /folder/{id}:
+ *   get:
+ *     tags:
+ *       - Folder
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: Parent_folder_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     summary: Get all the folders related to the user from a folder_id
+ *     responses:
+ *       200:
+ *         description: Successful folder operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Folder'
  *   patch:
  *     tags:
  *       - Folder

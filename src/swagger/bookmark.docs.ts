@@ -36,7 +36,29 @@
  *             schema:
  *               $ref: '#/components/schemas/Bookmark'
  * /bookmark/{id}:
- *   patch:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: Parent_folder_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     summary: Get all the bookmarks based on user by folder_id
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Bookmark'
+*   patch:
  *     tags:
  *       - Bookmark
  *     security:
