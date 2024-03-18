@@ -167,6 +167,7 @@ export const postBookmark = async (req: Request, res: Response) => {
             chip_id: chip.id || 1,
             user_id: user.id,
             date: new Date(),
+            isdeleted: false,
             created_by: user.username,
             updated_by: user.username,
         }
