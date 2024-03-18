@@ -48,6 +48,7 @@ export const postChip = async (req: Request, res: Response) => {
             name,
             user_id: user.id,
             folder_id,
+            isdeleted: false,
             created_by: user.username,
             updated_by: user.username,
         })
