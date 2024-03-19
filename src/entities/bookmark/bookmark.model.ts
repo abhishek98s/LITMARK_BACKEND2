@@ -7,6 +7,7 @@ export interface BookmarkModel {
     chip_id: number,
     user_id: number,
     date: Date,
+    isdeleted: boolean,
     click_date?: Date,
     created_by?: string,
     updated_by?: string,

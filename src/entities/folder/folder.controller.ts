@@ -13,7 +13,7 @@ const isImage = async (username: string) => {
 
     } catch (error) {
         const imageName = crypto.randomUUID();
-        const image = await saveImage({ type: 'folder', url: 'https://res.cloudinary.com/dxsqdqnoe/image/upload/v1709878273/litmark/xo5sncdhybhemuvacf4u.png', name: imageName }, username)
+        const image = await saveImage({ type: 'folder', url: 'https://res.cloudinary.com/dxsqdqnoe/image/upload/v1709878273/litmark/xo5sncdhybhemuvacf4u.png', name: imageName, isdeleted: false }, username)
         return image.id!;
     }
 }
@@ -78,7 +78,7 @@ export const postFolders = async (req: Request, res: Response) => {
             const imagePath = req.file!.path;
             const imageUrl = await uploadImage(imagePath)
 
-            const image = await saveImage({ url: imageUrl, type: 'folder', name: req.file.filename }, user.username)
+            const image = await saveImage({ url: imageUrl, type: 'folder', name: req.file.filename, isdeleted: false }, user.username)
 
             req.body.image_id = image.id;
         }
@@ -88,6 +88,7 @@ export const postFolders = async (req: Request, res: Response) => {
             user_id: user.id,
             image_id: await isImage(user.username),
             folder_id: folder_id || null,
+            isdeleted: false,
             created_by: user.username,
             updated_by: user.username,
         }
@@ -125,7 +126,7 @@ export const patchFolders = async (req: Request, res: Response) => {
             const imagePath = req.file!.path;
             const imageUrl = await uploadImage(imagePath)
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename }, user.username)
+            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename, isdeleted: false }, user.username)
 
             req.body.image_id = image.id;
         }

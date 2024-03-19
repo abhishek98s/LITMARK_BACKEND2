@@ -10,7 +10,7 @@ import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages'
  * @returns a bookmark object with the specified bookmarkId.
  */
 export const findBookmarkById = async (bookmarkId: number) => {
-    const bookmarks: BookmarkModel = await knex('bookmarks').select('*').where('id', bookmarkId).first();
+    const bookmarks: BookmarkModel = await knex('bookmarks').select('*').where('id', bookmarkId).andWhere('isdeleted', false).first();
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND)
 
     return bookmarks;
@@ -21,7 +21,7 @@ export const findBookmarkById = async (bookmarkId: number) => {
  * @returns an array of BookmarkModel objects.
  */
 export const findBookmarks = async (user_id: number) => {
-    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id);
+    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('isdeleted', 0);
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return bookmarks;
@@ -37,7 +37,7 @@ export const findBookmarks = async (user_id: number) => {
  * match the provided `user_id` and `folder_id`.
  */
 export const findBookmarksByFolderId = async (user_id: number, folder_id: number) => {
-    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('folder_id', folder_id);
+    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('folder_id', folder_id).andWhere('isdeleted', 0);
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return bookmarks;
@@ -86,7 +86,7 @@ export const removeBookmark = async (bookmarkId: number) => {
     const currentBookmark: BookmarkModel = await findBookmarkById(bookmarkId);
     if (!currentBookmark) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND);
 
-    const bookmark = await knex('bookmarks').select('*').where('id', bookmarkId).del();
+    const bookmark = await knex('bookmarks').update({ ...currentBookmark, isdeleted: true }).where('id', bookmarkId);
     if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
 
     return currentBookmark;

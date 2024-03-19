@@ -148,12 +148,13 @@ export const postBookmark = async (req: Request, res: Response) => {
 
         const imageName = crypto.randomUUID();
         const imageUrl = await getThumbnailFromURL(url);
-        const imageFromDB = await saveImage({ url: imageUrl, type: 'bookmark', name: imageName }, user.username)
+        const imageFromDB = await saveImage({ url: imageUrl, type: 'bookmark', name: imageName, isdeleted: false }, user.username)
 
         const chipData = {
             name: isFolder.name,
             user_id: user.id,
             folder_id,
+            isdeleted: false,
             created_by: user.username,
             updated_by: user.username,
         }
@@ -167,6 +168,7 @@ export const postBookmark = async (req: Request, res: Response) => {
             chip_id: chip.id || 1,
             user_id: user.id,
             date: new Date(),
+            isdeleted: false,
             created_by: user.username,
             updated_by: user.username,
         }
@@ -210,7 +212,7 @@ export const patchBookmark = async (req: Request, res: Response) => {
             const imagePath = req.file!.path;
             const imageUrl = await uploadImage(imagePath)
 
-            const image = await saveImage({ url: imageUrl, type: 'bookmark', name: req.file.filename }, user.username)
+            const image = await saveImage({ url: imageUrl, type: 'bookmark', name: req.file.filename, isdeleted: false }, user.username)
 
             req.body.image_id = image.id;
         }

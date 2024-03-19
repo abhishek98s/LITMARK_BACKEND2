@@ -118,7 +118,7 @@ export const postImage = async (req: Request, res: Response) => {
     isValidType(req.body);
     validateImageType(req.file!.originalname);
 
-    const result = await saveImage({ type, url, name }, user.username);
+    const result = await saveImage({ type, url, name, isdeleted: false }, user.username);
 
     res.status(StatusCodes.OK).json({ data: result });
   } catch (error) {

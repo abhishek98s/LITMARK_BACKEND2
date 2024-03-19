@@ -56,7 +56,7 @@ export const registerHandler = async (req: Request, res: Response) => {
             const imageUrl = await uploadImage(imagePath)
             const imageName = req.file.filename;
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: imageName }, username)
+            const image = await saveImage({ url: imageUrl, type: 'user', name: imageName, isdeleted: false }, username)
             req.body.image_id = image.id;
         } else {
             req.body.image_id = 0;
@@ -67,6 +67,7 @@ export const registerHandler = async (req: Request, res: Response) => {
             email,
             password,
             role: req.body.role,
+            isdeleted: false,
             image_id: req.body.image_id,
             created_by: username,
             updated_by: username,

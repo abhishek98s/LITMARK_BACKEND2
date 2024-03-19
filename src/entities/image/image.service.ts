@@ -9,7 +9,7 @@ import { ImageModel } from './image.model';
  * @returns a Promise that resolves to an ImageModel object.
  */
 export const findImage = async (imageId: number): Promise<ImageModel> => {
-    const image: ImageModel = await knex('images').select().where('id', imageId).first();
+    const image: ImageModel = await knex('images').select().where('id', imageId).andWhere('isdeleted', false).first();
     if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND)
 
     return image;
@@ -70,8 +70,8 @@ export const updateImage = async (newImageData: ImageModel, imageId: number): Pr
  */
 export const removeImage = async (imageId: number): Promise<ImageModel> => {
     const image = await findImage(imageId);
-    
-    await knex('images').select('*').where('id', imageId).del();
-    
+
+    await knex('images').update({ ...image, isdeleted: true }).where('id', imageId);
+
     return image
 }

@@ -3,6 +3,7 @@ export interface ImageModel {
     name: string,
     url: string,
     type: 'folder' | 'user' | 'bookmark',
+    isdeleted: boolean,
     created_by?: string,
     updated_by?: string,
 }
