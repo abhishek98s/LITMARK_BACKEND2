@@ -19,7 +19,7 @@ function getActiveDatabase(db: string) {
                 password: process.env.DB_MYSQL_PASSWORD,
                 database: process.env.DB_NAME,
                 host: process.env.DB_HOST || '127.0.0.1',
-                port: 3300,
+                port: parseInt(process.env.DB_PORT!) || 3306,
             }
         };
     }
