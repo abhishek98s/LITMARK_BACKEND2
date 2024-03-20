@@ -260,6 +260,15 @@ export const deleteBookmark = async (req: Request, res: Response) => {
 }
 
 
+/**
+ * This TypeScript function searches for bookmarks by title and returns the results in a JSON format,
+ * handling errors appropriately.
+ * @param {Request} req - Request object containing information about the HTTP request
+ * @param {Response} res - The `res` parameter in the `searchByTitle` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by a web framework like Express in Node.js. This object
+ * allows you to send data back to
+ */
 export const searchByTitle = async (req: Request, res: Response) => {
     try {
         const title: string = req.query.title as string;
