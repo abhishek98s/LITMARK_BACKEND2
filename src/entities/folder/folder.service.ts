@@ -81,3 +81,46 @@ export const removeFolder = async (folderId: number) => {
 
     return currentFolder;
 }
+
+
+/**
+ * The function `sortByDate` sorts data from a specific folder by date for a given user based on the
+ * specified order.
+ * @param {number} userId - The `userId` parameter in the `sortByDate` function is the unique
+ * identifier of the user for whom you want to sort the data.
+ * @param {number} folder_id - The `folder_id` parameter in the `sortByDate` function represents the
+ * unique identifier of the folder for which you want to retrieve and sort the data. It is used to
+ * filter the data based on the specified folder.
+ * @param {string} sortOrder - The `sortOrder` parameter in the `sortByDate` function determines the
+ * order in which the data will be sorted. It can be either 'asc' for ascending order or 'desc' for
+ * descending order based on the 'date' field in the database table.
+ * @returns The function `sortByDate` is returning the sorted data from the `folders` table based on
+ * the specified `userId`, `folder_id`, and `sortOrder`. If the sorted data is empty, it will throw an
+ * error with the message `FOLDER_EMPTY`.
+ */
+export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
+    const sortedData = await knex('folders').orderBy('created_at', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
+    if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
+    return sortedData;
+}
+
+/**
+ * The function sorts folders by title alphabetically for a specific user and folder ID.
+ * @param {number} userId - The `userId` parameter in the `sortByAlphabet` function represents the
+ * unique identifier of the user for whom the folders are being sorted.
+ * @param {number} folder_id - The `folder_id` parameter in the `sortByAlphabet` function represents
+ * the unique identifier of the folder for which you want to sort the data. It is used to filter the
+ * data based on the specified folder.
+ * @param {string} sortOrder - The `sortOrder` parameter in the `sortByAlphabet` function determines
+ * the order in which the data will be sorted. It can be either `'asc'` for ascending order or `'desc'`
+ * for descending order based on the `title` field of the folders table.
+ * @returns The function `sortByAlphabet` is returning the sorted data from the `folders` table based
+ * on the `title` column and the specified `sortOrder`. The data is filtered by `user_id`, `isdeleted`,
+ * and `folder_id`. If the sorted data is empty, an error with the message `FOLDER_EMPTY` will be
+ * thrown.
+ */
+export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
+    const sortedData = await knex('folders').orderBy('name', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
+    if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
+    return sortedData;
+}
