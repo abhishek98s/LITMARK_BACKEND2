@@ -1,5 +1,32 @@
 /**
  * @swagger
+ * /bookmark/search:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all the bookmarks based on user
+ *     parameters:
+ *       - name: title
+ *         in: query
+ *         description: Title of bookmark
+ *         required: true
+ *         type: string
+ *       - name: folder_id
+ *         in: query
+ *         description: Folder_id to search bookmark in certain folder
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Bookmark'
  * /bookmark:
  *   get:
  *     tags:

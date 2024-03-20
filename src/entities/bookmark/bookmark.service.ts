@@ -91,3 +91,9 @@ export const removeBookmark = async (bookmarkId: number) => {
 
     return currentBookmark;
 }
+
+
+export const getBookmarksByTitle = async (title: string, folderId: number) => {
+    const bookmarksByTitle = await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhere('folder_id', folderId)
+    return bookmarksByTitle
+}

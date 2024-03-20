@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, removeBookmark, updateBookmark } from './bookmark.service';
+import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, getBookmarksByTitle, removeBookmark, updateBookmark } from './bookmark.service';
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -11,6 +11,7 @@ import { addChip } from '../chip/chip.service';
 import { findFolderById } from '../folder/folder.service';
 import { FolderModel } from '../folder/folder.model';
 import { ChipModel } from '../chip/chip.model';
+import { logger } from '../../logger/logger';
 
 dotenv.config()
 
@@ -254,6 +255,27 @@ export const deleteBookmark = async (req: Request, res: Response) => {
 
         res.status(200).json({ data: result })
     } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+
+export const searchByTitle = async (req: Request, res: Response) => {
+    try {
+        const title: string = req.query.title as string;
+        const folder_id: number = req.query.folder_id as unknown as number;
+
+        if (!title) {
+            throw new Error(bookmarkExceptionMessages.SEARCH_QUERY_EMPTY)
+        }
+
+        const result = await getBookmarksByTitle(title!, folder_id!);
+        logger.error(result)
+
+
+        res.status(200).json({ data: result })
+    } catch (error) {
+        console.log(error)
         res.status(500).json({ msg: (error as Error).message })
     }
 }
