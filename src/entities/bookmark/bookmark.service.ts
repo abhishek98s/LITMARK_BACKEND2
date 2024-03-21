@@ -91,3 +91,9 @@ export const removeBookmark = async (bookmarkId: number) => {
 
     return currentBookmark;
 }
+
+export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
+    const bookmark = await knex('bookmarks').update(bookmarkData).where('id', bookmarkData.id)
+    if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
+    return
+}

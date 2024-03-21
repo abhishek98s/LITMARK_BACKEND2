@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteBookmark, getBookmarks, patchBookmark, postBookmark, getBookmarksByFolderId } from './bookmark.controller';
+import { deleteBookmark, getBookmarks, patchBookmark, postBookmark, getBookmarksByFolderId, bookmarkClick } from './bookmark.controller';
 import { verifyToken } from '../../auth/middleware/authentication.middleware';
 import multer from 'multer';
 import joiValidationMiddleware from '../../auth/middleware/joiValidationMiddleware';
@@ -13,5 +13,6 @@ router.use(verifyToken);
 
 router.get('/', getBookmarks).get('/:folder_id', getBookmarksByFolderId).post('/', joiValidationMiddleware(bookmarkSchema), verifyToken, postBookmark)
 router.patch('/:id', upload.single('litmark_image'), verifyToken, patchBookmark).delete('/:id', deleteBookmark)
+router.patch('/click/:id', bookmarkClick)
 
 export default router;

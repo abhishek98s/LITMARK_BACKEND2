@@ -58,7 +58,7 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Bookmark'
-*   patch:
+ *   patch:
  *     tags:
  *       - Bookmark
  *     security:
@@ -92,6 +92,27 @@
  *       - Bookmark
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: Bookmark ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Bookmark'
+ * /bookmark/click/{id}:
+ *   patch:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Update the date of when bookmark was clicked by bookmark id
  *     parameters:
  *       - name: id
  *         in: path
