@@ -7,4 +7,5 @@ export const bookmarkExceptionMessages = {
     ADD_FAILED: 'Failed to add bookmark.',
     UPDATE_FAILED: 'Failed to update bookmark.',
     DELETE_FAILED: 'Failed to delete bookmark.',
+    SEARCH_QUERY_EMPTY: 'Search query is empty',
 }

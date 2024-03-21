@@ -4,7 +4,8 @@ import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages'
 
 /**
  * The function finds a bookmark by its ID and returns it, or throws an error if the bookmark is not
- * found.
+ * found while filtering out
+ * deleted bookmarks.
  * @param {number} bookmarkId - The `bookmarkId` parameter is the unique identifier of the bookmark
  * that you want to find. It is of type `number`.
  * @returns a bookmark object with the specified bookmarkId.
@@ -17,7 +18,8 @@ export const findBookmarkById = async (bookmarkId: number) => {
 }
 
 /**
- * The function `findBookmarks` retrieves all bookmarks from a database table and returns them.
+ * The function `findBookmarks` retrieves all bookmarks from a database table and returns them while filtering out
+ * deleted bookmarks.
  * @returns an array of BookmarkModel objects.
  */
 export const findBookmarks = async (user_id: number) => {
@@ -28,7 +30,8 @@ export const findBookmarks = async (user_id: number) => {
 }
 
 /**
- * This function finds bookmarks by folder ID for a specific user.
+ * This function finds bookmarks by folder ID for a specific user while filtering out
+ * deleted bookmarks.
  * @param {number} user_id - User ID is a unique identifier for a user in the system. It is used to
  * associate data and actions with a specific user account.
  * @param {number} folder_id - The `folder_id` parameter is the unique identifier of the folder for
@@ -90,4 +93,22 @@ export const removeBookmark = async (bookmarkId: number) => {
     if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
 
     return currentBookmark;
+}
+
+/**
+ * The function `getBookmarksByTitle` retrieves bookmarks by title and folder ID while filtering out
+ * deleted bookmarks.
+ * @param {string} title - The `title` parameter is a string that represents the title of the bookmarks
+ * you want to retrieve. It is used to filter bookmarks based on a partial match of the title.
+ * @param {number} folderId - The `folderId` parameter is a number that represents the ID of the folder
+ * in which you want to search for bookmarks with a specific title.
+ * @returns The function `getBookmarksByTitle` is returning an array of bookmarks that match the
+ * provided `title` and belong to the specified `folderId`. The bookmarks are filtered based on the
+ * case-insensitive comparison of the `title` field with the provided `title` string, and only
+ * bookmarks that are not marked as deleted (`isdeleted` is false) and belong to the specified
+ * `folderId
+ */
+export const getBookmarksByTitle = async (title: string, folderId: number) => {
+    const bookmarksByTitle = await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhere('folder_id', folderId)
+    return bookmarksByTitle
 }
