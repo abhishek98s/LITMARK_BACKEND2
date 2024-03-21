@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, getBookmarksByTitle, removeBookmark, sortByAlphabet, sortByDate, updateBookmark } from './bookmark.service';
+import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, getBookmarksByTitle, removeBookmark, sortByAlphabet, sortByDate, updateBookmark, updateClickedDate } from './bookmark.service';
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -260,6 +260,7 @@ export const deleteBookmark = async (req: Request, res: Response) => {
 }
 
 
+
 /**
 
  * This TypeScript function searches for bookmarks by title and returns the results in a JSON format,
@@ -323,6 +324,34 @@ export const getSortedData = async (req: Request, res: Response) => {
                 break;
         }
         res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+/**
+ * The function `bookmarkClick` updates the click_date of a bookmark based on the provided ID.
+ * @param {Request} req - The `req` parameter in the `bookmarkClick` function is of type `Request`,
+ * which is typically used to represent the HTTP request in Express.js or other Node.js frameworks. It
+ * contains information about the incoming request such as headers, parameters, body, etc. You can
+ * access specific data from the
+ * @param {Response} res - The `res` parameter in the `bookmarkClick` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by a web framework like Express in Node.js. The `res` object
+ * has methods like `status
+ */
+export const bookmarkClick = async (req: Request, res: Response) => {
+    try {
+        const bookmarkId = parseInt(req.params.id);
+
+        if (!bookmarkId) {
+            throw new Error(bookmarkExceptionMessages.INVALID_ID)
+        }
+
+        const isBookmarkPresent = await findBookmarkById(bookmarkId);
+
+        await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
+
+        res.status(200).json({ data: { msg: 'Bookmark date updated.' } })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
