@@ -92,6 +92,13 @@ export const removeBookmark = async (bookmarkId: number) => {
     return currentBookmark;
 }
 
+/**
+ * The function `updateClickedDate` updates a bookmark click_date in the database with the provided data.
+ * @param {BookmarkModel} bookmarkData - BookmarkModel is a type representing the data structure of a
+ * bookmark. It likely includes properties such as id, title, url, and any other relevant information
+ * about a bookmark.
+ * @returns The `updateClickedDate` function is returning nothing (`undefined`).
+ */
 export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
     const bookmark = await knex('bookmarks').update(bookmarkData).where('id', bookmarkData.id)
     if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);

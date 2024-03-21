@@ -258,6 +258,17 @@ export const deleteBookmark = async (req: Request, res: Response) => {
     }
 }
 
+/**
+ * The function `bookmarkClick` updates the click_date of a bookmark based on the provided ID.
+ * @param {Request} req - The `req` parameter in the `bookmarkClick` function is of type `Request`,
+ * which is typically used to represent the HTTP request in Express.js or other Node.js frameworks. It
+ * contains information about the incoming request such as headers, parameters, body, etc. You can
+ * access specific data from the
+ * @param {Response} res - The `res` parameter in the `bookmarkClick` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by a web framework like Express in Node.js. The `res` object
+ * has methods like `status
+ */
 export const bookmarkClick = async (req: Request, res: Response) => {
     try {
         const bookmarkId = parseInt(req.params.id);
@@ -268,7 +279,7 @@ export const bookmarkClick = async (req: Request, res: Response) => {
 
         const isBookmarkPresent = await findBookmarkById(bookmarkId);
 
-        await updateClickedDate({ ...isBookmarkPresent, date: new Date() });
+        await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
 
         res.status(200).json({ data: { msg: 'Bookmark date updated.' } })
     } catch (error) {
