@@ -1,32 +1,5 @@
 /**
  * @swagger
- * /bookmark/search:
- *   get:
- *     tags:
- *       - Bookmark
- *     security:
- *       - bearerAuth: []
- *     summary: Get all the bookmarks based on user
- *     parameters:
- *       - name: title
- *         in: query
- *         description: Title of bookmark
- *         required: true
- *         type: string
- *       - name: folder_id
- *         in: query
- *         description: Folder_id to search bookmark in certain folder
- *         required: true
- *         type: integer
- *     responses:
- *       '200':
- *         description: Successful operation
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Bookmark'
  * /bookmark:
  *   get:
  *     tags:
@@ -154,6 +127,72 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Bookmark'
+ * /bookmark/sort:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Sort bookmarks by date and alphabet of a folder.
+ *     parameters:
+ *       - name: sort
+ *         in: query
+ *         description: Filter type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - date
+ *             - alphabet
+ *       - name: folder_id
+ *         in: query
+ *         description: Folder Id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: order
+ *         in: query
+ *         description: Folder Id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - asc
+ *             - desc
+ *     responses:
+ *       200:
+ *         description: Deleted folder successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Folder'
+ * /bookmark/search:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all the bookmarks based on user
+ *     parameters:
+ *       - name: title
+ *         in: query
+ *         description: Title of bookmark
+ *         required: true
+ *         type: string
+ *       - name: folder_id
+ *         in: query
+ *         description: Folder_id to search bookmark in certain folder
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Bookmark'
  * components:
  *   schemas:
  *    Bookmark:
