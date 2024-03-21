@@ -106,6 +106,45 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Bookmark'
+ * /bookmark/sort:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Sort bookmarks by date and alphabet of a folder.
+ *     parameters:
+ *       - name: sort
+ *         in: query
+ *         description: Filter type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - date
+ *             - alphabet
+ *       - name: folder_id
+ *         in: query
+ *         description: Folder Id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: order
+ *         in: query
+ *         description: Folder Id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - asc
+ *             - desc
+ *     responses:
+ *       200:
+ *         description: Deleted folder successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Folder'
  * components:
  *   schemas:
  *    Bookmark:
