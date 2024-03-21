@@ -166,3 +166,9 @@ export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
     if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
     return
 }
+export const findRecentClickedBookmarks = async (user_id: number) => {
+    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('isdeleted', 0).andWhereNot('click_date', null).orderBy('click_date', 'desc');
+    if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+
+    return bookmarks;
+}

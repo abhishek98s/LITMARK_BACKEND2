@@ -184,6 +184,8 @@
  *         description: Folder_id to search bookmark in certain folder
  *         required: true
  *         type: integer
+ * /bookmark/recent:
+ *     summary: Get all recently clicked bookmark
  *     responses:
  *       '200':
  *         description: Successful operation
