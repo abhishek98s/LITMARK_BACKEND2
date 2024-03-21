@@ -58,7 +58,7 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Bookmark'
-*   patch:
+ *   patch:
  *     tags:
  *       - Bookmark
  *     security:
@@ -106,6 +106,22 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Bookmark'
+ * /bookmark/recent:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all recently clicked bookmark
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Bookmark'
  * components:
  *   schemas:
  *    Bookmark:

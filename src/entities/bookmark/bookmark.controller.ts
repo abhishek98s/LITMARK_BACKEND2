@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, removeBookmark, updateBookmark } from './bookmark.service';
+import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, findRecentClickedBookmarks, removeBookmark, updateBookmark } from './bookmark.service';
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -251,6 +251,18 @@ export const deleteBookmark = async (req: Request, res: Response) => {
         }
 
         const result = await removeBookmark(bookmarkId);
+
+        res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+export const getRecentBookmarks = async (req: Request, res: Response) => {
+    try {
+        const { user } = req.body;
+
+        const result = await findRecentClickedBookmarks(user.id);
 
         res.status(200).json({ data: result })
     } catch (error) {
