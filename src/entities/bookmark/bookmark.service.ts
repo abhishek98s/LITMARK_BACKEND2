@@ -112,3 +112,45 @@ export const getBookmarksByTitle = async (title: string, folderId: number) => {
     const bookmarksByTitle = await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhere('folder_id', folderId)
     return bookmarksByTitle
 }
+/**
+ * The function `sortByDate` sorts bookmarks by date for a specific user and folder based on the
+ * specified order.
+ * @param {number} userId - The `userId` parameter is the unique identifier of the user whose bookmarks
+ * you want to sort.
+ * @param {number} folder_id - The `folder_id` parameter in the `sortByDate` function represents the ID
+ * of the folder containing bookmarks that you want to sort by date.
+ * @param {string} sortOrder - The `sortOrder` parameter in the `sortByDate` function determines the
+ * order in which the bookmarks will be sorted based on their date. It can be either 'asc' for
+ * ascending order or 'desc' for descending order. This parameter specifies whether the bookmarks
+ * should be sorted from oldest to newest ('
+ * @returns The function `sortByDate` is returning a sorted list of bookmarks based on the specified
+ * `userId`, `folder_id`, and `sortOrder`. If there are no bookmarks found for the given criteria, it
+ * will throw an error with the message "bookmarkExceptionMessages.BOOKMARK_EMPTY".
+ */
+export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
+    const sortedData = await knex('bookmarks').orderBy('date', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
+    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+    return sortedData;
+}
+
+/**
+ * This TypeScript function sorts bookmarks by title alphabetically for a specific user and folder
+ * based on the provided sortOrder.
+ * @param {number} userId - The `userId` parameter is a number that represents the unique identifier of
+ * the user for whom the bookmarks are being sorted.
+ * @param {number} folder_id - The `folder_id` parameter in the `sortByAlphabet` function represents
+ * the ID of the folder containing the bookmarks that you want to sort alphabetically.
+ * @param {string} sortOrder - The `sortOrder` parameter in the `sortByAlphabet` function determines
+ * the order in which the bookmarks will be sorted based on their titles. It can be either `'asc'` for
+ * ascending order or `'desc'` for descending order. This parameter specifies whether the bookmarks
+ * should be sorted alphabetically
+ * @returns The function `sortByAlphabet` is returning a sorted list of bookmarks based on the title in
+ * either ascending or descending order, filtered by the provided `userId`, `folder_id`, and
+ * `isdeleted` condition. If the sorted data is empty, it will throw an error with the message
+ * "BOOKMARK_EMPTY".
+ */
+export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
+    const sortedData = await knex('bookmarks').orderBy('title', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
+    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+    return sortedData;
+}

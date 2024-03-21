@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, getBookmarksByTitle, removeBookmark, updateBookmark } from './bookmark.service';
+import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, getBookmarksByTitle, removeBookmark, sortByAlphabet, sortByDate, updateBookmark } from './bookmark.service';
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -261,6 +261,7 @@ export const deleteBookmark = async (req: Request, res: Response) => {
 
 
 /**
+
  * This TypeScript function searches for bookmarks by title and returns the results in a JSON format,
  * handling errors appropriately.
  * @param {Request} req - Request object containing information about the HTTP request
@@ -269,6 +270,7 @@ export const deleteBookmark = async (req: Request, res: Response) => {
  * `Response`, which is typically provided by a web framework like Express in Node.js. This object
  * allows you to send data back to
  */
+
 export const searchByTitle = async (req: Request, res: Response) => {
     try {
         const title: string = req.query.title as string;
@@ -285,6 +287,43 @@ export const searchByTitle = async (req: Request, res: Response) => {
         res.status(200).json({ data: result })
     } catch (error) {
         console.log(error)
+    }
+}
+/*
+ * The function `getSortedData` in TypeScript fetches and sorts data based on specified criteria like
+ * date or alphabet for a given user and folder.
+ * @param {Request} req - The `req` parameter in the `getSortedData` function represents the request
+ * object, which contains information about the HTTP request that was made. This object includes
+ * properties such as `query` (for query parameters), `body` (for request body data), `params` (for
+ * route parameters),
+ * @param {Response} res - The `res` parameter in the `getSortedData` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by a web framework like Express in Node.js. The `res` object
+ * has methods like `
+ */
+export const getSortedData = async (req: Request, res: Response) => {
+    try {
+        const sortBy = req.query.sort as string;
+        const folder_id = req.query.folder_id as unknown as number;
+        const sortOrder = req.query.order as string || 'asc';
+
+        const { user } = req.body;
+
+        let result;
+
+        switch (sortBy) {
+            case 'date':
+                result = await sortByDate(user.id, folder_id, sortOrder);
+                break;
+            case 'alphabet':
+                result = await sortByAlphabet(user.id, folder_id, sortOrder);
+                break;
+            default:
+                new Error(bookmarkExceptionMessages.INVALID_DATA);
+                break;
+        }
+        res.status(200).json({ data: result })
+    } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
 }
