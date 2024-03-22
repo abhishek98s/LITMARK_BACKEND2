@@ -3,7 +3,8 @@ import dotenv from 'dotenv'
 import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, findRecentClickedBookmarks, getBookmarksByTitle, removeBookmark, sortByAlphabet, sortByDate, updateBookmark, updateClickedDate } from './bookmark.service';
+import { addBookmark, deleteRecentBookmarkById, findBookmarkById, findBookmarks, findBookmarksByFolderId, findRecentClickedBookmarks, getBookmarksByTitle, removeBookmark, sortByAlphabet, sortByDate, updateBookmark, updateClickedDate } from './bookmark.service';
+
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -339,6 +340,7 @@ export const getRecentBookmarks = async (req: Request, res: Response) => {
         res.status(500).json({ msg: (error as Error).message })
     }
 }
+
 /**
  * The function `bookmarkClick` updates the click_date of a bookmark based on the provided ID.
  * @param {Request} req - The `req` parameter in the `bookmarkClick` function is of type `Request`,
@@ -357,12 +359,26 @@ export const bookmarkClick = async (req: Request, res: Response) => {
         if (!bookmarkId) {
             throw new Error(bookmarkExceptionMessages.INVALID_ID)
         }
-
         const isBookmarkPresent = await findBookmarkById(bookmarkId);
 
         await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
 
         res.status(200).json({ data: { msg: 'Bookmark date updated.' } })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+export const deleteRecentBookmark = async (req: Request, res: Response) => {
+    try {
+        const { user } = req.body;
+        const bookmarkId = parseInt(req.params.id);
+
+        const currentBookmark = await findBookmarkById(bookmarkId);
+
+        await deleteRecentBookmarkById(currentBookmark, user.id)
+
+        res.status(200).json({ data: { msg: 'Recent bookmark deleted' } })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
