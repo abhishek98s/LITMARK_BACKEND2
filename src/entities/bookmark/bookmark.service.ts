@@ -92,10 +92,33 @@ export const removeBookmark = async (bookmarkId: number) => {
     return currentBookmark;
 }
 
-
+/**
+ * This TypeScript function retrieves recent clicked bookmarks for a specific user ID.
+ * @param {number} user_id - The `user_id` parameter is a number that represents the unique identifier
+ * of a user in the system. It is used to filter bookmarks based on the user who clicked on them.
+ * @returns The function `findRecentClickedBookmarks` returns an array of `BookmarkModel` objects
+ * representing the recent clicked bookmarks for a specific user, based on the provided `user_id`.
+ */
 export const findRecentClickedBookmarks = async (user_id: number) => {
     const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('isdeleted', 0).andWhereNot('click_date', null).orderBy('click_date', 'desc');
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return bookmarks;
+}
+
+/**
+ * The function `deleteRecentBookmarkById` updates a bookmark's click_date to null in the database for
+ * a specific user.
+ * @param {BookmarkModel} bookmarkData - BookmarkModel - an object containing data of the bookmark to
+ * be deleted
+ * @param {number} user_id - The `user_id` parameter is the unique identifier of the user who owns the
+ * bookmark that needs to be deleted. It is used to identify the specific user's bookmark that should
+ * be deleted from the database.
+ * @returns The `deleteRecentBookmarkById` function is returning nothing (`undefined`).
+ */
+export const deleteRecentBookmarkById = async (bookmarkData: BookmarkModel, user_id: number) => {
+    const bookmark = await knex('bookmarks').update({ ...bookmarkData, click_date: null }).where('user_id', user_id).andWhere('id', bookmarkData.id);
+    if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED)
+
+    return
 }

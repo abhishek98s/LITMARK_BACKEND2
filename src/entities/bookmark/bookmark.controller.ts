@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, findRecentClickedBookmarks, removeBookmark, updateBookmark } from './bookmark.service';
+import { addBookmark, deleteRecentBookmarkById, findBookmarkById, findBookmarks, findBookmarksByFolderId, findRecentClickedBookmarks, removeBookmark, updateBookmark } from './bookmark.service';
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -265,6 +265,25 @@ export const getRecentBookmarks = async (req: Request, res: Response) => {
         const result = await findRecentClickedBookmarks(user.id);
 
         res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+export const deleteRecentBookmark = async (req: Request, res: Response) => {
+    try {
+        const { user } = req.body;
+        const bookmarkId = parseInt(req.params.id);
+
+        if (!bookmarkId) {
+            throw new Error(bookmarkExceptionMessages.INVALID_ID)
+        }
+
+        const currentBookmark = await findBookmarkById(bookmarkId);
+
+        await deleteRecentBookmarkById(currentBookmark, user.id)
+
+        res.status(200).json({ data: { msg: 'Recent bookmark deleted' } })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }

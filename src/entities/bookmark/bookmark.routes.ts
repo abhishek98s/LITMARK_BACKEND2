@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteBookmark, getBookmarks, patchBookmark, postBookmark, getBookmarksByFolderId, getRecentBookmarks } from './bookmark.controller';
+import { deleteBookmark, getBookmarks, patchBookmark, postBookmark, getBookmarksByFolderId, getRecentBookmarks, deleteRecentBookmark } from './bookmark.controller';
 import { verifyToken } from '../../auth/middleware/authentication.middleware';
 import multer from 'multer';
 import joiValidationMiddleware from '../../auth/middleware/joiValidationMiddleware';
@@ -11,7 +11,7 @@ const upload = multer({ dest: 'temp/' });
 
 router.use(verifyToken);
 
-router.get('/recent', getRecentBookmarks)
+router.get('/recent', getRecentBookmarks).delete('/recent/:id', deleteRecentBookmark)
 router.get('/', getBookmarks).get('/:folder_id', getBookmarksByFolderId).post('/', joiValidationMiddleware(bookmarkSchema), verifyToken, postBookmark)
 router.patch('/:id', upload.single('litmark_image'), verifyToken, patchBookmark).delete('/:id', deleteBookmark)
 
