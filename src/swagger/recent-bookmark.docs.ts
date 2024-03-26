@@ -57,4 +57,63 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Bookmark'
+ * /bookmark/recent/sort:
+ *   get:
+ *     tags:
+ *       - RecentBookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all recently clicked bookmarks
+ *     parameters:
+ *       - name: sortBy
+ *         in: query
+ *         description: Sort type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - date
+ *             - alphabet
+ *       - name: order
+ *         in: query
+ *         description: Order of the result
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - asc
+ *             - desc
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Bookmark'
+ * /bookmark/recent/search:
+ *   get:
+ *     tags:
+ *       - RecentBookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Search bookmarks based on title
+ *     parameters:
+ *       - name: title
+ *         in: query
+ *         description: Titile of bookmark
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Bookmark'
+ *
  */
