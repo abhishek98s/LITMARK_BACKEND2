@@ -196,3 +196,78 @@ export const deleteRecentBookmarkById = async (bookmarkData: BookmarkModel, user
 
     return
 }
+
+/**
+ * The function `sortRecentBookmarkByDate` retrieves recent bookmarks for a specific user and sorts
+ * them based on click_date in a specified order and filtering out deleted bookmarks.
+ * @param {number} userId - The `userId` parameter is the unique identifier of the user for whom you
+ * want to retrieve recent bookmarks.
+ * @param {string} sortOrder - The `sortOrder` parameter specifies the order in which the bookmarks
+ * should be sorted. It can have two possible values: "asc" for ascending order or "desc" for
+ * descending order based on the `click_date` field.
+ * @returns The function `sortRecentBookmarkByDate` returns an array of `BookmarkModel` objects that
+ * represent recent bookmarks sorted by the `click_date` field in the specified `sortOrder` (ascending
+ * or descending) for a specific `userId`. If there are no recent bookmarks found, it throws an error
+ * with the message `EMPTY_RECENT_BOOKMARK`.
+ */
+export const sortRecentBookmarkByDate = async (userId: number, sortOrder: string) => {
+    const recentBookmarks: BookmarkModel[] = await knex('bookmarks').select('*').orderBy('click_date', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    if (recentBookmarks.length === 0) throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
+
+    return recentBookmarks
+}
+
+/**
+ * The function sorts recent bookmarks by title alphabetically in a specified order for a specific user and filtering out deleted bookmarks.
+ * @param {number} userId - The `userId` parameter is the unique identifier of the user whose bookmarks
+ * you want to sort.
+ * @param {string} sortOrder - The `sortOrder` parameter specifies the order in which the bookmarks
+ * should be sorted. It can be either 'asc' for ascending order or 'desc' for descending order based on
+ * the bookmark title.
+ * @returns The function `sortRecentBookmarkByAlphabet` returns a sorted list of bookmarks based on the
+ * title in either ascending or descending order, filtered by a specific user ID, and excluding any
+ * bookmarks that are marked as deleted or have a null click date. If the sorted data is empty, an
+ * error with the message "Bookmark empty" will be thrown.
+ */
+export const sortRecentBookmarkByAlphabet = async (userId: number, sortOrder: string) => {
+    const sortedData = await knex('bookmarks').orderBy('title', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+
+    return sortedData;
+}
+
+/**
+ * The function `filterRecentBookmarkByChip` filters recent bookmarks by user ID and chip ID while
+ * ensuring they are not deleted and have a click date and filtering out deleted bookmarks.
+ * @param {number} userId - The `userId` parameter represents the unique identifier of the user whose
+ * bookmarks are being filtered.
+ * @param {number} chipId - The `chipId` parameter in the `filterRecentBookmarkByChip` function
+ * represents the ID of the chip that is used to filter the recent bookmarks for a specific user.
+ * @returns The function `filterRecentBookmarkByChip` is returning the filtered bookmarks data based on
+ * the provided `userId`, `chipId`, and additional conditions. If there are no bookmarks that match the
+ * criteria, it will throw an error with the message `EMPTY_RECENT_BOOKMARK`.
+ */
+export const filterRecentBookmarkByChip = async (userId: number, chipId: number) => {
+    const filteredData = await knex('bookmarks').where('user_id', userId).where('chip_id', chipId).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    if (filteredData.length === 0) throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
+
+    return filteredData
+}
+
+/**
+ * The function `getRecentBookmarksByTitle` retrieves recent bookmarks by title from a database using a
+ * case-insensitive search and filtering out deleted bookmarks.
+ * @param {string} title - The `getRecentBookmarksByTitle` function is an asynchronous function that
+ * retrieves recent bookmarks from a database table named 'bookmarks' based on a provided title. The
+ * function uses the Knex query builder to interact with the database.
+ * @returns The function `getRecentBookmarksByTitle` is returning an array of objects containing the
+ * `title` and `url` of bookmarks that match the provided `title` string. These bookmarks are filtered
+ * based on the following conditions:
+ * 1. The `title` must contain the provided `title` string (case-insensitive match).
+ * 2. The `isdeleted` field must be false.
+ * 3.
+ */
+export const getRecentBookmarksByTitle = async (title: string) => {
+    const recentbookmarksByTitle = await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    return recentbookmarksByTitle
+}

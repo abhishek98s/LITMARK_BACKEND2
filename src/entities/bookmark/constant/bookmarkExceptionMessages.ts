@@ -9,4 +9,5 @@ export const bookmarkExceptionMessages = {
     DELETE_FAILED: 'Failed to delete bookmark.',
     SEARCH_QUERY_EMPTY: 'Search query is empty',
     INVALID_DATA: 'Invalid Data',
+    EMPTY_RECENT_BOOKMARK: 'No recent bookmark available.',
 }
