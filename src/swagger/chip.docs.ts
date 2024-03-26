@@ -21,6 +21,7 @@
  *       - Chip
  *     security:
  *       - bearerAuth: []
+ *     summary: Add new chips;
  *     requestBody:
  *       description: Chip Data
  *       required: true
@@ -41,6 +42,7 @@
  *       - Chip
  *     security:
  *       - bearerAuth: []
+ *     summary: Update the chip name by id.
  *     parameters:
  *       - name: id
  *         in: path
@@ -70,6 +72,7 @@
  *       - Chip
  *     security:
  *       - bearerAuth: []
+ *     summary: Delete the chip by id.
  *     parameters:
  *       - name: id
  *         in: path

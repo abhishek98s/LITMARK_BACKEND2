@@ -21,6 +21,7 @@
  *       - Bookmark
  *     security:
  *       - bearerAuth: []
+ *     summary: Add new bookmark.
  *     requestBody:
  *       description: Bookmark Data
  *       required: true
@@ -41,6 +42,7 @@
  *       - Bookmark
  *     security:
  *       - bearerAuth: []
+ *     summary: Get all the bookmarks based on user by folder_id
  *     parameters:
  *       - name: id
  *         in: path
@@ -48,7 +50,6 @@
  *         required: true
  *         schema:
  *           type: integer
- *     summary: Get all the bookmarks based on user by folder_id
  *     responses:
  *       '200':
  *         description: Successful operation
@@ -63,6 +64,7 @@
  *       - Bookmark
  *     security:
  *       - bearerAuth: []
+ *     summary: Update bookmark name based of ceratin id.
  *     parameters:
  *       - name: id
  *         in: path
@@ -92,27 +94,7 @@
  *       - Bookmark
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         description: Bookmark ID
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       '200':
- *         description: Successful operation
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Bookmark'
- * /bookmark/click/{id}:
- *   patch:
- *     tags:
- *       - Bookmark
- *     security:
- *       - bearerAuth: []
- *     summary: Update the date of when bookmark was clicked by bookmark id
+ *     summary: Delete a bookmark by id
  *     parameters:
  *       - name: id
  *         in: path
@@ -184,8 +166,6 @@
  *         description: Folder_id to search bookmark in certain folder
  *         required: true
  *         type: integer
- * /bookmark/recent:
- *     summary: Get all recently clicked bookmark
  *     responses:
  *       '200':
  *         description: Successful operation

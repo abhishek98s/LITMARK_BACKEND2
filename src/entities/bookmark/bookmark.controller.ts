@@ -352,7 +352,7 @@ export const getRecentBookmarks = async (req: Request, res: Response) => {
  * `Response`, which is typically provided by a web framework like Express in Node.js. The `res` object
  * has methods like `status
  */
-export const bookmarkClick = async (req: Request, res: Response) => {
+export const addRecentBookmark = async (req: Request, res: Response) => {
     try {
         const bookmarkId = parseInt(req.params.id);
 
