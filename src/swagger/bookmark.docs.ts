@@ -58,7 +58,7 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Bookmark'
-*   patch:
+ *   patch:
  *     tags:
  *       - Bookmark
  *     security:
@@ -106,6 +106,95 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Bookmark'
+ * /bookmark/click/{id}:
+ *   patch:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Update the date of when bookmark was clicked by bookmark id
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: Bookmark ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Bookmark'
+ * /bookmark/sort:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Sort bookmarks by date and alphabet of a folder.
+ *     parameters:
+ *       - name: sort
+ *         in: query
+ *         description: Filter type
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - date
+ *             - alphabet
+ *       - name: folder_id
+ *         in: query
+ *         description: Folder Id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - name: order
+ *         in: query
+ *         description: Folder Id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - asc
+ *             - desc
+ *     responses:
+ *       200:
+ *         description: Deleted folder successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Folder'
+ * /bookmark/search:
+ *   get:
+ *     tags:
+ *       - Bookmark
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all the bookmarks based on user
+ *     parameters:
+ *       - name: title
+ *         in: query
+ *         description: Title of bookmark
+ *         required: true
+ *         type: string
+ *       - name: folder_id
+ *         in: query
+ *         description: Folder_id to search bookmark in certain folder
+ *         required: true
+ *         type: integer
+ * /bookmark/recent:
+ *     summary: Get all recently clicked bookmark
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Bookmark'
  * components:
  *   schemas:
  *    Bookmark:

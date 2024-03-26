@@ -3,7 +3,8 @@ import dotenv from 'dotenv'
 import crypto from 'crypto';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, findBookmarkById, findBookmarks, findBookmarksByFolderId, removeBookmark, updateBookmark } from './bookmark.service';
+import { addBookmark, deleteRecentBookmarkById, findBookmarkById, findBookmarks, findBookmarksByFolderId, findRecentClickedBookmarks, getBookmarksByTitle, removeBookmark, sortByAlphabet, sortByDate, updateBookmark, updateClickedDate } from './bookmark.service';
+
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -11,6 +12,7 @@ import { addChip } from '../chip/chip.service';
 import { findFolderById } from '../folder/folder.service';
 import { FolderModel } from '../folder/folder.model';
 import { ChipModel } from '../chip/chip.model';
+import { logger } from '../../logger/logger';
 
 dotenv.config()
 
@@ -253,6 +255,130 @@ export const deleteBookmark = async (req: Request, res: Response) => {
         const result = await removeBookmark(bookmarkId);
 
         res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+/**
+
+ * This TypeScript function searches for bookmarks by title and returns the results in a JSON format,
+ * handling errors appropriately.
+ * @param {Request} req - Request object containing information about the HTTP request
+ * @param {Response} res - The `res` parameter in the `searchByTitle` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by a web framework like Express in Node.js. This object
+ * allows you to send data back to
+ */
+
+export const searchByTitle = async (req: Request, res: Response) => {
+    try {
+        const title: string = req.query.title as string;
+        const folder_id: number = req.query.folder_id as unknown as number;
+
+        if (!title) {
+            throw new Error(bookmarkExceptionMessages.SEARCH_QUERY_EMPTY)
+        }
+
+        const result = await getBookmarksByTitle(title!, folder_id!);
+        logger.error(result)
+
+
+        res.status(200).json({ data: result })
+    } catch (error) {
+        console.log(error)
+    }
+}
+/*
+ * The function `getSortedData` in TypeScript fetches and sorts data based on specified criteria like
+ * date or alphabet for a given user and folder.
+ * @param {Request} req - The `req` parameter in the `getSortedData` function represents the request
+ * object, which contains information about the HTTP request that was made. This object includes
+ * properties such as `query` (for query parameters), `body` (for request body data), `params` (for
+ * route parameters),
+ * @param {Response} res - The `res` parameter in the `getSortedData` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by a web framework like Express in Node.js. The `res` object
+ * has methods like `
+ */
+export const getSortedData = async (req: Request, res: Response) => {
+    try {
+        const sortBy = req.query.sort as string;
+        const folder_id = req.query.folder_id as unknown as number;
+        const sortOrder = req.query.order as string || 'asc';
+
+        const { user } = req.body;
+
+        let result;
+
+        switch (sortBy) {
+            case 'date':
+                result = await sortByDate(user.id, folder_id, sortOrder);
+                break;
+            case 'alphabet':
+                result = await sortByAlphabet(user.id, folder_id, sortOrder);
+                break;
+            default:
+                new Error(bookmarkExceptionMessages.INVALID_DATA);
+                break;
+        }
+        res.status(200).json({ data: result })
+
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+export const getRecentBookmarks = async (req: Request, res: Response) => {
+    try {
+        const { user } = req.body;
+
+        const result = await findRecentClickedBookmarks(user.id);
+
+        res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+/**
+ * The function `bookmarkClick` updates the click_date of a bookmark based on the provided ID.
+ * @param {Request} req - The `req` parameter in the `bookmarkClick` function is of type `Request`,
+ * which is typically used to represent the HTTP request in Express.js or other Node.js frameworks. It
+ * contains information about the incoming request such as headers, parameters, body, etc. You can
+ * access specific data from the
+ * @param {Response} res - The `res` parameter in the `bookmarkClick` function is an object
+ * representing the HTTP response that the function will send back to the client. It is of type
+ * `Response`, which is typically provided by a web framework like Express in Node.js. The `res` object
+ * has methods like `status
+ */
+export const bookmarkClick = async (req: Request, res: Response) => {
+    try {
+        const bookmarkId = parseInt(req.params.id);
+
+        if (!bookmarkId) {
+            throw new Error(bookmarkExceptionMessages.INVALID_ID)
+        }
+        const isBookmarkPresent = await findBookmarkById(bookmarkId);
+
+        await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
+
+        res.status(200).json({ data: { msg: 'Bookmark date updated.' } })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+export const deleteRecentBookmark = async (req: Request, res: Response) => {
+    try {
+        const { user } = req.body;
+        const bookmarkId = parseInt(req.params.id);
+
+        const currentBookmark = await findBookmarkById(bookmarkId);
+
+        await deleteRecentBookmarkById(currentBookmark, user.id)
+
+        res.status(200).json({ data: { msg: 'Recent bookmark deleted' } })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }

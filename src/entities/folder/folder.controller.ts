@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { FolderModel } from './folder.model'
-import { addFolders, findAllFolders, findAllNestedFolders, findFolderById, removeFolder, updateFolder } from './folder.service'
+import { addFolders, findAllFolders, findAllNestedFolders, findFolderById, removeFolder, sortByAlphabet, sortByDate, updateFolder } from './folder.service'
 import { uploadImage } from '../image/image.controller';
 import { findImage, saveImage } from '../image/image.service';
 import { folderExceptionMessages } from './constant/folderExceptionMessages';
@@ -166,6 +166,45 @@ export const deleteFolders = async (req: Request, res: Response) => {
 
         const result = await removeFolder(folderId);
 
+        res.status(200).json({ data: result })
+    } catch (error) {
+        res.status(500).json({ msg: (error as Error).message })
+    }
+}
+
+/**
+ * The function `getSortedFolders` sorts folders based on a specified criteria and returns the sorted
+ * data in ascending or descending order.
+ * @param {Request} req - The `req` parameter in the `getSortedFolders` function represents the
+ * incoming request to the server. It contains information such as the request method, request headers,
+ * request body, request parameters, query parameters, and more. In this specific function, `req` is of
+ * type `Request`, which
+ * @param {Response} res - The `res` parameter in the `getSortedFolders` function is the response
+ * object that will be used to send a response back to the client making the request. It is an instance
+ * of the `Response` class from the Express.js framework. This object allows you to send HTTP responses
+ * with data back
+ */
+export const getSortedFolders = async (req: Request, res: Response) => {
+    try {
+        const sortBy = req.query.sort as string;
+        const folder_id = req.query.folder_id as unknown as number;
+        const sortOrder = req.query.order as string || 'asc';
+
+        const { user } = req.body;
+
+        let result;
+
+        switch (sortBy) {
+            case 'date':
+                result = await sortByDate(user.id, folder_id, sortOrder);
+                break;
+            case 'alphabet':
+                result = await sortByAlphabet(user.id, folder_id, sortOrder);
+                break;
+            default:
+                new Error(folderExceptionMessages.INVALID_DATA);
+                break;
+        }
         res.status(200).json({ data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
