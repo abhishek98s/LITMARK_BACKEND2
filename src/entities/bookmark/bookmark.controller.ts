@@ -13,73 +13,10 @@ import { findFolderById } from '../folder/folder.service';
 import { FolderModel } from '../folder/folder.model';
 import { ChipModel } from '../chip/chip.model';
 import { logger } from '../../logger/logger';
+import { getThumbnailFromURL, getTitleFromURL } from '../../utils/bookmark';
 
 dotenv.config()
 
-/**
- * The function `getHostnameFromUrl` extracts the hostname from a given URL string.
- * @param {string} url - The `getHostnameFromUrl` function takes a URL string as input and extracts the
- * hostname from it. The hostname is the part of the URL that identifies the domain or server.
- * @returns The function `getHostnameFromUrl` returns the hostname extracted from the provided URL.
- */
-export const getHostnameFromUrl = (url: string) => {
-    const pattern = /https?:\/\/(?:www\.)?([^/?]+)/i;
-    const match = url.match(pattern);
-    if (match) {
-        return match[1];
-    } else {
-        return null;
-    }
-}
-
-/**
- * The function `getTitleFromURL` fetches the title of a webpage using Google Custom Search API based
- * on the provided URL.
- * @param {string} url - The `url` parameter in the `getTitleFromURL` function is a string representing
- * the URL from which you want to extract the title.
- * @returns The function `getTitleFromURL` is returning the title of the first search result from the
- * Google Custom Search API based on the provided URL. If there is an error during the API call, it
- * will return the hostname extracted from the URL using the `getHostnameFromUrl` function.
- */
-async function getTitleFromURL(url: string) {
-    try {
-        const searchAPIKey = 'AIzaSyDvFPrz3tL8mXR3_ezMcdYeDMbbZk3hLLE';
-        const searchID = '2340c7cfc09cf440b';
-
-        const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${searchAPIKey}&cx=${searchID}&q=${url}`);
-        const data = await response.json();
-
-        const title = data.items[0].title;
-        return title;
-    } catch (error) {
-        return getHostnameFromUrl(url);
-    }
-}
-
-/**
- * The function `getThumbnailFromURL` fetches a thumbnail image from a URL using the Google Custom
- * Search API, or returns a favicon image if an error occurs.
- * @param {string} url - The `url` parameter in the `getThumbnailFromURL` function is a string
- * representing the URL of a webpage from which you want to retrieve a thumbnail image.
- * @returns The function `getThumbnailFromURL` is returning either the thumbnail image URL extracted
- * from the Google Custom Search API response based on the input URL, or a Google favicon URL if there
- * is an error during the API call.
- */
-async function getThumbnailFromURL(url: string) {
-    try {
-        const searchAPIKey = 'AIzaSyDvFPrz3tL8mXR3_ezMcdYeDMbbZk3hLLE';
-        const searchID = '2340c7cfc09cf440b';
-
-        const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${searchAPIKey}&cx=${searchID}&q=${url}`);
-        const data = await response.json();
-
-        const thumbnail = data.items[0].pagemap.cse_thumbnail[0].src;
-        return thumbnail;
-    } catch (error) {
-        const favicon = `https://www.google.com/s2/favicons?domain=${getHostnameFromUrl(url)}&sz=256`
-        return favicon;
-    }
-}
 
 /**
  * The function `getBookmarks` is an asynchronous function that retrieves bookmarks and sends them as a

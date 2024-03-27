@@ -6,6 +6,7 @@ const folderSchema: Schema = joi.object().keys({
     user: joi.object().keys({
         id: joi.number().required(),
         username: joi.string().required(),
+        email: joi.string().required(),
         iat: joi.number(),
     }),
 })
