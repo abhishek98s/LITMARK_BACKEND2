@@ -18,7 +18,7 @@ export const loginHandler = async (req: Request, res: Response) => {
 
         const user = await findUserByEmail(email);
 
-        const { username, id } = user;
+        const { username, id, email: dBEmail } = user;
 
         const passordMatched: boolean = await bcrypt.compare(password, user.password);
 
@@ -26,7 +26,7 @@ export const loginHandler = async (req: Request, res: Response) => {
             throw new Error(authExceptionMessages.INVALID_ID_CREDENTIALS)
         }
 
-        const token = jwt.sign({ username, id }, process.env.JWT_TOKEN as string);
+        const token = jwt.sign({ username, id, email:dBEmail }, process.env.JWT_TOKEN as string);
 
         res.status(200).json({ data: token });
     } catch (error: unknown) {

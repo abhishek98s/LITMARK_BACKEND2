@@ -3,7 +3,7 @@ import { UserModel } from '../../entities/user/user.model';
 import { addUser } from '../../entities/user/user.service';
 
 export const findUserByEmail = async (email: string) => {
-    const user = await knex('users').select('username', 'id', 'password').where('email', email).first();
+    const user = await knex('users').select('username', 'id', 'password', 'email').where('email', email).first();
     if (!user) throw new Error('User doesn\'t exist')
 
     return user;
