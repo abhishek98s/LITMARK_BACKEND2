@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt'
 
-import knex from '../../config/knex.config'
 import { userExceptionMessages } from './constant/userExceptionMessages';
 import * as UserDAO from './user.repository';
 import { UserModel } from './user.model'
