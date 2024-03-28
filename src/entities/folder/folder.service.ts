@@ -81,7 +81,7 @@ export const removeFolder = async (folderId: number) => {
     if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
 
     const folder = await FolderDAO.remove({ ...currentFolder, isdeleted: true }, folderId);
-    if (!folder) throw new Error('Failed to delete folder')
+    if (!folder) throw new Error(folderExceptionMessages.DELETE_FOLDER)
 
     return currentFolder;
 }
