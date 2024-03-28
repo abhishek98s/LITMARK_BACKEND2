@@ -1,5 +1,5 @@
-import knex from '../../config/knex.config'
 import { ChipModel } from './chip.model';
+import * as ChipDAO from './chip.repository';
 import { chipExceptionMessages } from './constant/chipExceptionMessages';
 
 /**
@@ -10,7 +10,8 @@ import { chipExceptionMessages } from './constant/chipExceptionMessages';
  * @returns a Promise that resolves to a ChipModel object.
  */
 export const findChipById = async (chipId: number) => {
-    const chip: ChipModel = await knex('chips').where('id', chipId).andWhere('isdeleted', false).first();
+    const chip: ChipModel = await ChipDAO.fetchById(chipId);
+
     if (!chip) throw new Error(chipExceptionMessages.CHIP_NOTFOUND);
 
     return chip;
@@ -22,7 +23,8 @@ export const findChipById = async (chipId: number) => {
  * @returns an array of ChipModel objects.
  */
 export const findAllChips = async (user_id: number): Promise<ChipModel[]> => {
-    const chips: ChipModel[] = await knex('chips').select('*').where('user_id', user_id).andWhere('isdeleted', false);
+    const chips: ChipModel[] = await ChipDAO.fetchAll(user_id);
+
     if (!chips) throw new Error(chipExceptionMessages.CHIP_NOT_AVAILABLE);
 
     return chips;
@@ -35,7 +37,8 @@ export const findAllChips = async (user_id: number): Promise<ChipModel[]> => {
  * @returns a Promise that resolves to a ChipModel object.
  */
 export const addChip = async (chipData: ChipModel) => {
-    const chip = await knex('chips').insert(chipData);
+    const chip = await ChipDAO.create(chipData);
+
     if (!chip) throw new Error(chipExceptionMessages.ADD_FAILED);
 
     const [chipID] = chip
@@ -54,7 +57,8 @@ export const addChip = async (chipData: ChipModel) => {
  * @returns the updated chip data.
  */
 export const updateChip = async (chipData: ChipModel, chipId: number) => {
-    const chip: ChipModel = await knex('chips').select('*').where('id', chipId).update(chipData);
+    const chip = await ChipDAO.update(chipData, chipId);
+
     if (!chip) throw new Error(chipExceptionMessages.UPDATE_FAILED);
 
     return await findChipById(chipId);
@@ -70,7 +74,7 @@ export const removeChip = async (chipId: number) => {
     const currentChip = await findChipById(chipId);
     if (!currentChip) throw new Error(chipExceptionMessages.REMOVE_FAILED)
 
-    const chip= await knex('chips').update({ ...currentChip, isdeleted: true }).where('id', chipId);
+    const chip = await ChipDAO.remove({ ...currentChip, isdeleted: true }, chipId);
     if (!chip) throw new Error('Failed to delete chip')
 
     return currentChip;
