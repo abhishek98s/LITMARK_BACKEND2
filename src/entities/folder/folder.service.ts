@@ -73,15 +73,16 @@ export const updateFolder = async (folderData: FolderModel, folderId: number) =>
  * @returns the deleted folder.
  */
 export const removeFolder = async (folderId: number) => {
-    const currentFolder = await findFolderById(folderId)
-    if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
+    const subfolders: FolderModel[] = await knex('folders').where('folder_id ', folderId);
 
-    const folder = await knex('folders').where('id', folderId).update({ ...currentFolder, isdeleted:true});
-    if (!folder) throw new Error('Failed to delete folder')
+    for (const subfolder of subfolders) {
+        await removeFolder(subfolder.id!)
+    }
 
-    return currentFolder;
+    await knex('folders').where('id', folderId).update('isdeleted', true);
+    await knex('bookmarks').where('folder_id', folderId).update('isdeleted', true);
+    return
 }
-
 
 /**
  * The function `sortByDate` sorts data from a specific folder by date for a given user based on the
