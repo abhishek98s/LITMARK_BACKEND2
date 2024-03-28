@@ -1,5 +1,5 @@
-import knex from '../../config/knex.config'
 import { folderExceptionMessages } from './constant/folderExceptionMessages';
+import * as FolderDAO from './folder.repository';
 import { FolderModel } from './folder.model'
 
 /**
@@ -8,14 +8,16 @@ import { FolderModel } from './folder.model'
  * @returns an array of FolderModel objects.
  */
 export const findAllFolders = async (user_id: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', null).andWhere('isdeleted', false);
+    const folders: FolderModel[] = await FolderDAO.fetchAllParent(user_id);
+
     if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
 
     return folders
 }
 
 export const findAllNestedFolders = async (user_id: number, parentFolderId: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await knex('folders').select('*').where('user_id', user_id).andWhere('folder_id', parentFolderId).andWhere('isdeleted', false);
+    const folders: FolderModel[] = await FolderDAO.fetchAllNested(user_id, parentFolderId)
+
     if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
 
     return folders
@@ -29,7 +31,8 @@ export const findAllNestedFolders = async (user_id: number, parentFolderId: numb
  * @returns a Promise that resolves to a FolderModel object.
  */
 export const findFolderById = async (folderId: number): Promise<FolderModel> => {
-    const folder: FolderModel = await knex('folders').select('*').where('id', folderId).andWhere('isdeleted', false).first();
+    const folder: FolderModel = await FolderDAO.fetchById(folderId);
+
     if (!folder) throw new Error(folderExceptionMessages.FOLDER_NOT_FOUND);
 
     return folder;
@@ -42,12 +45,12 @@ export const findFolderById = async (folderId: number): Promise<FolderModel> => 
  * @returns the inserted folder data.
  */
 export const addFolders = async (folderData: FolderModel) => {
-    const folder = await knex('folders').insert(folderData);
+    const folder = await FolderDAO.create(folderData)
     if (!folder) throw new Error(folderExceptionMessages.ADD_FAILED)
 
     const [folder_Id] = folder;
 
-    return await findFolderById(folder_Id);
+    return await FolderDAO.fetchById(folder_Id);
 }
 
 /**
@@ -60,10 +63,11 @@ export const addFolders = async (folderData: FolderModel) => {
  * @returns the updated folder data.
  */
 export const updateFolder = async (folderData: FolderModel, folderId: number) => {
-    const folder = await knex('folders').where('id', folderId).update(folderData);
+    const folder = await FolderDAO.update(folderData, folderId);
+
     if (!folder) throw new Error(folderExceptionMessages.UPDATE_FOLDER)
 
-    return await findFolderById(folderId);
+    return await FolderDAO.fetchById(folderId);
 }
 
 /**
@@ -73,15 +77,14 @@ export const updateFolder = async (folderData: FolderModel, folderId: number) =>
  * @returns the deleted folder.
  */
 export const removeFolder = async (folderId: number) => {
-    const currentFolder = await findFolderById(folderId)
+    const currentFolder = await FolderDAO.fetchById(folderId)
     if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
 
-    const folder = await knex('folders').where('id', folderId).update({ ...currentFolder, isdeleted:true});
+    const folder = await FolderDAO.remove({ ...currentFolder, isdeleted: true }, folderId);
     if (!folder) throw new Error('Failed to delete folder')
 
     return currentFolder;
 }
-
 
 /**
  * The function `sortByDate` sorts data from a specific folder by date for a given user based on the
@@ -99,8 +102,10 @@ export const removeFolder = async (folderId: number) => {
  * error with the message `FOLDER_EMPTY`.
  */
 export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await knex('folders').orderBy('created_at', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
+    const sortedData = await FolderDAO.sortBy('created_at', userId, folder_id, sortOrder);
+
     if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
+
     return sortedData;
 }
 
@@ -120,7 +125,9 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  * thrown.
  */
 export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await knex('folders').orderBy('name', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
+    const sortedData = await FolderDAO.sortBy('name', userId, folder_id, sortOrder);
+
     if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
+
     return sortedData;
 }
