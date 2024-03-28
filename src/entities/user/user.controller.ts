@@ -4,7 +4,7 @@ import validator from 'validator';
 import { addUser, getUserById, removeUser, updateUser } from './user.service';
 import { saveImage } from '../image/image.service';
 import { uploadImage, validateImageType } from '../image/image.controller';
-import { userExceptionMessages } from './constant/folderExceptionMessages';
+import { userExceptionMessages } from './constant/userExceptionMessages';
 
 /**
  * The function `getUser` is an asynchronous function that retrieves a user by their ID and returns the
