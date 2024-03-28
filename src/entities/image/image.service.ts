@@ -1,5 +1,5 @@
-import knex from '../../config/knex.config';
 import { imageExceptionMessages } from './constant/imageExceptionMessages';
+import * as ImageDAO from './image.repository';
 import { ImageModel } from './image.model';
 
 /**
@@ -9,7 +9,8 @@ import { ImageModel } from './image.model';
  * @returns a Promise that resolves to an ImageModel object.
  */
 export const findImage = async (imageId: number): Promise<ImageModel> => {
-    const image: ImageModel = await knex('images').select().where('id', imageId).andWhere('isdeleted', false).first();
+    const image: ImageModel = await ImageDAO.fetchById(imageId);
+
     if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND)
 
     return image;
@@ -32,9 +33,9 @@ export const saveImage = async (imageData: ImageModel, username: string) => {
         created_by: username,
         updated_by: username,
     }
-    const image = await knex('images').insert(newImage);
+    const image = await ImageDAO.create(newImage);
     const [image_id] = image;
-    return await findImage(image_id)
+    return await ImageDAO.fetchById(image_id)
 }
 
 /**
@@ -48,18 +49,12 @@ export const saveImage = async (imageData: ImageModel, username: string) => {
  * user who is updating the image.
  * @returns a Promise that resolves to an ImageModel object.
  */
-export const updateImage = async (newImageData: ImageModel, imageId: number): Promise<ImageModel> => {
-    // const currentImage: ImageModel = await knex('images').select('url', 'type').where('id', imageId).first();
-
-    // const updatedImage: ImageModel = {
-    //     ...newImageData, ...newImageData,
-    // };
-
-    const image = await knex('images').where('id', imageId).update(newImageData);
+export const updateImage = async (imageData: ImageModel, imageId: number): Promise<ImageModel> => {
+    const image = await ImageDAO.update(imageData, imageId);
 
     if (!image) throw new Error(imageExceptionMessages.UPLOAD_FAILED); // update the comment
 
-    return await findImage(imageId)
+    return await ImageDAO.fetchById(imageId)
 }
 
 /**
@@ -69,9 +64,11 @@ export const updateImage = async (newImageData: ImageModel, imageId: number): Pr
  * @returns a Promise that resolves to an instance of the ImageModel.
  */
 export const removeImage = async (imageId: number): Promise<ImageModel> => {
-    const image = await findImage(imageId);
+    const image = await ImageDAO.fetchById(imageId);
+    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
 
-    await knex('images').update({ ...image, isdeleted: true }).where('id', imageId);
+    const removeImage = await ImageDAO.remove({ ...image, isdeleted: true }, imageId)
+    if (!removeImage) throw new Error(imageExceptionMessages.DELETE_FAILED);
 
     return image
 }
