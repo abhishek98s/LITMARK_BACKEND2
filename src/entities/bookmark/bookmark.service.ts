@@ -1,5 +1,5 @@
-import knex from '../../config/knex.config'
 import { BookmarkModel } from './bookmark.model'
+import * as BookmarkDAO from './bookmark.repository'
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
 
 /**
@@ -11,7 +11,7 @@ import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages'
  * @returns a bookmark object with the specified bookmarkId.
  */
 export const findBookmarkById = async (bookmarkId: number) => {
-    const bookmarks: BookmarkModel = await knex('bookmarks').select('*').where('id', bookmarkId).andWhere('isdeleted', false).first();
+    const bookmarks: BookmarkModel = await BookmarkDAO.fetchById(bookmarkId)
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND)
 
     return bookmarks;
@@ -23,7 +23,7 @@ export const findBookmarkById = async (bookmarkId: number) => {
  * @returns an array of BookmarkModel objects.
  */
 export const findBookmarks = async (user_id: number) => {
-    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('isdeleted', 0);
+    const bookmarks: BookmarkModel[] = await BookmarkDAO.fetchAll(user_id);
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return bookmarks;
@@ -40,7 +40,7 @@ export const findBookmarks = async (user_id: number) => {
  * match the provided `user_id` and `folder_id`.
  */
 export const findBookmarksByFolderId = async (user_id: number, folder_id: number) => {
-    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('folder_id', folder_id).andWhere('isdeleted', 0);
+    const bookmarks: BookmarkModel[] = await BookmarkDAO.fetchByFolderId(user_id, folder_id);
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return bookmarks;
@@ -54,7 +54,7 @@ export const findBookmarksByFolderId = async (user_id: number, folder_id: number
  * @returns the bookmark that was inserted into the 'bookmarks' table.
  */
 export const addBookmark = async (bookmarkData: BookmarkModel) => {
-    const bookmark = await knex('bookmarks').insert(bookmarkData);
+    const bookmark = await BookmarkDAO.create(bookmarkData);
     if (!bookmark) throw new Error(bookmarkExceptionMessages.ADD_FAILED);
 
     const [bookmarkId] = bookmark;
@@ -73,7 +73,7 @@ export const addBookmark = async (bookmarkData: BookmarkModel) => {
  * @returns the updated bookmark data.
  */
 export const updateBookmark = async (bookmarkData: BookmarkModel, bookmarkId: number) => {
-    const bookmark = await knex('bookmarks').update(bookmarkData).where('id', bookmarkId);
+    const bookmark = await BookmarkDAO.updateTitle(bookmarkData, bookmarkId)
     if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
 
     return findBookmarkById(bookmarkId);
@@ -86,10 +86,10 @@ export const updateBookmark = async (bookmarkData: BookmarkModel, bookmarkId: nu
  * @returns the deleted bookmark.
  */
 export const removeBookmark = async (bookmarkId: number) => {
-    const currentBookmark: BookmarkModel = await findBookmarkById(bookmarkId);
+    const currentBookmark: BookmarkModel = await BookmarkDAO.fetchById(bookmarkId)
     if (!currentBookmark) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND);
 
-    const bookmark = await knex('bookmarks').update({ ...currentBookmark, isdeleted: true }).where('id', bookmarkId);
+    const bookmark = await BookmarkDAO.remove({ ...currentBookmark, isdeleted: true });
     if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
 
     return currentBookmark;
@@ -109,7 +109,7 @@ export const removeBookmark = async (bookmarkId: number) => {
  * `folderId
  */
 export const getBookmarksByTitle = async (title: string, folderId: number) => {
-    const bookmarksByTitle = await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhere('folder_id', folderId)
+    const bookmarksByTitle = await BookmarkDAO.fetchByTitle(title, folderId)
     return bookmarksByTitle
 }
 /**
@@ -128,8 +128,9 @@ export const getBookmarksByTitle = async (title: string, folderId: number) => {
  * will throw an error with the message "bookmarkExceptionMessages.BOOKMARK_EMPTY".
  */
 export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await knex('bookmarks').orderBy('date', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+
+    const sortedData = await BookmarkDAO.sortBy('created_at', userId, folder_id, sortOrder)
+
     return sortedData;
 }
 
@@ -150,8 +151,8 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  * "BOOKMARK_EMPTY".
  */
 export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await knex('bookmarks').orderBy('title', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+    const sortedData = await BookmarkDAO.sortBy('title', userId, folder_id, sortOrder)
+
     return sortedData;
 }
 /*
@@ -162,8 +163,10 @@ export const sortByAlphabet = async (userId: number, folder_id: number, sortOrde
  * @returns The `updateClickedDate` function is returning nothing (`undefined`).
  */
 export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
-    const bookmark = await knex('bookmarks').update(bookmarkData).where('id', bookmarkData.id)
+    const bookmark = await BookmarkDAO.updateClickedDate(bookmarkData);
+
     if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
+
     return
 }
 /*
@@ -174,7 +177,8 @@ export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
  * representing the recent clicked bookmarks for a specific user, based on the provided `user_id`.
  */
 export const findRecentClickedBookmarks = async (user_id: number) => {
-    const bookmarks: BookmarkModel[] = await knex('bookmarks').select('*').where('user_id', user_id).andWhere('isdeleted', 0).andWhereNot('click_date', null).orderBy('click_date', 'desc');
+    const bookmarks = await BookmarkDAO.sortRecentlyClickedBookmarkBy('click_date', user_id, 'desc');
+
     if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return bookmarks;
@@ -191,7 +195,10 @@ export const findRecentClickedBookmarks = async (user_id: number) => {
  * @returns The `deleteRecentBookmarkById` function is returning nothing (`undefined`).
  */
 export const deleteRecentBookmarkById = async (bookmarkData: BookmarkModel, user_id: number) => {
-    const bookmark = await knex('bookmarks').update({ ...bookmarkData, click_date: null }).where('user_id', user_id).andWhere('id', bookmarkData.id);
+    const newbookmarkData: BookmarkModel = { ...bookmarkData, click_date: null };
+
+    const bookmark = await BookmarkDAO.removeRecentlyClickedBookmark(newbookmarkData, user_id);
+
     if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED)
 
     return
@@ -211,7 +218,8 @@ export const deleteRecentBookmarkById = async (bookmarkData: BookmarkModel, user
  * with the message `EMPTY_RECENT_BOOKMARK`.
  */
 export const sortRecentBookmarkByDate = async (userId: number, sortOrder: string) => {
-    const recentBookmarks: BookmarkModel[] = await knex('bookmarks').select('*').orderBy('click_date', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    const recentBookmarks: BookmarkModel[] = await BookmarkDAO.sortRecentlyClickedBookmarkBy('click_date', userId, sortOrder);
+
     if (recentBookmarks.length === 0) throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
 
     return recentBookmarks
@@ -230,8 +238,9 @@ export const sortRecentBookmarkByDate = async (userId: number, sortOrder: string
  * error with the message "Bookmark empty" will be thrown.
  */
 export const sortRecentBookmarkByAlphabet = async (userId: number, sortOrder: string) => {
-    const sortedData = await knex('bookmarks').orderBy('title', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null);
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+    const sortedData: BookmarkModel[] = await BookmarkDAO.sortRecentlyClickedBookmarkBy('title', userId, sortOrder);
+
+    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY);
 
     return sortedData;
 }
@@ -248,7 +257,8 @@ export const sortRecentBookmarkByAlphabet = async (userId: number, sortOrder: st
  * criteria, it will throw an error with the message `EMPTY_RECENT_BOOKMARK`.
  */
 export const filterRecentBookmarkByChip = async (userId: number, chipId: number) => {
-    const filteredData = await knex('bookmarks').where('user_id', userId).where('chip_id', chipId).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    const filteredData: BookmarkModel[] = await BookmarkDAO.filterRecentlyClickedBookmarksByChip(userId, chipId);
+
     if (filteredData.length === 0) throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
 
     return filteredData
@@ -268,6 +278,7 @@ export const filterRecentBookmarkByChip = async (userId: number, chipId: number)
  * 3.
  */
 export const getRecentBookmarksByTitle = async (title: string) => {
-    const recentbookmarksByTitle = await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    const recentbookmarksByTitle = await BookmarkDAO.fetchRecentlyClickedBookmarksByTittle(title);
+
     return recentbookmarksByTitle
 }
