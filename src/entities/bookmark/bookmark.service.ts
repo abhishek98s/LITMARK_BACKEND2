@@ -129,7 +129,6 @@ export const getBookmarksByTitle = async (title: string, folderId: number) => {
  */
 export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
     const sortedData = await knex('bookmarks').orderBy('date', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
     return sortedData;
 }
 
@@ -151,7 +150,6 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  */
 export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
     const sortedData = await knex('bookmarks').orderBy('title', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
     return sortedData;
 }
 /*

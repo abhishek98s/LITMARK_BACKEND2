@@ -164,9 +164,9 @@ export const deleteFolders = async (req: Request, res: Response) => {
         const folderId: number = parseInt(req.params.id);
         if (!folderId) throw new Error(folderExceptionMessages.INVALID_ID);
 
-        const result = await removeFolder(folderId);
+        await removeFolder(folderId);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ data: 'Folder deleted sucessfully' })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }

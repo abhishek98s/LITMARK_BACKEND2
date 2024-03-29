@@ -66,22 +66,28 @@ export const updateFolder = async (folderData: FolderModel, folderId: number) =>
     return await findFolderById(folderId);
 }
 
+
 /**
- * The function removes a folder from a database based on its ID.
- * @param {number} folderId - The `folderId` parameter is the unique identifier of the folder that
- * needs to be removed.
- * @returns the deleted folder.
+ * The function `removeFolder` recursively deletes a folder and its subfolders along with their
+ * associated bookmarks by updating their `isdeleted` flag in the database.
+ * @param {number} folderId - The `removeFolder` function is designed to recursively delete a folder
+ * and all its subfolders and bookmarks from a database. The function takes a `folderId` parameter,
+ * which is the unique identifier of the folder to be deleted. The function first retrieves all
+ * subfolders of the given folder, then recursively
+ * @returns The `removeFolder` function is returning nothing explicitly, as it ends with `return`
+ * without any value.
  */
 export const removeFolder = async (folderId: number) => {
-    const currentFolder = await findFolderById(folderId)
-    if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
+    const subfolders: FolderModel[] = await knex('folders').where('folder_id ', folderId);
 
-    const folder = await knex('folders').where('id', folderId).update({ ...currentFolder, isdeleted:true});
-    if (!folder) throw new Error('Failed to delete folder')
+    for (const subfolder of subfolders) {
+        await removeFolder(subfolder.id!)
+    }
 
-    return currentFolder;
+    await knex('folders').where('id', folderId).update('isdeleted', true);
+    await knex('bookmarks').where('folder_id', folderId).update('isdeleted', true);
+    return
 }
-
 
 /**
  * The function `sortByDate` sorts data from a specific folder by date for a given user based on the
@@ -100,7 +106,6 @@ export const removeFolder = async (folderId: number) => {
  */
 export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
     const sortedData = await knex('folders').orderBy('created_at', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
     return sortedData;
 }
 
@@ -121,6 +126,5 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  */
 export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
     const sortedData = await knex('folders').orderBy('name', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
     return sortedData;
 }
