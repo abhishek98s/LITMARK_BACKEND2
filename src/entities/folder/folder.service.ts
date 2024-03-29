@@ -106,7 +106,6 @@ export const removeFolder = async (folderId: number) => {
  */
 export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
     const sortedData = await knex('folders').orderBy('created_at', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
     return sortedData;
 }
 
@@ -127,6 +126,5 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  */
 export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
     const sortedData = await knex('folders').orderBy('name', sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id);
-    if (sortedData.length === 0) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
     return sortedData;
 }
