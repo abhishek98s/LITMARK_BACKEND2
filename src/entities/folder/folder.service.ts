@@ -1,5 +1,6 @@
 import { folderExceptionMessages } from './constant/folderExceptionMessages';
 import * as FolderDAO from './folder.repository';
+import * as BookmarkDAO from '../bookmark/bookmark.repository';
 import { FolderModel } from './folder.model'
 
 /**
@@ -82,18 +83,14 @@ export const updateFolder = async (folderData: FolderModel, folderId: number) =>
  * without any value.
  */
 export const removeFolder = async (folderId: number) => {
-
-    const currentFolder = await FolderDAO.fetchById(folderId)
-    if (!currentFolder) throw new Error(folderExceptionMessages.REMOVE_FAILED)
-
-    const subfolders: FolderModel[] = await knex('folders').where('folder_id ', folderId);
+    const subfolders: FolderModel[] = await FolderDAO.fetchAllByFolderId(folderId);
 
     for (const subfolder of subfolders) {
         await removeFolder(subfolder.id!)
     }
 
-    await knex('folders').where('id', folderId).update('isdeleted', true);
-    await knex('bookmarks').where('folder_id', folderId).update('isdeleted', true);
+    await FolderDAO.remove(folderId)
+    await BookmarkDAO.removeByFolderid(folderId)
     return
 }
 

@@ -13,6 +13,10 @@ export const fetchById = async (folderId: number) => {
     return await knex('folders').select('*').where('id', folderId).andWhere('isdeleted', false).first();
 }
 
+export const fetchAllByFolderId = async (folderId: number) => {
+    return await knex('folders').where('folder_id ', folderId);
+}
+
 export const create = async (folderData: FolderModel) => {
     return await knex('folders').insert(folderData);
 }
@@ -21,8 +25,8 @@ export const update = async (folderData: FolderModel, folderId: number) => {
     return await knex('folders').where('id', folderId).update(folderData);
 }
 
-export const remove = async (folderData: FolderModel, folderId: number) => {
-    return await knex('folders').where('id', folderId).update(folderData);
+export const remove = async (folderId: number) => {
+    return await knex('folders').where('id', folderId).update('isdeleted', true);
 }
 
 export const sortBy = async (sortBy: string, userId: number, folderId: number, sortOrder: string) => {
