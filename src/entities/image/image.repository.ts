@@ -13,6 +13,6 @@ export const update = async (imageData: ImageModel, imageId: number) => {
     return await knex('images').where('id', imageId).update(imageData);
 }
 
-export const remove = async (imageData: ImageModel, imageId: number) => {
-    return await knex('images').update(imageData).where('id', imageId);
+export const remove = async (imageId: number) => {
+    return await knex('images').update('isdeleted', true).where('id', imageId);
 }

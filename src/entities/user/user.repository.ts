@@ -13,6 +13,6 @@ export const update = async (userData: UserModel, userId: number) => {
     return await knex('users').select('*').where('id', userId).update(userData);
 }
 
-export const remove = async (userData: UserModel, userId: number) => {
-    return await knex('users').where('id', userId).update(userData);
+export const remove = async (userId: number) => {
+    return await knex('users').where('id', userId).update('isdeleted', true);
 }

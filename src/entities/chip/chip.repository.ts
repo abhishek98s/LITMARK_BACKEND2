@@ -17,6 +17,6 @@ export const update = async (chipData: ChipModel, chipId: number) => {
     return await knex('chips').where('id', chipId).update(chipData);
 }
 
-export const remove = async (chipData: ChipModel, chipId: number) => {
-    return await knex('chips').update(chipData).where('id', chipId);
+export const remove = async ( chipId: number) => {
+    return await knex('chips').update('isdeleted', true).where('id', chipId);
 }

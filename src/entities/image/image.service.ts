@@ -67,7 +67,7 @@ export const removeImage = async (imageId: number): Promise<ImageModel> => {
     const image = await ImageDAO.fetchById(imageId);
     if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
 
-    const removeImage = await ImageDAO.remove({ ...image, isdeleted: true }, imageId)
+    const removeImage = await ImageDAO.remove(imageId)
     if (!removeImage) throw new Error(imageExceptionMessages.DELETE_FAILED);
 
     return image
