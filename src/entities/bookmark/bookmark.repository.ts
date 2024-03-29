@@ -26,6 +26,10 @@ export const remove = async (bookmarkData: BookmarkModel) => {
     return await knex('bookmarks').where('id', bookmarkData.id).update(bookmarkData);
 }
 
+export const removeByFolderid = async (folderId: number) => {
+    return await knex('bookmarks').where('folder_id', folderId).update('isdeleted', true);
+}
+
 export const fetchByTitle = async (title: string, folderId: number) => {
     return await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhere('folder_id', folderId)
 }
