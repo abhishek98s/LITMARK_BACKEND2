@@ -8,7 +8,7 @@ export interface BookmarkModel {
     user_id: number,
     date: Date,
     isdeleted: boolean,
-    click_date?: Date,
+    click_date?: Date | null,
     created_by?: string,
     updated_by?: string,
 }
