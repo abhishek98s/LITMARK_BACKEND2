@@ -128,9 +128,8 @@ export const getBookmarksByTitle = async (title: string, folderId: number) => {
  * will throw an error with the message "bookmarkExceptionMessages.BOOKMARK_EMPTY".
  */
 export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await BookmarkDAO.sortBy('created_at', userId, folder_id, sortOrder)
 
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+    const sortedData = await BookmarkDAO.sortBy('created_at', userId, folder_id, sortOrder)
 
     return sortedData;
 }
@@ -153,8 +152,6 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  */
 export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
     const sortedData = await BookmarkDAO.sortBy('title', userId, folder_id, sortOrder)
-
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
 
     return sortedData;
 }
