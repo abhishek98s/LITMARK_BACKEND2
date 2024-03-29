@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 
-import knex from '../../config/knex.config'
+import { userExceptionMessages } from './constant/userExceptionMessages';
+import * as UserDAO from './user.repository';
 import { UserModel } from './user.model'
 
 
@@ -11,8 +12,9 @@ import { UserModel } from './user.model'
  * @returns a Promise that resolves to a UserModel object.
  */
 export const getUserById = async (userId: number) => {
-    const user: UserModel = await knex('users').select('*').where('id', userId).andWhere('isdeleted', false).first();
-    if (!user) throw new Error('Failed to get user')
+    const user: UserModel = await UserDAO.fetchById(userId);
+
+    if (!user) throw new Error(userExceptionMessages.USER_NOT_FOUND)
 
     return user;
 }
@@ -31,12 +33,12 @@ export const addUser = async (userInfo: UserModel) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await knex('users').insert({ ...userInfo, password: hashedPassword });
-    if (!user) throw new Error('Failed to add user')
+    const user = await UserDAO.create({ ...userInfo, password: hashedPassword })
+    if (!user) throw new Error(userExceptionMessages.CREATE_FAILED)
 
     const [userID] = user;
 
-    return await getUserById(userID);
+    return await UserDAO.fetchById(userID);
 }
 
 /**
@@ -51,10 +53,11 @@ export const updateUser = async (userId: number, updatedUserInfo: UserModel) => 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(updatedUserInfo.password, salt);
 
-    const user: UserModel = await knex('users').select('*').where('id', userId).update({ ...updatedUserInfo, password: hashedPassword });
-    if (!user) throw new Error('Failed to upadate user')
+    const updatedUser = { ...updatedUserInfo, password: hashedPassword };
+    const user = await UserDAO.update(updatedUser, userId)
+    if (!user) throw new Error(userExceptionMessages.UPDATE_FAILED)
 
-    return await getUserById(userId);
+    return await UserDAO.fetchById(userId);
 }
 
 /**
@@ -67,8 +70,9 @@ export const removeUser = async (userId: number) => {
     const currentUser = await getUserById(userId);
     if (!currentUser) throw new Error('User doesnot exist')
 
-    const user = await knex('users').where('id', userId).update({isdeleted:true});
-    if (!user) throw new Error('Failed to delete user')
+    const deletedUser = { ...currentUser, isdeleted: true };
+    const user = await UserDAO.remove(deletedUser, userId);
+    if (!user) throw new Error(userExceptionMessages.DELETE_FAILED)
 
     return currentUser;
 }
