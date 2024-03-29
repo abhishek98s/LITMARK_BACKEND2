@@ -1,3 +1,4 @@
+import * as ImageDAO from '../image/image.repository';
 import { BookmarkModel } from './bookmark.model'
 import * as BookmarkDAO from './bookmark.repository'
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
@@ -92,6 +93,7 @@ export const removeBookmark = async (bookmarkId: number) => {
     const bookmark = await BookmarkDAO.remove({ ...currentBookmark, isdeleted: true });
     if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
 
+    ImageDAO.remove(currentBookmark.image_id)
     return currentBookmark;
 }
 

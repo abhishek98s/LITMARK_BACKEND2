@@ -74,7 +74,7 @@ export const removeChip = async (chipId: number) => {
     const currentChip = await findChipById(chipId);
     if (!currentChip) throw new Error(chipExceptionMessages.REMOVE_FAILED)
 
-    const chip = await ChipDAO.remove({ ...currentChip, isdeleted: true }, chipId);
+    const chip = await ChipDAO.remove(chipId);
     if (!chip) throw new Error('Failed to delete chip')
 
     return currentChip;

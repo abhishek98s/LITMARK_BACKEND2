@@ -70,8 +70,7 @@ export const removeUser = async (userId: number) => {
     const currentUser = await getUserById(userId);
     if (!currentUser) throw new Error('User doesnot exist')
 
-    const deletedUser = { ...currentUser, isdeleted: true };
-    const user = await UserDAO.remove(deletedUser, userId);
+    const user = await UserDAO.remove(userId);
     if (!user) throw new Error(userExceptionMessages.DELETE_FAILED)
 
     return currentUser;
