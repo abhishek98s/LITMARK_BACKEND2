@@ -80,8 +80,10 @@
  *           schema:
  *             type: object
  *             properties:
- *               name:
- *                 type: string
+ *               title:
+ *                 title: string
+ *               folder_id:
+ *                 title: integer
  *     responses:
  *       '200':
  *         description: Successful operation

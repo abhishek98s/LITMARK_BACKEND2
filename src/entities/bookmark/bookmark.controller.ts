@@ -138,14 +138,10 @@ export const patchBookmark = async (req: Request, res: Response) => {
             throw new Error(bookmarkExceptionMessages.INVALID_ID)
         }
 
-        const { title, user } = req.body;
-
-        if (!title) {
-            throw new Error(bookmarkExceptionMessages.TITLE_REQUIRED)
-        }
+        const { title, user, folder_id } = req.body;
 
         const currentBookmark = await findBookmarkById(bookmarkId);
-        const { image_id: currentBookmarkImage } = currentBookmark;
+        const { title: currentBookmarkTitle, image_id: currentBookmarkImage, folder_id: currentBookmarkFolderId } = currentBookmark;
 
         if (req.file) {
             const imagePath = req.file!.path;
@@ -158,7 +154,8 @@ export const patchBookmark = async (req: Request, res: Response) => {
 
         const bookmarkData: BookmarkModel = {
             ...currentBookmark,
-            title,
+            title: title || currentBookmarkTitle,
+            folder_id: folder_id || currentBookmarkFolderId,
             image_id: req.body.image_id || currentBookmarkImage,
             updated_by: user.username,
         }
