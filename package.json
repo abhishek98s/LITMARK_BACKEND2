@@ -6,8 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "npx kill-port 3000 5000 9000 && npx nodemon",
-    "build": "rimraf ./build && tsc",
-    "start": "npm run build && npx nodemon build/index.js",
+    "build": "rimraf ./build && tsc && npm i",
+    "start": "npm run build && node build/index.js",
+    "dev": "npx nodemon build/index.js",
+    "main": "build/index.js",
     "knex": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts",
     "migrate:make": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:make",
     "migrate:latest": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:latest",
