@@ -1,0 +1,15 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "src/index.ts",
+            "use": "@vercel/node",
+            "config": {
+                "distDir": "build",
+                "buildCommand": "npm run build",
+                "installCommand": "npm i",
+                "devCommand": "npm run start"
+            }
+        }
+    ]
+}
