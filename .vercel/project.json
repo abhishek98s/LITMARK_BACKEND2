@@ -1,1 +1,15 @@
-{"projectId":"prj_83MNVT9gFuEKZHwTFaRARkWEgS4S","orgId":"team_Wl3KwSWFvjcWHTXNm3zz9NsA"}
+{
+  "projectId": "prj_83MNVT9gFuEKZHwTFaRARkWEgS4S",
+  "orgId": "team_Wl3KwSWFvjcWHTXNm3zz9NsA",
+  "settings": {
+    "createdAt": 1716793214109,
+    "framework": null,
+    "devCommand": "npm run start",
+    "installCommand": "npm i",
+    "buildCommand": "npm run build",
+    "outputDirectory": "build",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "20.x"
+  }
+}
