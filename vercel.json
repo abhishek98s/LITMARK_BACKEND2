@@ -8,7 +8,7 @@
                 "distDir": "build",
                 "buildCommand": "npm run build",
                 "installCommand": "npm i",
-                "devCommand": "npm run start"
+                "devCommand": "node /.vercel/output/static/index.js"
             }
         }
     ]
