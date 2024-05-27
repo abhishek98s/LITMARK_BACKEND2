@@ -1,7 +1,0 @@
-node_modules
-
-temp
-.idea
-.env
-logs
-.vercel
