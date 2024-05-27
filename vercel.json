@@ -8,8 +8,14 @@
                 "distDir": ".vercel/output",
                 "buildCommand": "npm run build",
                 "installCommand": "npm ci",
-                "devCommand": "npm run start"
+                "devCommand": "npm run dev"
             }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/index.js"
         }
     ]
 }
