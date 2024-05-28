@@ -34,7 +34,7 @@ export const saveImage = async (imageData: ImageModel, username: string) => {
         updated_by: username,
     }
     const image = await ImageDAO.create(newImage);
-    const [image_id] = image;
+    const { image_id } = image;
     return await ImageDAO.fetchById(image_id)
 }
 

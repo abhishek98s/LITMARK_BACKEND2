@@ -10,13 +10,14 @@ export const fetchAll = async (user_id: number) => {
 }
 
 export const create = async (chipData: ChipModel) => {
-    return await knex('chips').insert(chipData);
+    const chip = await knex('chips').insert(chipData).returning('id');
+    return { chipID: chip[0].id };
 }
 
 export const update = async (chipData: ChipModel, chipId: number) => {
     return await knex('chips').where('id', chipId).update(chipData);
 }
 
-export const remove = async ( chipId: number) => {
+export const remove = async (chipId: number) => {
     return await knex('chips').update('isdeleted', true).where('id', chipId);
 }

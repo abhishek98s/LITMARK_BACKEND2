@@ -41,7 +41,7 @@ export const addChip = async (chipData: ChipModel) => {
 
     if (!chip) throw new Error(chipExceptionMessages.ADD_FAILED);
 
-    const [chipID] = chip
+    const { chipID } = chip
 
     return await findChipById(chipID);
 }

@@ -28,7 +28,12 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Bookmark'
+ *             type: object
+ *             properties:
+ *               url:
+ *                 type: integer
+ *               folder_id:
+ *                 type: integer
  *     responses:
  *       '200':
  *         description: Successful operation
@@ -81,9 +86,9 @@
  *             type: object
  *             properties:
  *               title:
- *                 title: string
+ *                 type: string
  *               folder_id:
- *                 title: integer
+ *                 type: integer
  *     responses:
  *       '200':
  *         description: Successful operation

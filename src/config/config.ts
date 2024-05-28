@@ -23,4 +23,14 @@ function getActiveDatabase(db: string) {
             }
         };
     }
+
+    if (db === 'pg') {
+        return {
+            client: db,
+            connection: process.env.POSTGRES_URL,
+            migrations: {
+                directory: `${__dirname}/../migrations`,
+            }
+        };
+    }
 }

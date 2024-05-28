@@ -58,7 +58,7 @@ export const addBookmark = async (bookmarkData: BookmarkModel) => {
     const bookmark = await BookmarkDAO.create(bookmarkData);
     if (!bookmark) throw new Error(bookmarkExceptionMessages.ADD_FAILED);
 
-    const [bookmarkId] = bookmark;
+    const { bookmarkId } = bookmark;
 
     return findBookmarkById(bookmarkId)
 }

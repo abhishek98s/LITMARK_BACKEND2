@@ -87,6 +87,8 @@ export const postBookmark = async (req: Request, res: Response) => {
 
         const imageName = crypto.randomUUID();
         const imageUrl = await getThumbnailFromURL(url);
+        console.log(imageUrl);
+
         const imageFromDB = await saveImage({ url: imageUrl, type: 'bookmark', name: imageName, isdeleted: false }, user.username)
 
         const chipData = {

@@ -2,20 +2,21 @@ import knex from '../../config/knex.config'
 import { BookmarkModel } from './bookmark.model';
 
 
-export const fetchById = async (bookmarkId: number) => {
-    return await knex('bookmarks').select('*').where('id', bookmarkId).andWhere('isdeleted', false).first();
+export const fetchById = async (bookmarkId: number): Promise<BookmarkModel> => {
+    return await knex('bookmarks').select('*').where('id', bookmarkId).andWhere('isdeleted', false).first().returning(['id', 'url', 'image_id', 'user_id', 'folder_id', 'chip_id']);
 }
 
-export const fetchAll = async (user_id: number) => {
+export const fetchAll = async (user_id: number): Promise<BookmarkModel[]> => {
     return await knex('bookmarks').select('*').where('user_id', user_id).andWhere('isdeleted', false);
 }
 
-export const fetchByFolderId = async (user_id: number, folder_id: number) => {
+export const fetchByFolderId = async (user_id: number, folder_id: number): Promise<BookmarkModel[]> => {
     return await knex('bookmarks').select('*').where('user_id', user_id).andWhere('folder_id', folder_id).andWhere('isdeleted', false);
 }
 
 export const create = async (bookmarkData: BookmarkModel) => {
-    return await knex('bookmarks').insert(bookmarkData);
+    const bookmark = await knex('bookmarks').insert(bookmarkData).returning('id');
+    return { bookmarkId: bookmark[0].id }
 }
 
 export const updateTitle = async (bookmarkData: BookmarkModel, bookmarkId: number) => {
