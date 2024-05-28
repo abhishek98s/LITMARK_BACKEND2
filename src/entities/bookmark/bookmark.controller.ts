@@ -14,6 +14,7 @@ import { FolderModel } from '../folder/folder.model';
 import { ChipModel } from '../chip/chip.model';
 import { logger } from '../../logger/logger';
 import { getThumbnailFromURL, getTitleFromURL } from '../../utils/bookmark';
+import { bookmarkSucessMessages } from './constant/bookmarkSucessMessages';
 
 dotenv.config()
 
@@ -34,7 +35,7 @@ export const getBookmarks = async (req: Request, res: Response) => {
 
         const result: BookmarkModel[] = await findBookmarks(user.id);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -58,7 +59,7 @@ export const getBookmarksByFolderId = async (req: Request, res: Response) => {
 
         const result: BookmarkModel[] = await findBookmarksByFolderId(user.id, folder_id);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -87,8 +88,6 @@ export const postBookmark = async (req: Request, res: Response) => {
 
         const imageName = crypto.randomUUID();
         const imageUrl = await getThumbnailFromURL(url);
-        console.log(imageUrl);
-
         const imageFromDB = await saveImage({ url: imageUrl, type: 'bookmark', name: imageName, isdeleted: false }, user.username)
 
         const chipData = {
@@ -116,7 +115,7 @@ export const postBookmark = async (req: Request, res: Response) => {
 
         const result = await addBookmark(bookmarkData);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, message: bookmarkSucessMessages.POST_SUCESS, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -164,7 +163,7 @@ export const patchBookmark = async (req: Request, res: Response) => {
 
         const result = await updateBookmark(bookmarkData, bookmarkId);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, message: bookmarkSucessMessages.PATCH_SUCESS, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -190,7 +189,7 @@ export const deleteBookmark = async (req: Request, res: Response) => {
 
         const result = await removeBookmark(bookmarkId);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, message: bookmarkSucessMessages.DELETE_SUCESS, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -220,7 +219,7 @@ export const searchByTitle = async (req: Request, res: Response) => {
         logger.error(result)
 
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -258,7 +257,7 @@ export const getSortedData = async (req: Request, res: Response) => {
                 new Error(bookmarkExceptionMessages.INVALID_DATA);
                 break;
         }
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
 
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
@@ -271,7 +270,7 @@ export const getRecentBookmarks = async (req: Request, res: Response) => {
 
         const result = await findRecentClickedBookmarks(user.id);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -299,7 +298,7 @@ export const addRecentBookmark = async (req: Request, res: Response) => {
 
         await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
 
-        res.status(200).json({ data: { msg: 'Bookmark date updated.' } })
+        res.status(200).json({ status: true, message: bookmarkSucessMessages.ADDED_RB_SUCESS })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -323,7 +322,7 @@ export const deleteRecentBookmark = async (req: Request, res: Response) => {
 
         await deleteRecentBookmarkById(currentBookmark, user.id)
 
-        res.status(200).json({ data: { msg: 'Recent bookmark deleted' } })
+        res.status(200).json({ status: true, message: bookmarkSucessMessages.DELETE_RB_SUCESS })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -361,7 +360,7 @@ export const sortRecentBookmark = async (req: Request, res: Response) => {
                 break;
         }
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -398,7 +397,7 @@ export const filterRecentBookmark = async (req: Request, res: Response) => {
                 break;
         }
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -423,7 +422,7 @@ export const searchRecentBookmark = async (req: Request, res: Response) => {
 
         const result = await getRecentBookmarksByTitle(title!);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
