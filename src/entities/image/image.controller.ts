@@ -163,7 +163,7 @@ export const patchImage = async (req: Request, res: Response) => {
         updated_by: user.username,
         url: req.file ? req.body.url : currentImage.url,
       },
-      imageId
+      imageId,
     );
 
     res.status(StatusCodes.OK).json({ status: true, data: result });

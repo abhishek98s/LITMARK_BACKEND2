@@ -104,14 +104,50 @@ export const removeByFolderid = async (folderId: number) => {
     return await knex('bookmarks').where('folder_id', folderId).update('isdeleted', true);
 }
 
+/**
+ * This function fetches bookmarks by title from a specific folder while ensuring they are not deleted.
+ * @param {string} title - The `title` parameter is a string that represents the title of the bookmark
+ * you want to search for in the database.
+ * @param {number} folderId - The `folderId` parameter is the ID of the folder in which you want to
+ * search for bookmarks with titles similar to the provided `title`.
+ * @returns The function `fetchByTitle` is returning a Promise that resolves to an array of objects
+ * containing the `title` and `url` of bookmarks that match the provided `title` (case-insensitive)
+ * within a specific `folderId` where the `isdeleted` flag is set to false.
+ */
 export const fetchByTitle = async (title: string, folderId: number) => {
     return await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhere('folder_id', folderId)
 }
 
+
+/**
+ * This function sorts bookmarks by a specified criteria for a specific user and folder.
+ * @param {string} sortBy - The `sortBy` parameter is a string that specifies the column by which the
+ * bookmarks should be sorted.
+ * @param {number} userId - The `userId` parameter is the unique identifier of the user for whom the
+ * bookmarks are being retrieved.
+ * @param {number} folder_id - The `folder_id` parameter represents the unique identifier of the folder
+ * in which the bookmarks are stored. It is used to filter the bookmarks based on the specified folder.
+ * @param {string} sortOrder - The `sortOrder` parameter specifies the order in which the results
+ * should be sorted. It can have two possible values: "asc" for ascending order or "desc" for
+ * descending order.
+ * @returns The function `sortBy` is returning a promise that resolves to an array of bookmarks of objects
+ * containing the 'id', 'url', 'image_id', 'folder_id', 'title', 'date'
+ * selected from the database table 'bookmarks' based on the provided parameters such as `userId`,
+ * `folder_id`, `sortBy`, and `sortOrder`. The bookmarks are filtered by the `user_id`, `isdeleted`,
+ * and `folder_id` conditions and sorted based on the `sortBy` field in the specified `
+ */
 export const sortBy = async (sortBy: string, userId: number, folder_id: number, sortOrder: string) => {
-    return await knex('bookmarks').where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id).orderBy(sortBy, sortOrder);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title', 'date').where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id).orderBy(sortBy, sortOrder);
 }
 
+/**
+ * The function `updateClickedDate` updates a bookmark's data in the database based on the provided
+ * `bookmarkData` object.
+ * @param {BookmarkModel} bookmarkData - BookmarkModel is an object containing data related to a
+ * bookmark, such as id, title, url, and any other relevant information.
+ * @returns The `updateClickedDate` function is returning a Promise that resolves to the result of
+ * updating the `bookmarkData` in the `bookmarks` table where the `id` matches the `bookmarkData.id`.
+ */
 export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
     return await knex('bookmarks').update(bookmarkData).where('id', bookmarkData.id)
 }
@@ -121,11 +157,11 @@ export const removeRecentlyClickedBookmark = async (bookmarkData: BookmarkModel,
 }
 
 export const sortRecentlyClickedBookmarkBy = async (sortBy: string, userId: number, sortOrder: string) => {
-    return await knex('bookmarks').where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null).orderBy(sortBy, sortOrder);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title', 'date').where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null).orderBy(sortBy, sortOrder);
 }
 
 export const filterRecentlyClickedBookmarksByChip = async (userId: number, chipId: number) => {
-    return await knex('bookmarks').where('user_id', userId).where('chip_id', chipId).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title', 'date').where('user_id', userId).where('chip_id', chipId).andWhere('isdeleted', false).andWhereNot('click_date', null);
 }
 
 export const fetchRecentlyClickedBookmarksByTittle = async (title: string) => {
