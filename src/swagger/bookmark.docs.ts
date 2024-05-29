@@ -244,7 +244,7 @@ export const docs = {
                                         items: {
                                             properties: {
                                                 id: {
-                                                    type: 'string',
+                                                    type: 'integer',
                                                 },
                                                 url: {
                                                     type: 'string',
@@ -391,7 +391,7 @@ export const docs = {
                                         items: {
                                             properties: {
                                                 id: {
-                                                    type: 'string',
+                                                    type: 'integer',
                                                 },
                                                 url: {
                                                     type: 'string',
@@ -637,7 +637,7 @@ export const docs = {
                                         items: {
                                             properties: {
                                                 id: {
-                                                    type: 'string',
+                                                    type: 'integer',
                                                 },
                                                 url: {
                                                     type: 'string',
