@@ -18,7 +18,7 @@ export const getAllChips = async (req: Request, res: Response) => {
     try {
         const result: ChipModel[] = await findAllChips(req.body.user.id);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message });
     }
@@ -40,7 +40,7 @@ export const postChip = async (req: Request, res: Response) => {
     try {
         const { name, folder_id, user } = req.body;
 
-        if (!name|| !folder_id) {
+        if (!name || !folder_id) {
             throw new Error(chipExceptionMessages.Folder_NAME_REQUIRED)
         }
 
@@ -53,7 +53,7 @@ export const postChip = async (req: Request, res: Response) => {
             updated_by: user.username,
         })
 
-        res.status(200).json({ data: result });
+        res.status(200).json({ status: true, data: result });
     }
     catch (error) {
         res.status(500).json({ msg: (error as Error).message });
@@ -90,7 +90,7 @@ export const patchChip = async (req: Request, res: Response) => {
 
         const result = await updateChip({ ...currentChip, name, updated_by: user.username }, chipId)
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     }
     catch (error) {
         res.status(500).json({ msg: (error as Error).message });
@@ -121,7 +121,7 @@ export const deleteChip = async (req: Request, res: Response) => {
 
         const result = await removeChip(chipId);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     }
     catch (error) {
         res.status(500).json({ msg: (error as Error).message });

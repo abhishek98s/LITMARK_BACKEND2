@@ -237,32 +237,37 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                type: 'array',
-                                items: {
-                                    properties: {
-                                        id: {
-                                            type: 'string',
-                                        },
-                                        url: {
-                                            type: 'string',
-                                        },
-                                        image_id: {
-                                            type: 'integer',
-                                        },
-                                        user_id: {
-                                            type: 'integer',
-                                        },
-                                        folder_id: {
-                                            type: 'integer',
-                                        },
-                                        chip_id: {
-                                            type: 'integer',
-                                        },
-                                        title: {
-                                            type: 'string',
-                                        },
-                                        date: {
-                                            type: 'string',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'string',
+                                                },
+                                                url: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                                chip_id: {
+                                                    type: 'integer',
+                                                },
+                                                title: {
+                                                    type: 'string',
+                                                },
+                                                date: {
+                                                    type: 'string',
+                                                },
+                                            },
                                         },
                                     },
                                 },
