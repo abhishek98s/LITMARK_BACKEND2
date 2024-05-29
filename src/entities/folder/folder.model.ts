@@ -4,7 +4,7 @@ export interface FolderModel {
     image_id: number,
     user_id: number,
     folder_id: number | null,
-    isdeleted: boolean,
+    isdeleted?: boolean,
     created_by?: string,
     updated_by?: string,
 }
