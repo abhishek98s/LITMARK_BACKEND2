@@ -69,14 +69,51 @@ export const create = async (folderData: FolderModel): Promise<{ folder_Id: numb
     return { folder_Id: folder[0].id };
 }
 
+/**
+ * The function `update` updates a folder name in the database with the provided folder data based on
+ * the folder ID.
+ * @param {FolderModel} folderData - FolderModel - an object containing data to update a folder in the
+ * database
+ * @param {number} folderId - The `folderId` parameter is the unique identifier of the folder that you
+ * want to update in the database. It is used to locate the specific folder record in the `folders`
+ * table for the update operation.
+ * @returns The `update` function is returning a Promise that resolves to an object with the `id`
+ * property of type number.
+ */
 export const update = async (folderData: FolderModel, folderId: number): Promise<{ id: number }> => {
     return await knex('folders').where('id', folderId).update(folderData);
 }
 
+/**
+ * The function `remove` updates the `isdeleted` field of a folder with the specified `folderId` to
+ * true in a database table called `folders`.
+ * @param {number} folderId - The `folderId` parameter is a number that represents the unique
+ * identifier of the folder that you want to mark as deleted in the database.
+ * @returns The `remove` function is returning a promise that resolves to the result of updating the
+ * `isdeleted` field to `true` in the `folders` table where the `id` matches the `folderId` provided as
+ * an argument.
+ */
 export const remove = async (folderId: number) => {
     return await knex('folders').where('id', folderId).update('isdeleted', true);
 }
 
+/**
+ * The function sorts folders by a specified criteria for a given user and folder.
+ * @param {string} sortBy - The `sortBy` parameter is a string that specifies the column by which the
+ * results should be sorted.
+ * @param {number} userId - The `userId` parameter represents the unique identifier of the user for
+ * whom the folders are being sorted.
+ * @param {number} folderId - The `folderId` parameter represents the unique identifier of the folder
+ * that you want to sort.
+ * @param {string} sortOrder - The `sortOrder` parameter in the `sortBy` function determines the order
+ * in which the results should be sorted. It can have two possible values: "asc" for ascending order or
+ * "desc" for descending order. This parameter specifies whether the results should be sorted in
+ * ascending or descending order based on
+ * @returns The function `sortBy` is returning a promise that resolves to the result of a database
+ * query using Knex. The query is sorting records from the 'folders' table based on the `sortBy`
+ * parameter in the specified `sortOrder`. It filters the results based on the `userId`, `folderId`,
+ * and `isdeleted` conditions.
+ */
 export const sortBy = async (sortBy: string, userId: number, folderId: number, sortOrder: string) => {
     return await knex('folders').orderBy(sortBy, sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folderId);
 }
