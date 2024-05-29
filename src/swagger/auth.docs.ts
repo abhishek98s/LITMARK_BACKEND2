@@ -76,10 +76,7 @@ export const docs = {
                         'application/json': {
                             schema: {
                                 properties: {
-                                    email: {
-                                        type: 'string',
-                                    },
-                                    password: {
+                                    data: {
                                         type: 'string',
                                     },
                                 },

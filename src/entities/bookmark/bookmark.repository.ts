@@ -112,9 +112,6 @@ export const sortBy = async (sortBy: string, userId: number, folder_id: number, 
     return await knex('bookmarks').where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id).orderBy(sortBy, sortOrder);
 }
 
-
-
-
 export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
     return await knex('bookmarks').update(bookmarkData).where('id', bookmarkData.id)
 }
