@@ -153,7 +153,7 @@ export const docs = {
                 description: 'Image Data',
                 required: true,
                 content: {
-                    'multipart/orm-data': {
+                    'multipart/form-data': {
                         schema: {
                             $ref: '#/components/schemas/Image',
                         },
@@ -166,7 +166,28 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Image',
+                                properties: {
+                                    status: {
+                                        type: 'boolean',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'string',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            url: {
+                                                type: 'string',
+                                            },
+                                            type: {
+                                                type: 'string',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -202,7 +223,28 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Image',
+                                properties: {
+                                    status: {
+                                        type: 'boolean',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'string',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            url: {
+                                                type: 'string',
+                                            },
+                                            type: {
+                                                type: 'string',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -259,7 +301,28 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/User',
+                                properties: {
+                                    status: {
+                                        type: 'boolean',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'string',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            url: {
+                                                type: 'string',
+                                            },
+                                            type: {
+                                                type: 'string',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -293,7 +356,28 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Image',
+                                properties: {
+                                    status: {
+                                        type: 'boolean',
+                                    },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'string',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            url: {
+                                                type: 'string',
+                                            },
+                                            type: {
+                                                type: 'string',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
