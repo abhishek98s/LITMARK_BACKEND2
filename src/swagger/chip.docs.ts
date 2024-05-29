@@ -135,9 +135,27 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                type: 'array',
-                                items: {
-                                    $ref: '#/components/schemas/Chip',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'string',
+                                                },
+                                                name: {
+                                                    type: 'string',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -172,7 +190,26 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Chip',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -224,7 +261,26 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Chip',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -258,7 +314,26 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Chip',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },

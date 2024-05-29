@@ -31,7 +31,7 @@ const isImage = async (username: string) => {
 export const getAllTopFolders = async (req: Request, res: Response) => {
     try {
         const result: FolderModel[] = await findAllFolders(req.body.user.id);
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -50,7 +50,7 @@ export const getAllnestedFolders = async (req: Request, res: Response) => {
     try {
         const parentFolderId: number = parseInt(req.params.id);
         const result: FolderModel[] = await findAllNestedFolders(req.body.user.id, parentFolderId);
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -95,7 +95,7 @@ export const postFolders = async (req: Request, res: Response) => {
 
         const result = await addFolders(folderData)
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -143,7 +143,7 @@ export const patchFolders = async (req: Request, res: Response) => {
 
         const result = await updateFolder(folderData, folderId);
 
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -166,7 +166,7 @@ export const deleteFolders = async (req: Request, res: Response) => {
 
         await removeFolder(folderId);
 
-        res.status(200).json({ data: 'Folder deleted sucessfully' })
+        res.status(200).json({ status: true, data: 'Folder deleted sucessfully' })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }
@@ -205,7 +205,7 @@ export const getSortedFolders = async (req: Request, res: Response) => {
                 new Error(folderExceptionMessages.INVALID_DATA);
                 break;
         }
-        res.status(200).json({ data: result })
+        res.status(200).json({ status: true, data: result })
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message })
     }

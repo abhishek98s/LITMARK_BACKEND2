@@ -174,7 +174,6 @@
  *         folder_id: 1
  */
 
-
 export const docs = {
     '/folder': {
         get: {
@@ -186,7 +185,33 @@ export const docs = {
                     description: 'Successful folder operation',
                     content: {
                         'application/json': {
-                            schema: { $ref: '#/components/schemas/Folder' },
+                            schema: {
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                name: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -211,7 +236,31 @@ export const docs = {
                     description: 'Successful operation',
                     content: {
                         'application/json': {
-                            schema: { $ref: '#/components/schemas/Folder' },
+                            schema: {
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -239,7 +288,33 @@ export const docs = {
                     description: 'Successful folder operation',
                     content: {
                         'application/json': {
-                            schema: { $ref: '#/components/schemas/Folder' },
+                            schema: {
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                name: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -281,7 +356,31 @@ export const docs = {
                     description: 'Updated folder name successfully',
                     content: {
                         'application/json': {
-                            schema: { $ref: '#/components/schemas/Folder' },
+                            schema: {
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         },
                     },
                 },
@@ -307,7 +406,31 @@ export const docs = {
                     description: 'Deleted folder successfully',
                     content: {
                         'application/json': {
-                            schema: { $ref: '#/components/schemas/Folder' },
+                            schema: { 
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            name: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
+                             },
                         },
                     },
                 },
@@ -355,7 +478,33 @@ export const docs = {
                     description: 'Deleted folder successfully',
                     content: {
                         'application/json': {
-                            schema: { $ref: '#/components/schemas/Folder' },
+                            schema: { 
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                name: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                             },
                         },
                     },
                 },

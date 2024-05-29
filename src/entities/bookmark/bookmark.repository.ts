@@ -104,33 +104,117 @@ export const removeByFolderid = async (folderId: number) => {
     return await knex('bookmarks').where('folder_id', folderId).update('isdeleted', true);
 }
 
+/**
+ * This function fetches bookmarks by title from a specific folder while ensuring they are not deleted.
+ * @param {string} title - The `title` parameter is a string that represents the title of the bookmark
+ * you want to search for in the database.
+ * @param {number} folderId - The `folderId` parameter is the ID of the folder in which you want to
+ * search for bookmarks with titles similar to the provided `title`.
+ * @returns The function `fetchByTitle` is returning a Promise that resolves to an array of objects
+ * containing the `title` and `url` of bookmarks that match the provided `title` (case-insensitive)
+ * within a specific `folderId` where the `isdeleted` flag is set to false.
+ */
 export const fetchByTitle = async (title: string, folderId: number) => {
     return await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhere('folder_id', folderId)
 }
 
+
+/**
+ * This function sorts bookmarks by a specified criteria for a specific user and folder.
+ * @param {string} sortBy - The `sortBy` parameter is a string that specifies the column by which the
+ * bookmarks should be sorted.
+ * @param {number} userId - The `userId` parameter is the unique identifier of the user for whom the
+ * bookmarks are being retrieved.
+ * @param {number} folder_id - The `folder_id` parameter represents the unique identifier of the folder
+ * in which the bookmarks are stored. It is used to filter the bookmarks based on the specified folder.
+ * @param {string} sortOrder - The `sortOrder` parameter specifies the order in which the results
+ * should be sorted. It can have two possible values: "asc" for ascending order or "desc" for
+ * descending order.
+ * @returns The function `sortBy` is returning a promise that resolves to an array of bookmarks of objects
+ * containing the 'id', 'url', 'image_id', 'folder_id', 'title', 'date'
+ * selected from the database table 'bookmarks' based on the provided parameters such as `userId`,
+ * `folder_id`, `sortBy`, and `sortOrder`. The bookmarks are filtered by the `user_id`, `isdeleted`,
+ * and `folder_id` conditions and sorted based on the `sortBy` field in the specified `
+ */
 export const sortBy = async (sortBy: string, userId: number, folder_id: number, sortOrder: string) => {
-    return await knex('bookmarks').where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id).orderBy(sortBy, sortOrder);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title', 'date').where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folder_id).orderBy(sortBy, sortOrder);
 }
 
-
-
-
+/**
+ * The function `updateClickedDate` updates a bookmark's data in the database based on the provided
+ * `bookmarkData` object.
+ * @param {BookmarkModel} bookmarkData - BookmarkModel is an object containing data related to a
+ * bookmark, such as id, title, url, and any other relevant information.
+ * @returns The `updateClickedDate` function is returning a Promise that resolves to the result of
+ * updating the `bookmarkData` in the `bookmarks` table where the `id` matches the `bookmarkData.id`.
+ */
 export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
     return await knex('bookmarks').update(bookmarkData).where('id', bookmarkData.id)
 }
 
+/**
+ * The function `removeRecentlyClickedBookmark` updates a bookmark attribute date to null in the database based on the user ID
+ * and bookmark ID.
+ * @param {BookmarkModel} bookmarkData - BookmarkModel is an object containing data about a bookmark,
+ * such as id, title, url, and any other relevant information.
+ * @param {number} user_id - The `user_id` parameter is the unique identifier of the user whose
+ * bookmark you want to update or remove.
+ * @returns a promise that updates the bookmark date attribute in the database table 'bookmarks' for a specific
+ * user based on the user_id and bookmark id provided.
+ */
 export const removeRecentlyClickedBookmark = async (bookmarkData: BookmarkModel, user_id: number) => {
     return await knex('bookmarks').update(bookmarkData).where('user_id', user_id).andWhere('id', bookmarkData.id);
 }
 
+/**
+ * This function sorts recently clicked bookmarks by a specified criteria for a given user.
+ * @param {string} sortBy - The `sortBy` parameter is the field by which you want to sort the recently
+ * clicked bookmarks. It could be any field present in the `bookmarks` table, such as `id`, `url`,
+ * `image_id`, `folder_id`, `title`, or `date`.
+ * @param {number} userId - The `userId` parameter is the unique identifier of the user whose bookmarks
+ * you want to sort.
+ * @param {string} sortOrder - The `sortOrder` parameter specifies the order in which the bookmarks
+ * should be sorted. It can have two possible values: "asc" for ascending order or "desc" for
+ * descending order. This parameter determines whether the bookmarks will be sorted in increasing or
+ * decreasing order based on the specified `sortBy` parameter
+ * @returns The function `sortRecentlyClickedBookmarkBy` is returning a promise that resolves to the
+ * result of a database query using Knex. The query selects specific columns ('id', 'url', 'image_id',
+ * 'folder_id', 'title', 'date') from the 'bookmarks' table where the 'user_id' matches the provided
+ * userId, 'isdeleted' is false, and 'click_date
+ */
 export const sortRecentlyClickedBookmarkBy = async (sortBy: string, userId: number, sortOrder: string) => {
-    return await knex('bookmarks').where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null).orderBy(sortBy, sortOrder);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title', 'date').where('user_id', userId).andWhere('isdeleted', false).andWhereNot('click_date', null).orderBy(sortBy, sortOrder);
 }
 
+/**
+ * This function filters recently clicked bookmarks by user ID and chip ID while excluding deleted
+ * bookmarks and those without a click date.
+ * @param {number} userId - The `userId` parameter is the unique identifier of the user whose bookmarks
+ * you want to filter.
+ * @param {number} chipId - The `chipId` parameter is used to filter the bookmarks based on a specific
+ * category or tag associated with them. It helps in retrieving bookmarks that are tagged with a
+ * particular chip or category.
+ * @returns The function `filterRecentlyClickedBookmarksByChip` is returning a Promise that resolves to
+ * an array of bookmark objects that match the specified `userId`, `chipId`, and other conditions. Each
+ * bookmark object in the array contains the properties: 'id', 'url', 'image_id', 'folder_id', 'title',
+ * and 'date'.
+ */
 export const filterRecentlyClickedBookmarksByChip = async (userId: number, chipId: number) => {
-    return await knex('bookmarks').where('user_id', userId).where('chip_id', chipId).andWhere('isdeleted', false).andWhereNot('click_date', null);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title', 'date').where('user_id', userId).where('chip_id', chipId).andWhere('isdeleted', false).andWhereNot('click_date', null);
 }
 
+/**
+ * This function fetches recently clicked bookmarks by title from a database table while filtering out
+ * deleted bookmarks.
+ * @param {string} title - The `fetchRecentlyClickedBookmarksByTittle` function is designed to fetch
+ * recently clicked bookmarks based on a provided title. The function takes a `title` parameter of type
+ * string, which is used to filter bookmarks whose titles contain the provided string. The function
+ * then queries the database to select the `
+ * @returns The function `fetchRecentlyClickedBookmarksByTittle` is returning a Promise that resolves
+ * to an array of objects containing the `title` and `url` of bookmarks from the database table
+ * `bookmarks` where the `title` matches the provided input `title` (case-insensitive search),
+ * `isdeleted` is false, and `click_date` is not null.
+ */
 export const fetchRecentlyClickedBookmarksByTittle = async (title: string) => {
     return await knex('bookmarks').select('title', 'url').whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`]).andWhere('isdeleted', false).andWhereNot('click_date', null);
 }

@@ -1,15 +1,15 @@
-import { Request, Response } from "express";
-import { StatusCodes, getReasonPhrase } from "http-status-codes";
+import { Request, Response } from 'express';
+import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
 import {
   findImage,
   removeImage,
   saveImage,
   updateImage,
-} from "./image.service";
-import { ImageModel } from "./image.model";
-import { imageExceptionMessages } from "./constant/imageExceptionMessages";
-import cloudinary from "../../utils/imageUploader";
+} from './image.service';
+import { ImageModel } from './image.model';
+import { imageExceptionMessages } from './constant/imageExceptionMessages';
+import cloudinary from '../../utils/imageUploader';
 
 /**
  * The function checks if the type of an image is valid by matching it against a regular
@@ -36,7 +36,7 @@ export const isValidType = ({ type }: ImageModel) => {
  */
 export const uploadImage = async (imgPath: string) => {
   const imgUrl = (
-    await cloudinary.v2.uploader.upload(imgPath, { folder: "litmark" })
+    await cloudinary.v2.uploader.upload(imgPath, { folder: 'litmark' })
   ).secure_url;
   if (!imgUrl) throw new Error(imageExceptionMessages.UPLOAD_FAILED);
 
@@ -51,7 +51,7 @@ export const uploadImage = async (imgPath: string) => {
  * @returns nothing (void).
  */
 export const validateImageType = (fileName: string) => {
-  const imageType = fileName.split(".").pop() as string;
+  const imageType = fileName.split('.').pop() as string;
 
   const reg: RegExp = new RegExp(/\b(?:png|jpg|jpeg|gif)\b/i);
   const isValidType = reg.test(imageType);
@@ -81,7 +81,7 @@ export const getImage = async (req: Request, res: Response) => {
     const result = await findImage(imageId);
     if (!result) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
 
-    return res.status(StatusCodes.OK).json({ data: result });
+    return res.status(StatusCodes.OK).json({ status: true, data: result });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       msg: (error as Error).message,
@@ -120,7 +120,7 @@ export const postImage = async (req: Request, res: Response) => {
 
     const result = await saveImage({ type, url, name, isdeleted: false }, user.username);
 
-    res.status(StatusCodes.OK).json({ data: result });
+    res.status(StatusCodes.OK).json({ status: true, data: result });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       msg: (error as Error).message,
@@ -163,10 +163,10 @@ export const patchImage = async (req: Request, res: Response) => {
         updated_by: user.username,
         url: req.file ? req.body.url : currentImage.url,
       },
-      imageId
+      imageId,
     );
 
-    res.status(StatusCodes.OK).json({ data: result });
+    res.status(StatusCodes.OK).json({ status: true, data: result });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       msg: (error as Error).message,
@@ -193,7 +193,7 @@ export const deleteImage = async (req: Request, res: Response) => {
 
     const result = await removeImage(imageId);
 
-    res.status(StatusCodes.OK).json({ data: result });
+    res.status(StatusCodes.OK).json({ status: true, data: result });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       msg: (error as Error).message,

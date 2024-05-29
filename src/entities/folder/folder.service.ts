@@ -49,7 +49,7 @@ export const addFolders = async (folderData: FolderModel) => {
     const folder = await FolderDAO.create(folderData)
     if (!folder) throw new Error(folderExceptionMessages.ADD_FAILED)
 
-    const [folder_Id] = folder;
+    const { folder_Id } = folder;
 
     return await FolderDAO.fetchById(folder_Id);
 }

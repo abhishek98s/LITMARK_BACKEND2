@@ -237,9 +237,39 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                type: 'array',
-                                items: {
-                                    $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                url: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                                chip_id: {
+                                                    type: 'integer',
+                                                },
+                                                title: {
+                                                    type: 'string',
+                                                },
+                                                date: {
+                                                    type: 'string',
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -266,7 +296,7 @@ export const docs = {
                             type: 'object',
                             properties: {
                                 url: {
-                                    type: 'integer',
+                                    type: 'string',
                                 },
                                 folder_id: {
                                     type: 'integer',
@@ -282,7 +312,43 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: {
+                                        type: 'boolean',
+                                    },
+                                    message: {
+                                        type: 'string',
+                                    },
+                                    date: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'string',
+                                            },
+                                            url: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                            chip_id: {
+                                                type: 'integer',
+                                            },
+                                            title: {
+                                                type: 'string',
+                                            },
+                                            date: {
+                                                type: 'string',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -318,9 +384,39 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                type: 'array',
-                                items: {
-                                    $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                url: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                                chip_id: {
+                                                    type: 'integer',
+                                                },
+                                                title: {
+                                                    type: 'string',
+                                                },
+                                                date: {
+                                                    type: 'string',
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -374,7 +470,39 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    message: { type: 'string' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'string',
+                                            },
+                                            url: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                            chip_id: {
+                                                type: 'integer',
+                                            },
+                                            title: {
+                                                type: 'string',
+                                            },
+                                            date: {
+                                                type: 'string',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -408,7 +536,39 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    message: { type: 'string' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'string',
+                                            },
+                                            url: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                            user_id: {
+                                                type: 'integer',
+                                            },
+                                            folder_id: {
+                                                type: 'integer',
+                                            },
+                                            chip_id: {
+                                                type: 'integer',
+                                            },
+                                            title: {
+                                                type: 'string',
+                                            },
+                                            date: {
+                                                type: 'string',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -470,7 +630,40 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Folder',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                url: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                user_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                                chip_id: {
+                                                    type: 'integer',
+                                                },
+                                                title: {
+                                                    type: 'string',
+                                                },
+                                                date: {
+                                                    type: 'string',
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -511,9 +704,21 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                type: 'array',
-                                items: {
-                                    $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            properties: {
+                                                url: {
+                                                    type: 'string',
+                                                },
+                                                title: {
+                                                    type: 'string',
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },

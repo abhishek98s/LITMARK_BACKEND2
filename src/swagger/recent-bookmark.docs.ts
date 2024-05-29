@@ -119,6 +119,7 @@
  */
 
 
+
 export const docs = {
     '/bookmark/recent': {
         get: {
@@ -135,9 +136,34 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                type: 'array',
-                                items: {
-                                    $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                url: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                                title: {
+                                                    type: 'string',
+                                                },
+                                                date: {
+                                                    type: 'string',
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -172,7 +198,10 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    message: { type: 'string' },
+                                },
                             },
                         },
                     },
@@ -204,7 +233,10 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    message: { type: 'string' },
+                                },
                             },
                         },
                     },
@@ -249,9 +281,34 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                type: 'array',
-                                items: {
-                                    $ref: '#/components/schemas/Bookmark',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'array',
+                                        items: {
+                                            type: 'object',
+                                            properties: {
+                                                id: {
+                                                    type: 'integer',
+                                                },
+                                                url: {
+                                                    type: 'string',
+                                                },
+                                                image_id: {
+                                                    type: 'integer',
+                                                },
+                                                folder_id: {
+                                                    type: 'integer',
+                                                },
+                                                title: {
+                                                    type: 'string',
+                                                },
+                                                date: {
+                                                    type: 'string',
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -288,7 +345,23 @@ export const docs = {
                             schema: {
                                 type: 'array',
                                 items: {
-                                    $ref: '#/components/schemas/Bookmark',
+                                    properties: {
+                                        status: { type: 'boolean' },
+                                        data: {
+                                            type: 'array',
+                                            items: {
+                                                type: 'object',
+                                                properties: {
+                                                    url: {
+                                                        type: 'string',
+                                                    },
+                                                    title: {
+                                                        type: 'string',
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
