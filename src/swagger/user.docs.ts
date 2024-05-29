@@ -135,15 +135,30 @@ export const docs = {
     '/user': {
         post: {
             tags: ['User'],
+            security: [
+                {
+                    bearerAuth: [],
+                },
+            ],
             summary: 'Create a new user',
-            description: 'Create a user',
             requestBody: {
                 description: 'User data',
                 required: true,
                 content: {
                     'application/json': {
                         schema: {
-                            $ref: '#/components/schemas/User',
+                            type: 'object',
+                            properties: {
+                                username: {
+                                    type: 'string',
+                                },
+                                email: {
+                                    type: 'string',
+                                },
+                                password: {
+                                    type: 'string',
+                                },
+                            },
                         },
                     },
                 },
@@ -154,7 +169,10 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/User',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    message: { type: 'string' },
+                                },
                             },
                         },
                     },
@@ -188,7 +206,26 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/User',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            username: {
+                                                type: 'string',
+                                            },
+                                            email: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -239,7 +276,26 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/User',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            username: {
+                                                type: 'string',
+                                            },
+                                            email: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
@@ -271,7 +327,26 @@ export const docs = {
                     content: {
                         'application/json': {
                             schema: {
-                                $ref: '#/components/schemas/User',
+                                properties: {
+                                    status: { type: 'boolean' },
+                                    data: {
+                                        type: 'object',
+                                        properties: {
+                                            id: {
+                                                type: 'integer',
+                                            },
+                                            username: {
+                                                type: 'string',
+                                            },
+                                            email: {
+                                                type: 'string',
+                                            },
+                                            image_id: {
+                                                type: 'integer',
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },

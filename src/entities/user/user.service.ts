@@ -36,7 +36,7 @@ export const addUser = async (userInfo: UserModel) => {
     const user = await UserDAO.create({ ...userInfo, password: hashedPassword })
     if (!user) throw new Error(userExceptionMessages.CREATE_FAILED)
 
-    const [userID] = user;
+    const { userID } = user;
 
     return await UserDAO.fetchById(userID);
 }
