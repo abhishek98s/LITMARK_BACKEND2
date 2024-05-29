@@ -5,6 +5,7 @@ import { addUser, getUserById, removeUser, updateUser } from './user.service';
 import { saveImage } from '../image/image.service';
 import { uploadImage, validateImageType } from '../image/image.controller';
 import { userExceptionMessages } from './constant/userExceptionMessages';
+import { userSucessMessages } from './constant/userSucessMessages';
 
 /**
  * The function `getUser` is an asynchronous function that retrieves a user by their ID and returns the
@@ -24,7 +25,7 @@ export const getUser = async (req: Request, res: Response) => {
 
         const result = await getUserById(userId);
 
-        return res.json({ data: result })
+        return res.json({ status: true, data: result })
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
@@ -65,7 +66,7 @@ export const postUser = async (req: Request, res: Response) => {
             req.body.image_id = 0;
         }
 
-        const result = await addUser({
+        await addUser({
             username,
             email,
             password,
@@ -76,7 +77,7 @@ export const postUser = async (req: Request, res: Response) => {
             updated_by: user.username,
         });
 
-        return res.json({ data: result })
+        return res.json({ status: true, message: userSucessMessages.POST_SUCESS })
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
@@ -131,7 +132,7 @@ export const patchUser = async (req: Request, res: Response) => {
             updated_by: user.username,
         });
 
-        return res.json({ data: result })
+        return res.json({ status: true, data: result })
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
@@ -156,7 +157,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
         const result = await removeUser(userId);
 
-        return res.json({ data: result })
+        return res.json({ status: true, data: result })
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
