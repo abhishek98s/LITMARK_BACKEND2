@@ -42,7 +42,7 @@ export const fetchAll = async (user_id: number): Promise<BookmarkModel[]> => {
  * bookmarks from the database based on the `user_id` and `folder_id` provided as parameters.
  * @returns The `fetchByFolderId` function returns a Promise that resolves to an array of
  * `BookmarkModel` objects. Each `BookmarkModel` object contains the properties `id`, `url`,
- * `image_id`, `folder_id`, and `title`. The bookmarks are filtered based on the `user_id`,
+ * `image_id`, `folder_id`, 'date' and `title`. The bookmarks are filtered based on the `user_id`,
  * `folder_id`, and `isdeleted` criteria specified in the query.
  */
 export const fetchByFolderId = async (user_id: number, folder_id: number): Promise<BookmarkModel[]> => {
