@@ -220,7 +220,7 @@
  */
 
 export const docs = {
-    '/bookmarks': {
+    '/bookmark': {
         get: {
             tags: [
                 'Bookmark',

@@ -11,10 +11,10 @@ import { BookmarkModel } from './bookmark.model';
  * @returns The `fetchById` function is returning a Promise that resolves to a `BookmarkModel` object.
  * The function fetches a bookmark from the database based on the `bookmarkId`, ensuring that the
  * bookmark is not deleted (`isdeleted` is false). The retrieved bookmark data includes the fields:
- * 'id', 'url', 'image_id', 'user_id', 'folder_id', 'chip_id', 'title'
+ * 'id', 'url', 'image_id', 'user_id', 'folder_id', 'chip_id', 'title', 'date, 'date'
  */
 export const fetchById = async (bookmarkId: number): Promise<BookmarkModel> => {
-    const bookmark = await knex('bookmarks').where('id', bookmarkId).andWhere('isdeleted', false).select('id', 'url', 'image_id', 'user_id', 'folder_id', 'chip_id', 'title');
+    const bookmark = await knex('bookmarks').where('id', bookmarkId).andWhere('isdeleted', false).select('id', 'url', 'image_id', 'user_id', 'folder_id', 'chip_id', 'title', 'date');
     return bookmark[0];
 }
 
@@ -25,11 +25,11 @@ export const fetchById = async (bookmarkId: number): Promise<BookmarkModel> => {
  * on the user who created them.
  * @returns The `fetchAll` function is returning a Promise that resolves to an array of `BookmarkModel`
  * objects. These objects contain properties such as `id`, `url`, `image_id`, `user_id`, `folder_id`,
- * `chip_id`, and `title`. The function fetches bookmarks from the database table `bookmarks` where the
+ * `chip_id`, 'date' and `title`. The function fetches bookmarks from the database table `bookmarks` where the
  * `user_id` matches the provided `user_id` parameter
  */
 export const fetchAll = async (user_id: number): Promise<BookmarkModel[]> => {
-    return await knex('bookmarks').select('id', 'url', 'image_id', 'user_id', 'folder_id', 'chip_id', 'title').where('user_id', user_id).andWhere('isdeleted', false);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'user_id', 'folder_id', 'chip_id', 'title', 'date').where('user_id', user_id).andWhere('isdeleted', false);
 }
 
 /**
@@ -46,7 +46,7 @@ export const fetchAll = async (user_id: number): Promise<BookmarkModel[]> => {
  * `folder_id`, and `isdeleted` criteria specified in the query.
  */
 export const fetchByFolderId = async (user_id: number, folder_id: number): Promise<BookmarkModel[]> => {
-    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title').where('user_id', user_id).andWhere('folder_id', folder_id).andWhere('isdeleted', false);
+    return await knex('bookmarks').select('id', 'url', 'image_id', 'folder_id', 'title', 'date').where('user_id', user_id).andWhere('folder_id', folder_id).andWhere('isdeleted', false);
 }
 
 /**
