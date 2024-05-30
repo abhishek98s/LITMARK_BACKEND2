@@ -10,11 +10,13 @@ import chipRoutes from './entities/chip/chip.routes';
 import folderRoutes from './entities/folder/folder.routes';
 import bookmarkRoutes from './entities/bookmark/bookmark.routes';
 import authRoutes from './auth/routes/auth.routes';
+import bodyParser from 'body-parser';
 
 const app = express()
 const port = config.app.port;
 const name = config.app.name;
 app.use(cors());
+app.use(bodyParser.json()); app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json())
 app.use(logMiddleware)
