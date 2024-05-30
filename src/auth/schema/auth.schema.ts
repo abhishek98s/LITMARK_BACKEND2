@@ -2,7 +2,7 @@ import joi from 'joi';
 
 const authSchema = {
     login: joi.object().keys({
-        email: joi.string().required(),
+        email: joi.string().email().required(),
         password: joi.string().required(),
     }),
 

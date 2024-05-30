@@ -11,6 +11,7 @@ import { authExceptionMessages } from '../constant/authExceptionMessages';
 export const loginHandler = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
+        console.log(req.body);
 
         if (!email || !password) {
             throw new Error(authExceptionMessages.EMAIL_PASS_REQUIRED)
@@ -29,7 +30,7 @@ export const loginHandler = async (req: Request, res: Response) => {
         const token = jwt.sign({ username, id, email:dBEmail }, process.env.JWT_TOKEN as string);
 
         res.status(200).json({ data: token });
-    } catch (error: unknown) {
+    } catch (error) {
         res.status(500).json({ msg: (error as Error).message });
     }
 }

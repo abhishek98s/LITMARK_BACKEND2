@@ -16,17 +16,17 @@ const app = express()
 const port = config.app.port;
 const name = config.app.name;
 app.use(cors());
-app.use(bodyParser.json()); app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json())
+app.use(bodyParser.json()); app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logMiddleware)
 
+app.use('/api/auth', authRoutes);
 app.use('/api/image', imageRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/chip', chipRoutes);
 app.use('/api/folder', folderRoutes);
 app.use('/api/bookmark', bookmarkRoutes);
-app.use('/api/auth', authRoutes);
 
 swagger(app)
 
@@ -34,6 +34,13 @@ app.get('/', (request, response) => {
     response.send('Hello world')
 });
 
+app.get('/log', (request, response) => {
+    response.send('Hello world log')
+});
+
+
 app.listen(port, () => {
     console.log(`${name} started at http://localhost:${port}`);
 });
+
+export default app;
