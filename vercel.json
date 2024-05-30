@@ -1,10 +1,24 @@
 {
-    "version": 2,   
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "index.js"
+    "version": 2,
+    "builds": [
+      {
+        "src": "package.json",
+        "use": "@vercel/node",
+        "config": {
+          "includeFiles": [
+            "package.json",
+            "package-lock.json",
+            "dist/**"
+          ],
+          "installCommand": "npm ci",
+          "buildCommand": "npm run build"
         }
+      }
     ],
-    "outputDirectory": "build"
-}
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "dist/index.js"
+      }
+    ]
+  }
