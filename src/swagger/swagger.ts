@@ -19,7 +19,7 @@ export const swaggerConfig: OAS3Definition = {
   },
   servers: [
     {
-      url: 'http://localhost:5000/api',
+      url: 'https://litmark-backend2.onrender.com/api',
       description: 'Local development server',
     },
   ],
