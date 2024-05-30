@@ -28,7 +28,6 @@ export const fetchById = async (imageId: number) => {
 export const create = async (imageData: ImageModel) => {
     const image = await knex('images').insert(imageData).returning('id');
     const id = image[0].id;
-    console.log(id);
     return { image_id: id };
 }
 
