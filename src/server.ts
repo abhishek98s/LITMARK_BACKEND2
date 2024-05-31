@@ -42,3 +42,6 @@ app.get('/log', (request, response) => {
 app.listen(port, () => {
     console.log(`${name} started at http://localhost:${port}`);
 });
+
+
+export default app;
