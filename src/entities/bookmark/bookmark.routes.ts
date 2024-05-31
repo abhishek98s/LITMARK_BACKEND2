@@ -6,8 +6,8 @@ import joiValidationMiddleware from '../../auth/middleware/joiValidationMiddlewa
 import bookmarkSchema from './bookmark.schema';
 
 const router = express.Router();
-
-const upload = multer({ dest: 'temp/' });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.use(verifyToken);
 

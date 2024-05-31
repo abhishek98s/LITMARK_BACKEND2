@@ -6,8 +6,8 @@ import { verifyToken } from '../../auth/middleware/authentication.middleware';
 import joiValidationMiddleware from '../../auth/middleware/joiValidationMiddleware';
 import userSchema from './user.schema';
 const router = express.Router();
-
-const upload = multer({ dest: 'temp/' });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.use(verifyToken)
 

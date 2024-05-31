@@ -3,7 +3,7 @@ import cors from 'cors';
 
 import { config } from './config/config';
 import { swagger } from './swagger/swagger';
-import { logMiddleware } from './logger/logger';
+// import { logMiddleware } from './logger/logger';
 import imageRoutes from './entities/image/image.routes';
 import userRoutes from './entities/user/user.routes';
 import chipRoutes from './entities/chip/chip.routes';
@@ -19,7 +19,7 @@ app.use(cors());
 
 app.use(express.json())
 app.use(bodyParser.json()); app.use(bodyParser.urlencoded({ extended: true }));
-app.use(logMiddleware)
+// app.use(logMiddleware)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/image', imageRoutes);
@@ -44,4 +44,4 @@ app.listen(port, () => {
 });
 
 
-export default app;
+export {app};
