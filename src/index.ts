@@ -41,4 +41,4 @@ app.listen(port, () => {
     console.log(`${name} started at http://localhost:${port}`);
 });
 
-export { app };
+export default app;
