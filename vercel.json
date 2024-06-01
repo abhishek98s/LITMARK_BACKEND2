@@ -2,8 +2,8 @@
     "version": 2,   
     "routes": [
         {
-            "src": "/(.*)",
-            "dest": "build/index.js"
+            "src": "build/(.*)",
+            "dest": "index.js"
         }
     ],
     "outputDirectory": "build"

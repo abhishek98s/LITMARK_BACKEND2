@@ -12,7 +12,6 @@ import { addChip } from '../chip/chip.service';
 import { findFolderById } from '../folder/folder.service';
 import { FolderModel } from '../folder/folder.model';
 import { ChipModel } from '../chip/chip.model';
-import { logger } from '../../logger/logger';
 import { getThumbnailFromURL, getTitleFromURL } from '../../utils/bookmark';
 import { bookmarkSucessMessages } from './constant/bookmarkSucessMessages';
 
@@ -216,7 +215,6 @@ export const searchByTitle = async (req: Request, res: Response) => {
         }
 
         const result = await getBookmarksByTitle(title!, folder_id!);
-        logger.error(result)
 
 
         res.status(200).json({ status: true, data: result })

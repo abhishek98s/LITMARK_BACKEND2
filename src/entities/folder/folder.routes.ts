@@ -7,7 +7,8 @@ import folderSchema from './folder.schema';
 
 const router = express.Router();
 
-const upload = multer({ dest: 'temp/' });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.use(verifyToken)
 router.get('/sort', getSortedFolders)
