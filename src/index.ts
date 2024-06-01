@@ -16,6 +16,10 @@ const port = config.app.port;
 const name = config.app.name;
 app.use(cors());
 
+
+import pathToSwaggerUi from 'swagger-ui-dist'
+app.use(express.static(pathToSwaggerUi.absolutePath()))
+
 app.use(express.json())
 app.use(bodyParser.json()); app.use(bodyParser.urlencoded({ extended: true }));
 
