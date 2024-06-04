@@ -21,7 +21,7 @@ export const getTitleFromURL = async (url: string) => {
         const data = await response.json();
 
         if (data.items && data.items.length > 0 && data.items[0].title) {
-            return data.items[0].title;
+            return data.items[0].title || data.items[0].pagemap.metatags.title;
         } else {
             return getHostnameFromUrl(url);
         }
