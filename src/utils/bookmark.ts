@@ -16,11 +16,15 @@ export const getTitleFromURL = async (url: string) => {
         const searchAPIKey = process.env.GOOGLE_SEARCH_API_KEY;
         const searchID = process.env.GOOGLE_SEARCH_ID;
 
-        const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${searchAPIKey}&cx=${searchID}&q=${url}`);
+        const encodedUrl = encodeURIComponent(url);
+        const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${searchAPIKey}&cx=${searchID}&q=${encodedUrl}`);
         const data = await response.json();
 
-        const title = data.items[0].title;
-        return title;
+        if (data.items && data.items.length > 0 && data.items[0].title) {
+            return data.items[0].title;
+        } else {
+            return getHostnameFromUrl(url);
+        }
     } catch (error) {
         return getHostnameFromUrl(url);
     }
