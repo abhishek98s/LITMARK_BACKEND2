@@ -19,7 +19,7 @@ export const swaggerConfig: OAS3Definition = {
   },
   servers: [
     {
-      url: 'http://localhost:5000/api',
+      url: 'https://litmark-backend-2.vercel.app/api',
       description: 'Local development server',
     },
   ],

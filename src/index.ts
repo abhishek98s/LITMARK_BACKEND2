@@ -14,7 +14,11 @@ import bodyParser from 'body-parser';
 const app = express()
 const port = config.app.port;
 const name = config.app.name;
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['*'],
+  allowedHeaders: ['*']
+}));
 
 
 import pathToSwaggerUi from 'swagger-ui-dist'
