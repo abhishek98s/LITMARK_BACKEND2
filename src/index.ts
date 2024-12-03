@@ -17,7 +17,7 @@ const name = config.app.name;
 app.use(cors({
   origin: '*',
   methods: ['*'],
-  allowedHeaders: ['*']
+  allowedHeaders: ['*'],
 }));
 
 
