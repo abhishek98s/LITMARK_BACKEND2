@@ -12,7 +12,6 @@ import { addChip } from '../chip/chip.service';
 import { findFolderById } from '../folder/folder.service';
 import { FolderModel } from '../folder/folder.model';
 import { ChipModel } from '../chip/chip.model';
-// import { logger } from '../../logger/logger';
 import { getThumbnailFromURL, getTitleFromURL } from '../../utils/bookmark';
 import { bookmarkSucessMessages } from './constant/bookmarkSucessMessages';
 
@@ -142,6 +141,8 @@ export const patchBookmark = async (req: Request, res: Response) => {
         const { title, user, folder_id } = req.body;
 
         const currentBookmark = await findBookmarkById(bookmarkId);
+        delete currentBookmark.image_url;
+        
         const { title: currentBookmarkTitle, image_id: currentBookmarkImage, folder_id: currentBookmarkFolderId } = currentBookmark;
 
         if (req.file) {
@@ -216,7 +217,6 @@ export const searchByTitle = async (req: Request, res: Response) => {
         }
 
         const result = await getBookmarksByTitle(title!, folder_id!);
-        // logger.error(result)
 
 
         res.status(200).json({ status: true, data: result })
@@ -295,6 +295,7 @@ export const addRecentBookmark = async (req: Request, res: Response) => {
             throw new Error(bookmarkExceptionMessages.INVALID_ID)
         }
         const isBookmarkPresent = await findBookmarkById(bookmarkId);
+        delete isBookmarkPresent.image_url;
 
         await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
 
@@ -319,6 +320,7 @@ export const deleteRecentBookmark = async (req: Request, res: Response) => {
         const bookmarkId = parseInt(req.params.id);
 
         const currentBookmark = await findBookmarkById(bookmarkId);
+        delete currentBookmark.image_url;
 
         await deleteRecentBookmarkById(currentBookmark, user.id)
 

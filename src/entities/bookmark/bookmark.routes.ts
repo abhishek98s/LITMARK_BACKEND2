@@ -14,7 +14,6 @@ router.use(verifyToken);
 router.get('/recent', getRecentBookmarks)
     .delete('/recent/:id', deleteRecentBookmark)
     .patch('/recent/:id', addRecentBookmark)
-    .patch('/recent/:id', addRecentBookmark)
     .get('/recent/sort', sortRecentBookmark)
     .get('/recent/filter', filterRecentBookmark)
     .get('/recent/search', searchRecentBookmark)

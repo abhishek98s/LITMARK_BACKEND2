@@ -11,7 +11,6 @@ import { authExceptionMessages } from '../constant/authExceptionMessages';
 export const loginHandler = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
-        console.log(req.body);
 
         if (!email || !password) {
             throw new Error(authExceptionMessages.EMAIL_PASS_REQUIRED)

@@ -3,7 +3,6 @@ import cors from 'cors';
 
 import { config } from './config/config';
 import { swagger } from './swagger/swagger';
-// import { logMiddleware } from './logger/logger';
 import imageRoutes from './entities/image/image.routes';
 import userRoutes from './entities/user/user.routes';
 import chipRoutes from './entities/chip/chip.routes';
@@ -15,11 +14,18 @@ import bodyParser from 'body-parser';
 const app = express()
 const port = config.app.port;
 const name = config.app.name;
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['*'],
+  allowedHeaders: ['*'],
+}));
+
+
+import pathToSwaggerUi from 'swagger-ui-dist'
+app.use(express.static(pathToSwaggerUi.absolutePath()))
 
 app.use(express.json())
 app.use(bodyParser.json()); app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(logMiddleware)
 
 app.use('/api/auth', authRoutes);
 app.use('/api/image', imageRoutes);
@@ -43,5 +49,4 @@ app.listen(port, () => {
     console.log(`${name} started at http://localhost:${port}`);
 });
 
-
-export {app};
+export default app;

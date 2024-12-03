@@ -1,4 +1,6 @@
-import knex from '../../config/knex.config'
+/** @format */
+
+import knex from '../../config/knex.config';
 import { FolderModel } from './folder.model';
 
 /**
@@ -9,9 +11,23 @@ import { FolderModel } from './folder.model';
  * representing folders that belong to a specific user and have no parent folder. Each object in the
  * array contains the properties 'id', 'name', 'image_id', 'user_id', and 'folder_id' of the folder.
  */
-export const fetchAllParent = async (user_id: number): Promise<FolderModel[]> => {
-    return knex('folders').select('id', 'name', 'image_id', 'user_id', 'folder_id').where('user_id', user_id).andWhere('folder_id', null).andWhere('isdeleted', false);
-}
+export const fetchAllParent = async (
+  user_id: number,
+): Promise<FolderModel[]> => {
+  return knex('folders')
+    .select(
+      'folders.id',
+      'folders.name',
+      'folders.image_id',
+      'folders.user_id',
+      'folders.folder_id',
+      'images.url as image_url',
+    )
+    .leftJoin('images', 'folders.image_id', 'images.id')
+    .where('folders.user_id', user_id)
+    .andWhere('folders.folder_id', null)
+    .andWhere('folders.isdeleted', false);
+};
 
 /**
  * The function fetches all nested folders belonging to a specific user within a parent folder.
@@ -25,9 +41,24 @@ export const fetchAllParent = async (user_id: number): Promise<FolderModel[]> =>
  * `folder_id`. The folders are filtered based on the `user_id`, `parentFolderId`, and `isdeleted`
  * conditions specified in the `knex` query.
  */
-export const fetchAllNested = async (user_id: number, parentFolderId: number): Promise<FolderModel[]> => {
-    return await knex('folders').select('id', 'name', 'image_id', 'user_id', 'folder_id').where('user_id', user_id).andWhere('folder_id', parentFolderId).andWhere('isdeleted', false);
-}
+export const fetchAllNested = async (
+  user_id: number,
+  parentFolderId: number,
+): Promise<FolderModel[]> => {
+  return await knex('folders')
+    .select(
+      'folders.id',
+      'folders.name',
+      'folders.image_id',
+      'folders.user_id',
+      'folders.folder_id',
+      'images.url as image_url',
+    )
+    .leftJoin('images', 'folders.image_id', 'images.id')
+    .where('folders.user_id', user_id)
+    .andWhere('folders.folder_id', parentFolderId)
+    .andWhere('folders.isdeleted', false);
+};
 
 /**
  * This TypeScript function fetches a folder by its ID from a database table called 'folders' while
@@ -42,8 +73,20 @@ export const fetchAllNested = async (user_id: number, parentFolderId: number): P
  * to only select rows where the 'isdeleted' column is false. The `
  */
 export const fetchById = async (folderId: number): Promise<FolderModel> => {
-    return await knex('folders').select('id', 'name', 'image_id', 'user_id', 'folder_id').where('id', folderId).andWhere('isdeleted', false).first();
-}
+  return await knex('folders')
+    .select(
+      'folders.id',
+      'folders.name',
+      'folders.image_id',
+      'folders.user_id',
+      'folders.folder_id',
+      'images.url as image_url',
+    )
+    .leftJoin('images', 'folders.image_id', 'images.id')
+    .where('folders.id', folderId)
+    .andWhere('folders.isdeleted', false)
+    .first();
+};
 
 /**
  * This function fetches all folder models by folder ID asynchronously.
@@ -52,9 +95,11 @@ export const fetchById = async (folderId: number): Promise<FolderModel> => {
  * @returns An array of `FolderModel` objects that match the provided `folderId` from the `folders`
  * table in the database.
  */
-export const fetchAllByFolderId = async (folderId: number): Promise<FolderModel[]> => {
-    return await knex('folders').where('folder_id ', folderId);
-}
+export const fetchAllByFolderId = async (
+  folderId: number,
+): Promise<FolderModel[]> => {
+  return await knex('folders').where('folder_id ', folderId);
+};
 
 /**
  * The function creates a new folder record in a database table and returns the ID of the newly created
@@ -64,10 +109,12 @@ export const fetchAllByFolderId = async (folderId: number): Promise<FolderModel[
  * @returns The function `create` is returning an object with a property `folder_Id` that contains the
  * id of the newly inserted folder in the database.
  */
-export const create = async (folderData: FolderModel): Promise<{ folder_Id: number }> => {
-    const folder = await knex('folders').insert(folderData).returning('id');
-    return { folder_Id: folder[0].id };
-}
+export const create = async (
+  folderData: FolderModel,
+): Promise<{ folder_Id: number }> => {
+  const folder = await knex('folders').insert(folderData).returning('id');
+  return { folder_Id: folder[0].id };
+};
 
 /**
  * The function `update` updates a folder name in the database with the provided folder data based on
@@ -80,9 +127,12 @@ export const create = async (folderData: FolderModel): Promise<{ folder_Id: numb
  * @returns The `update` function is returning a Promise that resolves to an object with the `id`
  * property of type number.
  */
-export const update = async (folderData: FolderModel, folderId: number): Promise<{ id: number }> => {
-    return await knex('folders').where('id', folderId).update(folderData);
-}
+export const update = async (
+  folderData: FolderModel,
+  folderId: number,
+): Promise<{ id: number }> => {
+  return await knex('folders').where('id', folderId).update(folderData);
+};
 
 /**
  * The function `remove` updates the `isdeleted` field of a folder with the specified `folderId` to
@@ -94,8 +144,8 @@ export const update = async (folderData: FolderModel, folderId: number): Promise
  * an argument.
  */
 export const remove = async (folderId: number) => {
-    return await knex('folders').where('id', folderId).update('isdeleted', true);
-}
+  return await knex('folders').where('id', folderId).update('isdeleted', true);
+};
 
 /**
  * The function sorts folders by a specified criteria for a given user and folder.
@@ -114,6 +164,17 @@ export const remove = async (folderId: number) => {
  * parameter in the specified `sortOrder`. It filters the results based on the `userId`, `folderId`,
  * and `isdeleted` conditions.
  */
-export const sortBy = async (sortBy: string, userId: number, folderId: number, sortOrder: string) => {
-    return await knex('folders').orderBy(sortBy, sortOrder).where('user_id', userId).andWhere('isdeleted', false).andWhere('folder_id', folderId);
-}
+export const sortBy = async (
+  sortBy: string,
+  userId: number,
+  folderId: number,
+  sortOrder: string,
+) => {
+  return await knex('folders')
+    .select('folders.id', 'folders.name', 'images.url as image_url')
+    .leftJoin('images', 'folders.image_id', 'images.id')
+    .orderBy(`folders.${sortBy}`, sortOrder)
+    .where('folders.user_id', userId)
+    .andWhere('folders.isdeleted', false)
+    .andWhere('folders.folder_id', folderId);
+};

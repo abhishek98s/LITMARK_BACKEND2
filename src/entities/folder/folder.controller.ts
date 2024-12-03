@@ -132,6 +132,8 @@ export const patchFolders = async (req: Request, res: Response) => {
         }
 
         const currentFolder: FolderModel = await findFolderById(folderId)
+        delete currentFolder.image_url;
+        
         const { image_id: curretImage } = currentFolder;
 
         const folderData: FolderModel = {
