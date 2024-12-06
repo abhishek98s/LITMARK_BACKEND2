@@ -45,10 +45,10 @@ app.use('/api/chip', chipRoutes);
 app.use('/api/folder', folderRoutes);
 app.use('/api/bookmark', bookmarkRoutes);
 
-app.use(notFoundHandler);
-app.use(customErrorHandler);
-
 swagger(app);
+
+app.use(customErrorHandler);
+app.use(notFoundHandler);
 
 app.listen(port, () => {
   console.log(`${name} started at http://localhost:${port}`);
