@@ -51,7 +51,7 @@ export const getBookmarks = async (req: Request, res: Response) => {
 
   const result: BookmarkModel[] = await findBookmarks(user.id);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -74,7 +74,7 @@ export const getBookmarksByFolderId = async (req: Request, res: Response) => {
     folder_id,
   );
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -133,7 +133,7 @@ export const postBookmark = async (req: Request, res: Response) => {
 
   const result = await addBookmark(bookmarkData);
 
-  res.status(200).json({
+  res.status(StatusCodes.OK).json({
     status: true,
     message: bookmarkSucessMessages.POST_SUCESS,
     data: result,
@@ -198,7 +198,7 @@ export const patchBookmark = async (req: Request, res: Response) => {
 
   const result = await updateBookmark(bookmarkData, bookmarkId);
 
-  res.status(200).json({
+  res.status(StatusCodes.OK).json({
     status: true,
     message: bookmarkSucessMessages.PATCH_SUCESS,
     data: result,
@@ -227,7 +227,7 @@ export const deleteBookmark = async (req: Request, res: Response) => {
 
   const result = await removeBookmark(bookmarkId);
 
-  res.status(200).json({
+  res.status(StatusCodes.OK).json({
     status: true,
     message: bookmarkSucessMessages.DELETE_SUCESS,
     data: result,
@@ -258,7 +258,7 @@ export const searchByTitle = async (req: Request, res: Response) => {
 
   const result = await getBookmarksByTitle(title!, folder_id!);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 /*
  * The function `getSortedData` in TypeScript fetches and sorts data based on specified criteria like
@@ -279,6 +279,12 @@ export const getSortedData = async (req: Request, res: Response) => {
 
   const { user } = req.body;
 
+  if (!folder_id)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.FOLDER_REQUIRED,
+    );
+
   let result;
 
   switch (sortBy) {
@@ -289,13 +295,10 @@ export const getSortedData = async (req: Request, res: Response) => {
       result = await sortByAlphabet(user.id, folder_id, sortOrder);
       break;
     default:
-      new customHttpError(
-        StatusCodes.BAD_REQUEST,
-        bookmarkExceptionMessages.INVALID_DATA,
-      );
+      result = await sortByAlphabet(user.id, folder_id, sortOrder);
       break;
   }
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 export const getRecentBookmarks = async (req: Request, res: Response) => {
@@ -303,7 +306,7 @@ export const getRecentBookmarks = async (req: Request, res: Response) => {
 
   const result = await findRecentClickedBookmarks(user.id);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -390,7 +393,7 @@ export const sortRecentBookmark = async (req: Request, res: Response) => {
       break;
   }
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -422,7 +425,7 @@ export const filterRecentBookmark = async (req: Request, res: Response) => {
       break;
   }
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -446,5 +449,5 @@ export const searchRecentBookmark = async (req: Request, res: Response) => {
 
   const result = await getRecentBookmarksByTitle(title!);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };

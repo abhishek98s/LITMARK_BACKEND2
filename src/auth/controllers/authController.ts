@@ -37,7 +37,7 @@ export const loginHandler = async (req: Request, res: Response) => {
     process.env.JWT_TOKEN as string,
   );
 
-  res.status(200).json({ data: token });
+  res.status(StatusCodes.OK).json({ data: token });
 };
 
 export const registerHandler = async (req: Request, res: Response) => {

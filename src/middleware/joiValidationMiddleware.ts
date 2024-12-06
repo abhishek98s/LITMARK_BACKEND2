@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { Schema } from 'joi';
 
 const joiValidationMiddleware = (schema: Schema) => {
@@ -11,7 +12,9 @@ const joiValidationMiddleware = (schema: Schema) => {
     } else {
       const { details } = error;
       const message = details.map((i) => i.message).join(',');
-      res.status(422).json({ error: message });
+      res
+        .status(StatusCodes.UNPROCESSABLE_ENTITY)
+        .json({ status: false, message });
     }
   };
 };

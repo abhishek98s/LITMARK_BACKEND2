@@ -27,6 +27,8 @@ export const verifyToken = (
       },
     );
   } catch (error) {
-    res.status(401).json({ msg: (error as Error).message });
+    res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ msg: (error as Error).message });
   }
 };

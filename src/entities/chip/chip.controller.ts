@@ -25,7 +25,7 @@ import { StatusCodes } from 'http-status-codes';
 export const getAllChips = async (req: Request, res: Response) => {
   const result: ChipModel[] = await findAllChips(req.body.user.id);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -59,7 +59,7 @@ export const postChip = async (req: Request, res: Response) => {
     updated_by: user.username,
   });
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -104,7 +104,7 @@ export const patchChip = async (req: Request, res: Response) => {
     chipId,
   );
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -137,5 +137,5 @@ export const deleteChip = async (req: Request, res: Response) => {
 
   const result = await removeChip(chipId);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };

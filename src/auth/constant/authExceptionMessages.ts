@@ -5,4 +5,5 @@ export const authExceptionMessages = {
   INVALID_EMAIL: 'Invalid email address.',
   PASS_VALIDATION:
     'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.',
+  USER_NOT_FOUND: 'User doesn\'t exist',
 };

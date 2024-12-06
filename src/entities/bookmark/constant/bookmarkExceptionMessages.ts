@@ -1,5 +1,6 @@
 export const bookmarkExceptionMessages = {
   LINK_FOLDER_REQUIRED: 'Title and folder ID are required.',
+  FOLDER_REQUIRED: 'Folder ID is required.',
   INVALID_ID: 'Invalid bookmark ID.',
   TITLE_REQUIRED: 'Title is required.',
   BOOKMARK_NOT_FOUND: 'Bookmark does not exist.',
@@ -10,4 +11,5 @@ export const bookmarkExceptionMessages = {
   SEARCH_QUERY_EMPTY: 'Search query is empty',
   INVALID_DATA: 'Invalid Data',
   EMPTY_RECENT_BOOKMARK: 'No recent bookmark available.',
+  INVALID_SORT: 'SortBy should be either date or alphabet',
 };
