@@ -1,6 +1,8 @@
 import { imageExceptionMessages } from './constant/imageExceptionMessages';
 import * as ImageDAO from './image.repository';
 import { ImageModel } from './image.model';
+import { customHttpError } from '../../utils/customHttpError';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * The function `findImage` retrieves an image from a database based on its ID and returns it.
@@ -9,11 +11,15 @@ import { ImageModel } from './image.model';
  * @returns a Promise that resolves to an ImageModel object.
  */
 export const findImage = async (imageId: number): Promise<ImageModel> => {
-    const image: ImageModel = await ImageDAO.fetchById(imageId);
+  const image: ImageModel = await ImageDAO.fetchById(imageId);
 
-    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
+  if (!image)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      imageExceptionMessages.IMAGE_NOT_FOUND,
+    );
 
-    return image;
+  return image;
 };
 
 /**
@@ -28,14 +34,14 @@ export const findImage = async (imageId: number): Promise<ImageModel> => {
  * the database.
  */
 export const saveImage = async (imageData: ImageModel, username: string) => {
-    const newImage: ImageModel = {
-        ...imageData,
-        created_by: username,
-        updated_by: username,
-    };
-    const image = await ImageDAO.create(newImage);
-    const { image_id } = image;
-    return await ImageDAO.fetchById(image_id);
+  const newImage: ImageModel = {
+    ...imageData,
+    created_by: username,
+    updated_by: username,
+  };
+  const image = await ImageDAO.create(newImage);
+  const { image_id } = image;
+  return await ImageDAO.fetchById(image_id);
 };
 
 /**
@@ -49,12 +55,19 @@ export const saveImage = async (imageData: ImageModel, username: string) => {
  * user who is updating the image.
  * @returns a Promise that resolves to an ImageModel object.
  */
-export const updateImage = async (imageData: ImageModel, imageId: number): Promise<ImageModel> => {
-    const image = await ImageDAO.update(imageData, imageId);
+export const updateImage = async (
+  imageData: ImageModel,
+  imageId: number,
+): Promise<ImageModel> => {
+  const image = await ImageDAO.update(imageData, imageId);
 
-    if (!image) throw new Error(imageExceptionMessages.UPLOAD_FAILED); // update the comment
+  if (!image)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      imageExceptionMessages.UPLOAD_FAILED,
+    );
 
-    return await ImageDAO.fetchById(imageId);
+  return await ImageDAO.fetchById(imageId);
 };
 
 /**
@@ -64,11 +77,19 @@ export const updateImage = async (imageData: ImageModel, imageId: number): Promi
  * @returns a Promise that resolves to an instance of the ImageModel.
  */
 export const removeImage = async (imageId: number): Promise<ImageModel> => {
-    const image = await ImageDAO.fetchById(imageId);
-    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
+  const image = await ImageDAO.fetchById(imageId);
+  if (!image)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      imageExceptionMessages.IMAGE_NOT_FOUND,
+    );
 
-    const removeImage = await ImageDAO.remove(imageId);
-    if (!removeImage) throw new Error(imageExceptionMessages.DELETE_FAILED);
+  const removeImage = await ImageDAO.remove(imageId);
+  if (!removeImage)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      imageExceptionMessages.DELETE_FAILED,
+    );
 
-    return image;
+  return image;
 };

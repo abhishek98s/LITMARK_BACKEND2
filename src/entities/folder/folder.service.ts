@@ -2,26 +2,32 @@ import { folderExceptionMessages } from './constant/folderExceptionMessages';
 import * as FolderDAO from './folder.repository';
 import * as BookmarkDAO from '../bookmark/bookmark.repository';
 import { FolderModel } from './folder.model';
+import { customHttpError } from '../../utils/customHttpError';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * The function `findAllFolders` retrieves all folders from a database using Knex and returns them as
  * an array of `FolderModel` objects.
  * @returns an array of FolderModel objects.
  */
-export const findAllFolders = async (user_id: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await FolderDAO.fetchAllParent(user_id);
+export const findAllFolders = async (
+  user_id: number,
+): Promise<FolderModel[]> => {
+  const folders: FolderModel[] = await FolderDAO.fetchAllParent(user_id);
 
-    if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY);
-
-    return folders;
+  return folders;
 };
 
-export const findAllNestedFolders = async (user_id: number, parentFolderId: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await FolderDAO.fetchAllNested(user_id, parentFolderId);
+export const findAllNestedFolders = async (
+  user_id: number,
+  parentFolderId: number,
+): Promise<FolderModel[]> => {
+  const folders: FolderModel[] = await FolderDAO.fetchAllNested(
+    user_id,
+    parentFolderId,
+  );
 
-    if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY);
-
-    return folders;
+  return folders;
 };
 
 /**
@@ -31,12 +37,18 @@ export const findAllNestedFolders = async (user_id: number, parentFolderId: numb
  * to find. It is of type `number`.
  * @returns a Promise that resolves to a FolderModel object.
  */
-export const findFolderById = async (folderId: number): Promise<FolderModel> => {
-    const folder: FolderModel = await FolderDAO.fetchById(folderId);
+export const findFolderById = async (
+  folderId: number,
+): Promise<FolderModel> => {
+  const folder: FolderModel = await FolderDAO.fetchById(folderId);
 
-    if (!folder) throw new Error(folderExceptionMessages.FOLDER_NOT_FOUND);
+  if (!folder)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      folderExceptionMessages.FOLDER_NOT_FOUND,
+    );
 
-    return folder;
+  return folder;
 };
 
 /**
@@ -46,12 +58,16 @@ export const findFolderById = async (folderId: number): Promise<FolderModel> => 
  * @returns the inserted folder data.
  */
 export const addFolders = async (folderData: FolderModel) => {
-    const folder = await FolderDAO.create(folderData);
-    if (!folder) throw new Error(folderExceptionMessages.ADD_FAILED);
+  const folder = await FolderDAO.create(folderData);
+  if (!folder)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      folderExceptionMessages.ADD_FAILED,
+    );
 
-    const { folder_Id } = folder;
+  const { folder_Id } = folder;
 
-    return await FolderDAO.fetchById(folder_Id);
+  return await FolderDAO.fetchById(folder_Id);
 };
 
 /**
@@ -63,12 +79,19 @@ export const addFolders = async (folderData: FolderModel) => {
  * needs to be updated. It is of type `number`.
  * @returns the updated folder data.
  */
-export const updateFolder = async (folderData: FolderModel, folderId: number) => {
-    const folder = await FolderDAO.update(folderData, folderId);
+export const updateFolder = async (
+  folderData: FolderModel,
+  folderId: number,
+) => {
+  const folder = await FolderDAO.update(folderData, folderId);
 
-    if (!folder) throw new Error(folderExceptionMessages.UPDATE_FOLDER);
+  if (!folder)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      folderExceptionMessages.UPDATE_FOLDER,
+    );
 
-    return await FolderDAO.fetchById(folderId);
+  return await FolderDAO.fetchById(folderId);
 };
 
 /**
@@ -82,15 +105,17 @@ export const updateFolder = async (folderData: FolderModel, folderId: number) =>
  * without any value.
  */
 export const removeFolder = async (folderId: number) => {
-    const subfolders: FolderModel[] = await FolderDAO.fetchAllByFolderId(folderId);
+  const subfolders: FolderModel[] = await FolderDAO.fetchAllByFolderId(
+    folderId,
+  );
 
-    for (const subfolder of subfolders) {
-        await removeFolder(subfolder.id!);
-    }
+  for (const subfolder of subfolders) {
+    await removeFolder(subfolder.id!);
+  }
 
-    await FolderDAO.remove(folderId);
-    await BookmarkDAO.removeByFolderid(folderId);
-    return;
+  await FolderDAO.remove(folderId);
+  await BookmarkDAO.removeByFolderid(folderId);
+  return;
 };
 
 /**
@@ -108,10 +133,19 @@ export const removeFolder = async (folderId: number) => {
  * the specified `userId`, `folder_id`, and `sortOrder`. If the sorted data is empty, it will throw an
  * error with the message `FOLDER_EMPTY`.
  */
-export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await FolderDAO.sortBy('created_at', userId, folder_id, sortOrder);
+export const sortByDate = async (
+  userId: number,
+  folder_id: number,
+  sortOrder: string,
+) => {
+  const sortedData = await FolderDAO.sortBy(
+    'created_at',
+    userId,
+    folder_id,
+    sortOrder,
+  );
 
-    return sortedData;
+  return sortedData;
 };
 
 /**
@@ -129,8 +163,17 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  * and `folder_id`. If the sorted data is empty, an error with the message `FOLDER_EMPTY` will be
  * thrown.
  */
-export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await FolderDAO.sortBy('name', userId, folder_id, sortOrder);
+export const sortByAlphabet = async (
+  userId: number,
+  folder_id: number,
+  sortOrder: string,
+) => {
+  const sortedData = await FolderDAO.sortBy(
+    'name',
+    userId,
+    folder_id,
+    sortOrder,
+  );
 
-    return sortedData;
+  return sortedData;
 };

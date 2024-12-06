@@ -13,7 +13,11 @@ import { ImageModel } from './image.model';
  * 'images' table where 'isdeleted' is false.
  */
 export const fetchById = async (imageId: number) => {
-    return await knex('images').select('id', 'name', 'url', 'type').where('id', imageId).andWhere('isdeleted', false).first();
+  return await knex('images')
+    .select('id', 'name', 'url', 'type')
+    .where('id', imageId)
+    .andWhere('isdeleted', false)
+    .first();
 };
 
 /**
@@ -26,9 +30,9 @@ export const fetchById = async (imageId: number) => {
  * @returns { image_id: id }
  */
 export const create = async (imageData: ImageModel) => {
-    const image = await knex('images').insert(imageData).returning('id');
-    const id = image[0].id;
-    return { image_id: id };
+  const image = await knex('images').insert(imageData).returning('id');
+  const id = image[0].id;
+  return { image_id: id };
 };
 
 /**
@@ -42,7 +46,7 @@ export const create = async (imageData: ImageModel) => {
  * `images` table in the database where the `id` matches the `imageId` with the provided `imageData`.
  */
 export const update = async (imageData: ImageModel, imageId: number) => {
-    return await knex('images').where('id', imageId).update(imageData);
+  return await knex('images').where('id', imageId).update(imageData);
 };
 
 /**
@@ -54,5 +58,5 @@ export const update = async (imageData: ImageModel, imageId: number) => {
  * `images` table to `true` for the image with the specified `imageId`.
  */
 export const remove = async (imageId: number) => {
-    return await knex('images').update('isdeleted', true).where('id', imageId);
+  return await knex('images').update('isdeleted', true).where('id', imageId);
 };

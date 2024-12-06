@@ -1,21 +1,39 @@
 import { Request, Response } from 'express';
 import { FolderModel } from './folder.model';
-import { addFolders, findAllFolders, findAllNestedFolders, findFolderById, removeFolder, sortByAlphabet, sortByDate, updateFolder } from './folder.service';
+import {
+  addFolders,
+  findAllFolders,
+  findAllNestedFolders,
+  findFolderById,
+  removeFolder,
+  sortByAlphabet,
+  sortByDate,
+  updateFolder,
+} from './folder.service';
 import { uploadImage } from '../image/image.controller';
 import { findImage, saveImage } from '../image/image.service';
 import { folderExceptionMessages } from './constant/folderExceptionMessages';
 import crypto from 'crypto';
+import { StatusCodes } from 'http-status-codes';
+import { customHttpError } from '../../utils/customHttpError';
 
 const isImage = async (username: string) => {
-    try {
-        await findImage(1);
-        return 1;
-
-    } catch (error) {
-        const imageName = crypto.randomUUID();
-        const image = await saveImage({ type: 'folder', url: 'https://res.cloudinary.com/dxsqdqnoe/image/upload/v1709878273/litmark/xo5sncdhybhemuvacf4u.png', name: imageName, isdeleted: false }, username);
-        return image.id!;
-    }
+  try {
+    await findImage(1);
+    return 1;
+  } catch (error) {
+    const imageName = crypto.randomUUID();
+    const image = await saveImage(
+      {
+        type: 'folder',
+        url: 'https://res.cloudinary.com/dxsqdqnoe/image/upload/v1709878273/litmark/xo5sncdhybhemuvacf4u.png',
+        name: imageName,
+        isdeleted: false,
+      },
+      username,
+    );
+    return image.id!;
+  }
 };
 
 /**
@@ -29,12 +47,8 @@ const isImage = async (username: string) => {
  * code 200
  */
 export const getAllTopFolders = async (req: Request, res: Response) => {
-    try {
-        const result: FolderModel[] = await findAllFolders(req.body.user.id);
-        res.status(200).json({ status: true, data: result });
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
+  const result: FolderModel[] = await findAllFolders(req.body.user.id);
+  res.status(200).json({ status: true, data: result });
 };
 
 /**
@@ -47,13 +61,12 @@ export const getAllTopFolders = async (req: Request, res: Response) => {
  * has methods like `status
  */
 export const getAllnestedFolders = async (req: Request, res: Response) => {
-    try {
-        const parentFolderId: number = parseInt(req.params.id);
-        const result: FolderModel[] = await findAllNestedFolders(req.body.user.id, parentFolderId);
-        res.status(200).json({ status: true, data: result });
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
+  const parentFolderId: number = parseInt(req.params.id);
+  const result: FolderModel[] = await findAllNestedFolders(
+    req.body.user.id,
+    parentFolderId,
+  );
+  res.status(200).json({ status: true, data: result });
 };
 
 /**
@@ -67,38 +80,45 @@ export const getAllnestedFolders = async (req: Request, res: Response) => {
  * as setting the status code, headers, and sending the response body.
  */
 export const postFolders = async (req: Request, res: Response) => {
-    try {
-        const { name, folder_id, user } = req.body;
+  const { name, folder_id, user } = req.body;
 
-        if (!name) {
-            throw new Error(folderExceptionMessages.NAME_REQUIRED);
-        }
+  if (!name) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      folderExceptionMessages.NAME_REQUIRED,
+    );
+  }
 
-        if (req.file) {
-            const imagePath = req.file!.path;
-            const imageUrl = await uploadImage(imagePath);
+  if (req.file) {
+    const imagePath = req.file!.path;
+    const imageUrl = await uploadImage(imagePath);
 
-            const image = await saveImage({ url: imageUrl, type: 'folder', name: req.file.filename, isdeleted: false }, user.username);
+    const image = await saveImage(
+      {
+        url: imageUrl,
+        type: 'folder',
+        name: req.file.filename,
+        isdeleted: false,
+      },
+      user.username,
+    );
 
-            req.body.image_id = image.id;
-        }
+    req.body.image_id = image.id;
+  }
 
-        const folderData: FolderModel = {
-            name,
-            user_id: user.id,
-            image_id: await isImage(user.username),
-            folder_id: folder_id || null,
-            isdeleted: false,
-            created_by: user.username,
-            updated_by: user.username,
-        };
+  const folderData: FolderModel = {
+    name,
+    user_id: user.id,
+    image_id: await isImage(user.username),
+    folder_id: folder_id || null,
+    isdeleted: false,
+    created_by: user.username,
+    updated_by: user.username,
+  };
 
-        const result = await addFolders(folderData);
+  const result = await addFolders(folderData);
 
-        res.status(200).json({ status: true, data: result });
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
+  res.status(200).json({ status: true, data: result });
 };
 
 /**
@@ -112,43 +132,54 @@ export const postFolders = async (req: Request, res: Response) => {
  * as setting the status code, headers, and sending the response body.
  */
 export const patchFolders = async (req: Request, res: Response) => {
-    try {
-        const folderId: number = parseInt(req.params.id);
-        if (!folderId) throw new Error(folderExceptionMessages.INVALID_ID);
+  const folderId: number = parseInt(req.params.id);
+  if (!folderId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      folderExceptionMessages.INVALID_ID,
+    );
 
-        const { name, user } = req.body;
+  const { name, user } = req.body;
 
-        if (!name) {
-            throw new Error(folderExceptionMessages.NAME_REQUIRED);
-        }
+  if (!name) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      folderExceptionMessages.NAME_REQUIRED,
+    );
+  }
 
-        if (req.file) {
-            const imagePath = req.file!.path;
-            const imageUrl = await uploadImage(imagePath);
+  if (req.file) {
+    const imagePath = req.file!.path;
+    const imageUrl = await uploadImage(imagePath);
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename, isdeleted: false }, user.username);
+    const image = await saveImage(
+      {
+        url: imageUrl,
+        type: 'user',
+        name: req.file.filename,
+        isdeleted: false,
+      },
+      user.username,
+    );
 
-            req.body.image_id = image.id;
-        }
+    req.body.image_id = image.id;
+  }
 
-        const currentFolder: FolderModel = await findFolderById(folderId);
-        delete currentFolder.image_url;
+  const currentFolder: FolderModel = await findFolderById(folderId);
+  delete currentFolder.image_url;
 
-        const { image_id: curretImage } = currentFolder;
+  const { image_id: curretImage } = currentFolder;
 
-        const folderData: FolderModel = {
-            ...currentFolder,
-            name,
-            image_id: req.body.image_id || curretImage,
-            updated_by: user.username,
-        };
+  const folderData: FolderModel = {
+    ...currentFolder,
+    name,
+    image_id: req.body.image_id || curretImage,
+    updated_by: user.username,
+  };
 
-        const result = await updateFolder(folderData, folderId);
+  const result = await updateFolder(folderData, folderId);
 
-        res.status(200).json({ status: true, data: result });
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
+  res.status(200).json({ status: true, data: result });
 };
 
 /**
@@ -162,16 +193,16 @@ export const patchFolders = async (req: Request, res: Response) => {
  * headers, and send the response body.
  */
 export const deleteFolders = async (req: Request, res: Response) => {
-    try {
-        const folderId: number = parseInt(req.params.id);
-        if (!folderId) throw new Error(folderExceptionMessages.INVALID_ID);
+  const folderId: number = parseInt(req.params.id);
+  if (!folderId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      folderExceptionMessages.INVALID_ID,
+    );
 
-        await removeFolder(folderId);
+  await removeFolder(folderId);
 
-        res.status(200).json({ status: true, data: 'Folder deleted sucessfully' });
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
+  res.status(200).json({ status: true, data: 'Folder deleted sucessfully' });
 };
 
 /**
@@ -187,28 +218,27 @@ export const deleteFolders = async (req: Request, res: Response) => {
  * with data back
  */
 export const getSortedFolders = async (req: Request, res: Response) => {
-    try {
-        const sortBy = req.query.sort as string;
-        const folder_id = req.query.folder_id as unknown as number;
-        const sortOrder = req.query.order as string || 'asc';
+  const sortBy = req.query.sort as string;
+  const folder_id = req.query.folder_id as unknown as number;
+  const sortOrder = (req.query.order as string) || 'asc';
 
-        const { user } = req.body;
+  const { user } = req.body;
 
-        let result;
+  let result;
 
-        switch (sortBy) {
-            case 'date':
-                result = await sortByDate(user.id, folder_id, sortOrder);
-                break;
-            case 'alphabet':
-                result = await sortByAlphabet(user.id, folder_id, sortOrder);
-                break;
-            default:
-                new Error(folderExceptionMessages.INVALID_DATA);
-                break;
-        }
-        res.status(200).json({ status: true, data: result });
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
+  switch (sortBy) {
+    case 'date':
+      result = await sortByDate(user.id, folder_id, sortOrder);
+      break;
+    case 'alphabet':
+      result = await sortByAlphabet(user.id, folder_id, sortOrder);
+      break;
+    default:
+      new customHttpError(
+        StatusCodes.BAD_REQUEST,
+        folderExceptionMessages.INVALID_DATA,
+      );
+      break;
+  }
+  res.status(200).json({ status: true, data: result });
 };

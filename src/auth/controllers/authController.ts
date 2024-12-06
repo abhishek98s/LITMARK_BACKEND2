@@ -10,106 +10,95 @@ import { customHttpError } from '../../utils/customHttpError';
 import { StatusCodes } from 'http-status-codes';
 
 export const loginHandler = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-      throw new customHttpError(
-        StatusCodes.BAD_REQUEST,
-        authExceptionMessages.EMAIL_PASS_REQUIRED,
-      );
-    }
-
-    const user = await findUserByEmail(email);
-
-    const { username, id, email: dBEmail } = user;
-
-    const passordMatched: boolean = await bcrypt.compare(
-      password,
-      user.password,
+  if (!email || !password) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      authExceptionMessages.EMAIL_PASS_REQUIRED,
     );
-
-    if (!passordMatched) {
-      throw new customHttpError(
-        StatusCodes.BAD_REQUEST,
-        authExceptionMessages.INVALID_ID_CREDENTIALS,
-      );
-    }
-
-    const token = jwt.sign(
-      { username, id, email: dBEmail },
-      process.env.JWT_TOKEN as string,
-    );
-
-    res.status(200).json({ data: token });
-  } catch (error) {
-    res.status(500).json({ msg: (error as Error).message });
   }
+
+  const user = await findUserByEmail(email);
+
+  const { username, id, email: dBEmail } = user;
+
+  const passordMatched: boolean = await bcrypt.compare(password, user.password);
+
+  if (!passordMatched) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      authExceptionMessages.INVALID_ID_CREDENTIALS,
+    );
+  }
+
+  const token = jwt.sign(
+    { username, id, email: dBEmail },
+    process.env.JWT_TOKEN as string,
+  );
+
+  res.status(200).json({ data: token });
 };
 
 export const registerHandler = async (req: Request, res: Response) => {
-  try {
-    const { username, email, password, role } = req.body;
+  const { username, email, password, role } = req.body;
 
-    if (!username || !email || !password) {
-      throw new customHttpError(
-        StatusCodes.BAD_REQUEST,
-        authExceptionMessages.USER_CREDENTIALS,
-      );
-    }
-
-    if (!validator.isEmail(email)) {
-      throw new customHttpError(
-        StatusCodes.BAD_REQUEST,
-        authExceptionMessages.INVALID_EMAIL,
-      );
-    }
-
-    if (
-      !validator.isStrongPassword(password, {
-        minLength: 8,
-        minLowercase: 1,
-        minUppercase: 1,
-        minNumbers: 1,
-      })
-    ) {
-      throw new customHttpError(
-        StatusCodes.BAD_REQUEST,
-        authExceptionMessages.PASS_VALIDATION,
-      );
-    }
-
-    if (!role) {
-      req.body.role = 'normal';
-    }
-
-    if (req.file) {
-      const imagePath = req.file!.path;
-      const imageUrl = await uploadImage(imagePath);
-      const imageName = req.file.filename;
-
-      const image = await saveImage(
-        { url: imageUrl, type: 'user', name: imageName, isdeleted: false },
-        username,
-      );
-      req.body.image_id = image.id;
-    } else {
-      req.body.image_id = 0;
-    }
-
-    const savedUser = await register({
-      username,
-      email,
-      password,
-      role: req.body.role,
-      isdeleted: false,
-      image_id: req.body.image_id,
-      created_by: username,
-      updated_by: username,
-    });
-
-    res.json({ data: savedUser });
-  } catch (error: unknown) {
-    res.status(500).json({ msg: (error as Error).message });
+  if (!username || !email || !password) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      authExceptionMessages.USER_CREDENTIALS,
+    );
   }
+
+  if (!validator.isEmail(email)) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      authExceptionMessages.INVALID_EMAIL,
+    );
+  }
+
+  if (
+    !validator.isStrongPassword(password, {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    })
+  ) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      authExceptionMessages.PASS_VALIDATION,
+    );
+  }
+
+  if (!role) {
+    req.body.role = 'normal';
+  }
+
+  if (req.file) {
+    const imagePath = req.file!.path;
+    const imageUrl = await uploadImage(imagePath);
+    const imageName = req.file.filename;
+
+    const image = await saveImage(
+      { url: imageUrl, type: 'user', name: imageName, isdeleted: false },
+      username,
+    );
+    req.body.image_id = image.id;
+  } else {
+    req.body.image_id = 0;
+  }
+
+  const savedUser = await register({
+    username,
+    email,
+    password,
+    role: req.body.role,
+    isdeleted: false,
+    image_id: req.body.image_id,
+    created_by: username,
+    updated_by: username,
+  });
+
+  res.json({ data: savedUser });
 };

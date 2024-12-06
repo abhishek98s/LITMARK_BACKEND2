@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { StatusCodes, getReasonPhrase } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 import {
   findImage,
@@ -10,6 +10,7 @@ import {
 import { ImageModel } from './image.model';
 import { imageExceptionMessages } from './constant/imageExceptionMessages';
 import cloudinary from '../../utils/imageUploader';
+import { customHttpError } from '../../utils/customHttpError';
 
 /**
  * The function checks if the type of an image is valid by matching it against a regular
@@ -22,7 +23,11 @@ import cloudinary from '../../utils/imageUploader';
 export const isValidType = ({ type }: ImageModel) => {
   const reg: RegExp = new RegExp(/\b(?:folder|user|bookmark)\b/i);
   const isNameValid = reg.test(type);
-  if (!isNameValid) throw new Error(imageExceptionMessages.INVALID_TYPE);
+  if (!isNameValid)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      imageExceptionMessages.INVALID_TYPE,
+    );
   return true;
 };
 
@@ -38,7 +43,12 @@ export const uploadImage = async (imgPath: string) => {
   const imgUrl = (
     await cloudinary.v2.uploader.upload(imgPath, { folder: 'litmark' })
   ).secure_url;
-  if (!imgUrl) throw new Error(imageExceptionMessages.UPLOAD_FAILED);
+
+  if (!imgUrl)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      imageExceptionMessages.UPLOAD_FAILED,
+    );
 
   return imgUrl;
 };
@@ -56,7 +66,11 @@ export const validateImageType = (fileName: string) => {
   const reg: RegExp = new RegExp(/\b(?:png|jpg|jpeg|gif)\b/i);
   const isValidType = reg.test(imageType);
 
-  if (!isValidType) throw new Error(imageExceptionMessages.INVALID_IMAGE_TYPE);
+  if (!isValidType)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      imageExceptionMessages.INVALID_IMAGE_TYPE,
+    );
   return;
 };
 
@@ -74,20 +88,16 @@ export const validateImageType = (fileName: string) => {
  * image.
  */
 export const getImage = async (req: Request, res: Response) => {
-  try {
-    const imageId: number = parseInt(req.params.id);
-    if (!imageId) throw new Error(imageExceptionMessages.INVALID_ID);
+  const imageId: number = parseInt(req.params.id);
+  if (!imageId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      imageExceptionMessages.INVALID_ID,
+    );
 
-    const result = await findImage(imageId);
-    if (!result) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
+  const result = await findImage(imageId);
 
-    return res.status(StatusCodes.OK).json({ status: true, data: result });
-  } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      msg: (error as Error).message,
-      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-    });
-  }
+  return res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -102,31 +112,34 @@ export const getImage = async (req: Request, res: Response) => {
  * @returns a JSON response with the data property set to the result of the saveImage function.
  */
 export const postImage = async (req: Request, res: Response) => {
-  try {
-    if (!req.file) {
-      throw new Error(imageExceptionMessages.FILE_REQUIRED);
-    }
-    const imgPath = req.file!.path;
-
-    req.body.url = await uploadImage(imgPath);
-    req.body.name = req.file?.filename;
-
-    const { url, type, name, user } = req.body;
-
-    if (!type) throw new Error(imageExceptionMessages.TYPE_REQUIRED);
-
-    isValidType(req.body);
-    validateImageType(req.file!.originalname);
-
-    const result = await saveImage({ type, url, name, isdeleted: false }, user.username);
-
-    res.status(StatusCodes.OK).json({ status: true, data: result });
-  } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      msg: (error as Error).message,
-      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-    });
+  if (!req.file) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      imageExceptionMessages.FILE_REQUIRED,
+    );
   }
+  const imgPath = req.file!.path;
+
+  req.body.url = await uploadImage(imgPath);
+  req.body.name = req.file?.filename;
+
+  const { url, type, name, user } = req.body;
+
+  if (!type)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      imageExceptionMessages.TYPE_REQUIRED,
+    );
+
+  isValidType(req.body);
+  validateImageType(req.file!.originalname);
+
+  const result = await saveImage(
+    { type, url, name, isdeleted: false },
+    user.username,
+  );
+
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -141,38 +154,35 @@ export const postImage = async (req: Request, res: Response) => {
  * code if there is an error.
  */
 export const patchImage = async (req: Request, res: Response) => {
-  try {
-    const imageId: number = parseInt(req.params.id);
+  const imageId: number = parseInt(req.params.id);
 
-    const { name, user } = req.body;
+  const { name, user } = req.body;
 
-    if (!name) throw new Error(imageExceptionMessages.NAME_REQUIRED);
-
-    const currentImage = await findImage(imageId);
-
-    if (req.file) {
-      const imgPath = req.file!.path;
-      req.body.url = await uploadImage(imgPath);
-    }
-
-    // const result: ImageModel = await updateImage({ url, type, name }, imageId, user.id)
-    const result: ImageModel = await updateImage(
-      {
-        ...currentImage,
-        name,
-        updated_by: user.username,
-        url: req.file ? req.body.url : currentImage.url,
-      },
-      imageId,
+  if (!name)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      imageExceptionMessages.NAME_REQUIRED,
     );
 
-    res.status(StatusCodes.OK).json({ status: true, data: result });
-  } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      msg: (error as Error).message,
-      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-    });
+  const currentImage = await findImage(imageId);
+
+  if (req.file) {
+    const imgPath = req.file!.path;
+    req.body.url = await uploadImage(imgPath);
   }
+
+  // const result: ImageModel = await updateImage({ url, type, name }, imageId, user.id)
+  const result: ImageModel = await updateImage(
+    {
+      ...currentImage,
+      name,
+      updated_by: user.username,
+      url: req.file ? req.body.url : currentImage.url,
+    },
+    imageId,
+  );
+
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -187,17 +197,14 @@ export const patchImage = async (req: Request, res: Response) => {
  * @returns a JSON response with the data property set to the result of the removeImage function.
  */
 export const deleteImage = async (req: Request, res: Response) => {
-  try {
-    const imageId: number = parseInt(req.params.id);
-    if (!imageId) throw new Error(imageExceptionMessages.INVALID_ID);
+  const imageId: number = parseInt(req.params.id);
+  if (!imageId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      imageExceptionMessages.INVALID_ID,
+    );
 
-    const result = await removeImage(imageId);
+  const result = await removeImage(imageId);
 
-    res.status(StatusCodes.OK).json({ status: true, data: result });
-  } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      msg: (error as Error).message,
-      error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
-    });
-  }
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };

@@ -10,7 +10,7 @@
 //     transports: [
 //         new DailyRotateFile({
 //             filename: path.join('logs', 'application-%DATE%.log'),
-//             datePattern: 'YYYY-MM-DD', 
+//             datePattern: 'YYYY-MM-DD',
 //             maxSize: '5m',
 //         }),
 //     ],
