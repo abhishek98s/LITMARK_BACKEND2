@@ -11,10 +11,10 @@ import { ImageModel } from './image.model';
 export const findImage = async (imageId: number): Promise<ImageModel> => {
     const image: ImageModel = await ImageDAO.fetchById(imageId);
 
-    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND)
+    if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
 
     return image;
-}
+};
 
 /**
  * The `saveImage` function saves an image with the provided image data and the username of the
@@ -32,11 +32,11 @@ export const saveImage = async (imageData: ImageModel, username: string) => {
         ...imageData,
         created_by: username,
         updated_by: username,
-    }
+    };
     const image = await ImageDAO.create(newImage);
     const { image_id } = image;
-    return await ImageDAO.fetchById(image_id)
-}
+    return await ImageDAO.fetchById(image_id);
+};
 
 /**
  * The function updates an image in the database with new data and returns the updated image.
@@ -54,8 +54,8 @@ export const updateImage = async (imageData: ImageModel, imageId: number): Promi
 
     if (!image) throw new Error(imageExceptionMessages.UPLOAD_FAILED); // update the comment
 
-    return await ImageDAO.fetchById(imageId)
-}
+    return await ImageDAO.fetchById(imageId);
+};
 
 /**
  * The function removes an image from the database based on its ID.
@@ -67,8 +67,8 @@ export const removeImage = async (imageId: number): Promise<ImageModel> => {
     const image = await ImageDAO.fetchById(imageId);
     if (!image) throw new Error(imageExceptionMessages.IMAGE_NOT_FOUND);
 
-    const removeImage = await ImageDAO.remove(imageId)
+    const removeImage = await ImageDAO.remove(imageId);
     if (!removeImage) throw new Error(imageExceptionMessages.DELETE_FAILED);
 
-    return image
-}
+    return image;
+};

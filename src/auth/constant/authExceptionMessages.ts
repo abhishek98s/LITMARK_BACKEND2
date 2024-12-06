@@ -4,4 +4,4 @@ export const authExceptionMessages = {
     USER_CREDENTIALS: 'Username, email, and password are required.',
     INVALID_EMAIL: 'Invalid email address.',
     PASS_VALIDATION: 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.',
-}
+};

@@ -1,9 +1,9 @@
 import express from 'express';
-import multer from 'multer'
+import multer from 'multer';
 
 import { deleteImage, getImage, patchImage, postImage } from './image.controller';
-import { verifyToken } from '../../auth/middleware/authentication.middleware';
-import joiValidationMiddleware from '../../auth/middleware/joiValidationMiddleware';
+import { verifyToken } from '../../middleware/authentication.middleware';
+import joiValidationMiddleware from '../../middleware/joiValidationMiddleware';
 import imageSchema from './image.schema';
 const router = express.Router();
 const storage = multer.memoryStorage();

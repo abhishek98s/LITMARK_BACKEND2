@@ -7,6 +7,6 @@ export const knexConfig = {
         directory: '../migrations',
         extensions: ['ts'],
     },
-}
+};
 
-module.exports = knexConfig
+module.exports = knexConfig;

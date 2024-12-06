@@ -10,4 +10,4 @@ export const bookmarkExceptionMessages = {
     SEARCH_QUERY_EMPTY: 'Search query is empty',
     INVALID_DATA: 'Invalid Data',
     EMPTY_RECENT_BOOKMARK: 'No recent bookmark available.',
-}
+};

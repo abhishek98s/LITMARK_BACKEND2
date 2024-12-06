@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 dotenv.config();
 
 export const getHostnameFromUrl = (url: string) => {
@@ -9,7 +9,7 @@ export const getHostnameFromUrl = (url: string) => {
     } else {
         return null;
     }
-}
+};
 
 export const getTitleFromURL = async (url: string) => {
     try {
@@ -28,7 +28,7 @@ export const getTitleFromURL = async (url: string) => {
     } catch (error) {
         return getHostnameFromUrl(url);
     }
-}
+};
 
 export const getThumbnailFromURL = async (url: string) => {
     try {
@@ -41,7 +41,7 @@ export const getThumbnailFromURL = async (url: string) => {
         const thumbnail = data.items[0].pagemap.cse_thumbnail[0].src;
         return thumbnail;
     } catch (error) {
-        const favicon = `https://www.google.com/s2/favicons?domain=${getHostnameFromUrl(url)}&sz=256`
+        const favicon = `https://www.google.com/s2/favicons?domain=${getHostnameFromUrl(url)}&sz=256`;
         return favicon;
     }
-}
+};

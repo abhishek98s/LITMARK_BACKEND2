@@ -727,7 +727,7 @@ export const docs = {
             },
         },
     },
-}
+};
 
 export const schema = {
     Bookmark: {

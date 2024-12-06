@@ -1,4 +1,3 @@
-
 /**
  * @swagger
  * /user:
@@ -129,7 +128,6 @@
  *         email: example@gmail.com
  *         password: Example123!
  */
-
 
 export const docs = {
     '/user': {

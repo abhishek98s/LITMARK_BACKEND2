@@ -1,9 +1,8 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 import { userExceptionMessages } from './constant/userExceptionMessages';
 import * as UserDAO from './user.repository';
-import { UserModel } from './user.model'
-
+import { UserModel } from './user.model';
 
 /**
  * The function `getUserById` retrieves a user from a database based on their ID and returns it.
@@ -14,10 +13,10 @@ import { UserModel } from './user.model'
 export const getUserById = async (userId: number) => {
     const user: UserModel = await UserDAO.fetchById(userId);
 
-    if (!user) throw new Error(userExceptionMessages.USER_NOT_FOUND)
+    if (!user) throw new Error(userExceptionMessages.USER_NOT_FOUND);
 
     return user;
-}
+};
 
 /**
  * The function `addUser` takes in user information, hashes the password, inserts the user into a
@@ -33,13 +32,13 @@ export const addUser = async (userInfo: UserModel) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await UserDAO.create({ ...userInfo, password: hashedPassword })
-    if (!user) throw new Error(userExceptionMessages.CREATE_FAILED)
+    const user = await UserDAO.create({ ...userInfo, password: hashedPassword });
+    if (!user) throw new Error(userExceptionMessages.CREATE_FAILED);
 
     const { userID } = user;
 
     return await UserDAO.fetchById(userID);
-}
+};
 
 /**
  * The function updates a user's information in the database and returns the updated user.
@@ -54,11 +53,11 @@ export const updateUser = async (userId: number, updatedUserInfo: UserModel) => 
     const hashedPassword = await bcrypt.hash(updatedUserInfo.password, salt);
 
     const updatedUser = { ...updatedUserInfo, password: hashedPassword };
-    const user = await UserDAO.update(updatedUser, userId)
-    if (!user) throw new Error(userExceptionMessages.UPDATE_FAILED)
+    const user = await UserDAO.update(updatedUser, userId);
+    if (!user) throw new Error(userExceptionMessages.UPDATE_FAILED);
 
     return await UserDAO.fetchById(userId);
-}
+};
 
 /**
  * The function removes a user from the database by their ID and returns the deleted user.
@@ -68,10 +67,10 @@ export const updateUser = async (userId: number, updatedUserInfo: UserModel) => 
  */
 export const removeUser = async (userId: number) => {
     const currentUser = await getUserById(userId);
-    if (!currentUser) throw new Error('User doesnot exist')
+    if (!currentUser) throw new Error('User doesnot exist');
 
     const user = await UserDAO.remove(userId);
-    if (!user) throw new Error(userExceptionMessages.DELETE_FAILED)
+    if (!user) throw new Error(userExceptionMessages.DELETE_FAILED);
 
     return currentUser;
-}
+};
