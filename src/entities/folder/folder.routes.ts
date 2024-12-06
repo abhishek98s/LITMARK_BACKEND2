@@ -1,5 +1,12 @@
 import express from 'express';
-import { deleteFolders, getAllTopFolders, getAllnestedFolders, patchFolders, postFolders, getSortedFolders } from './folder.controller';
+import {
+  deleteFolders,
+  getAllTopFolders,
+  getAllnestedFolders,
+  patchFolders,
+  postFolders,
+  getSortedFolders,
+} from './folder.controller';
 import { verifyToken } from '../../middleware/authentication.middleware';
 import multer from 'multer';
 import joiValidationMiddleware from '../../middleware/joiValidationMiddleware';
@@ -11,7 +18,12 @@ const upload = multer({ storage });
 
 router.use(verifyToken);
 router.get('/sort', getSortedFolders);
-router.get('/', getAllTopFolders).get('/:id', getAllnestedFolders).post('/', joiValidationMiddleware(folderSchema), verifyToken, postFolders);
-router.patch('/:id', upload.single('litmark_image'), verifyToken, patchFolders).delete('/:id', deleteFolders);
+router
+  .get('/', getAllTopFolders)
+  .get('/:id', getAllnestedFolders)
+  .post('/', joiValidationMiddleware(folderSchema), verifyToken, postFolders);
+router
+  .patch('/:id', upload.single('litmark_image'), verifyToken, patchFolders)
+  .delete('/:id', deleteFolders);
 
 export default router;

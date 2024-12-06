@@ -1,5 +1,6 @@
-/** @format */
+import { StatusCodes } from 'http-status-codes';
 
+import { customHttpError } from '../../utils/customHttpError';
 import * as ImageDAO from '../image/image.repository';
 import { BookmarkModel } from './bookmark.model';
 import * as BookmarkDAO from './bookmark.repository';
@@ -15,7 +16,11 @@ import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages'
  */
 export const findBookmarkById = async (bookmarkId: number) => {
   const bookmarks: BookmarkModel = await BookmarkDAO.fetchById(bookmarkId);
-  if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND);
+  if (!bookmarks)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.BOOKMARK_NOT_FOUND,
+    );
 
   return bookmarks;
 };
@@ -27,7 +32,6 @@ export const findBookmarkById = async (bookmarkId: number) => {
  */
 export const findBookmarks = async (user_id: number) => {
   const bookmarks: BookmarkModel[] = await BookmarkDAO.fetchAll(user_id);
-  if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY);
 
   return bookmarks;
 };
@@ -50,7 +54,6 @@ export const findBookmarksByFolderId = async (
     user_id,
     folder_id,
   );
-  if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY);
 
   return bookmarks;
 };
@@ -64,7 +67,11 @@ export const findBookmarksByFolderId = async (
  */
 export const addBookmark = async (bookmarkData: BookmarkModel) => {
   const bookmark = await BookmarkDAO.create(bookmarkData);
-  if (!bookmark) throw new Error(bookmarkExceptionMessages.ADD_FAILED);
+  if (!bookmark)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      bookmarkExceptionMessages.ADD_FAILED,
+    );
 
   const { bookmarkId } = bookmark;
 
@@ -86,7 +93,11 @@ export const updateBookmark = async (
   bookmarkId: number,
 ) => {
   const bookmark = await BookmarkDAO.updateTitle(bookmarkData, bookmarkId);
-  if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
+  if (!bookmark)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      bookmarkExceptionMessages.UPDATE_FAILED,
+    );
 
   return findBookmarkById(bookmarkId);
 };
@@ -102,14 +113,16 @@ export const removeBookmark = async (bookmarkId: number) => {
     bookmarkId,
   );
   if (!currentBookmark)
-    throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND);
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.BOOKMARK_NOT_FOUND,
+    );
   delete currentBookmark.image_url;
 
-  const bookmark = await BookmarkDAO.remove({
+  await BookmarkDAO.remove({
     ...currentBookmark,
     isdeleted: true,
   });
-  if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
 
   ImageDAO.remove(currentBookmark.image_id);
   return currentBookmark;
@@ -200,9 +213,7 @@ export const sortByAlphabet = async (
  * @returns The `updateClickedDate` function is returning nothing (`undefined`).
  */
 export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
-  const bookmark = await BookmarkDAO.updateClickedDate(bookmarkData);
-
-  if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
+  await BookmarkDAO.updateClickedDate(bookmarkData);
 
   return;
 };
@@ -219,8 +230,6 @@ export const findRecentClickedBookmarks = async (user_id: number) => {
     user_id,
     'desc',
   );
-
-  if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY);
 
   return bookmarks;
 };
@@ -246,7 +255,11 @@ export const deleteRecentBookmarkById = async (
     user_id,
   );
 
-  if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
+  if (!bookmark)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      bookmarkExceptionMessages.DELETE_FAILED,
+    );
 
   return;
 };
@@ -276,7 +289,10 @@ export const sortRecentBookmarkByDate = async (
     );
 
   if (recentBookmarks.length === 0)
-    throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK,
+    );
 
   return recentBookmarks;
 };
@@ -300,8 +316,12 @@ export const sortRecentBookmarkByAlphabet = async (
   const sortedData: BookmarkModel[] =
     await BookmarkDAO.sortRecentlyClickedBookmarkBy('title', userId, sortOrder);
 
-  if (sortedData.length === 0)
-    throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY);
+  if (sortedData.length === 0) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK,
+    );
+  }
 
   return sortedData;
 };
@@ -324,8 +344,12 @@ export const filterRecentBookmarkByChip = async (
   const filteredData: BookmarkModel[] =
     await BookmarkDAO.filterRecentlyClickedBookmarksByChip(userId, chipId);
 
-  if (filteredData.length === 0)
-    throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
+  if (filteredData.length === 0) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK,
+    );
+  }
 
   return filteredData;
 };

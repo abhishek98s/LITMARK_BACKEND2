@@ -6,6 +6,8 @@ import { saveImage } from '../image/image.service';
 import { uploadImage, validateImageType } from '../image/image.controller';
 import { userExceptionMessages } from './constant/userExceptionMessages';
 import { userSucessMessages } from './constant/userSucessMessages';
+import { customHttpError } from '../../utils/customHttpError';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * The function `getUser` is an asynchronous function that retrieves a user by their ID and returns the
@@ -19,16 +21,16 @@ import { userSucessMessages } from './constant/userSucessMessages';
  * @returns a JSON response with the data property set to the result of the getUserById function.
  */
 export const getUser = async (req: Request, res: Response) => {
-    try {
-        const userId = parseInt(req.params.id);
-        if (!userId) throw new Error(userExceptionMessages.INVALID_ID);
+  const userId = parseInt(req.params.id);
+  if (!userId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      userExceptionMessages.INVALID_ID,
+    );
 
-        const result = await getUserById(userId);
+  const result = await getUserById(userId);
 
-        return res.json({ status: true, data: result });
-    } catch (error) {
-        return res.status(500).json({ msg: (error as Error).message });
-    }
+  return res.json({ status: true, data: result });
 };
 
 /**
@@ -43,44 +45,59 @@ export const getUser = async (req: Request, res: Response) => {
  * @returns a JSON response with the data property set to the result variable.
  */
 export const postUser = async (req: Request, res: Response) => {
-    try {
-        const { username, email, password, role, user } = req.body;
+  const { username, email, password, role, user } = req.body;
 
-        if (!username || !email || !password) {
-            throw new Error(userExceptionMessages.USER_CREDENTIALS_REQUIRED);
-        }
+  if (!username || !email || !password) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      userExceptionMessages.USER_CREDENTIALS_REQUIRED,
+    );
+  }
 
-        if (!(validator.isEmail(email!) && validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 }))) {
-            throw new Error(userExceptionMessages.INVALID_EMAIL_PASS);
-        }
+  if (
+    !(
+      validator.isEmail(email!) &&
+      validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+      })
+    )
+  ) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      userExceptionMessages.INVALID_EMAIL_PASS,
+    );
+  }
 
-        if (req.file) {
-            const imagePath = req.file!.path;
-            validateImageType(req.file.originalname);
-            const imageUrl = await uploadImage(imagePath);
-            const imageName = req.file.filename;
+  if (req.file) {
+    const imagePath = req.file!.path;
+    validateImageType(req.file.originalname);
+    const imageUrl = await uploadImage(imagePath);
+    const imageName = req.file.filename;
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: imageName, isdeleted: false }, username);
-            req.body.image_id = image.id;
-        } else {
-            req.body.image_id = 0;
-        }
+    const image = await saveImage(
+      { url: imageUrl, type: 'user', name: imageName, isdeleted: false },
+      username,
+    );
+    req.body.image_id = image.id;
+  } else {
+    req.body.image_id = 0;
+  }
 
-        await addUser({
-            username,
-            email,
-            password,
-            image_id: req.body.image_id,
-            isdeleted: false,
-            role: role === 'admin' ? role : 'normal',
-            created_by: user.username,
-            updated_by: user.username,
-        });
+  await addUser({
+    username,
+    email,
+    password,
+    image_id: req.body.image_id,
+    isdeleted: false,
+    role: role === 'admin' ? role : 'normal',
+    created_by: user.username,
+    updated_by: user.username,
+  });
 
-        return res.json({ status: true, message: userSucessMessages.POST_SUCESS });
-    } catch (error) {
-        return res.status(500).json({ msg: (error as Error).message });
-    }
+  return res.json({ status: true, message: userSucessMessages.POST_SUCESS });
 };
 
 /**
@@ -94,48 +111,72 @@ export const postUser = async (req: Request, res: Response) => {
  * @returns a JSON response with the updated user data.
  */
 export const patchUser = async (req: Request, res: Response) => {
-    try {
-        const userId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id);
 
-        if (!userId) throw new Error(userExceptionMessages.INVALID_ID);
+  if (!userId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      userExceptionMessages.INVALID_ID,
+    );
 
-        const { username, password, user } = req.body;
+  const { username, password, user } = req.body;
 
-        if (!username || !password) {
-            throw new Error(userExceptionMessages.USERNAME_PASS_REQUIRED);
-        }
+  if (!username || !password) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      userExceptionMessages.USERNAME_PASS_REQUIRED,
+    );
+  }
 
-        if (!(validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 }))) {
-            throw new Error(userExceptionMessages.PASS_VALIDATION);
-        }
+  if (
+    !validator.isStrongPassword(password, {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    })
+  ) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      userExceptionMessages.PASS_VALIDATION,
+    );
+  }
 
-        const currentUser = await getUserById(userId);
+  const currentUser = await getUserById(userId);
 
-        if (!currentUser) {
-            throw new Error(userExceptionMessages.USER_NOT_FOUND);
-        }
+  if (!currentUser) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      userExceptionMessages.USER_NOT_FOUND,
+    );
+  }
 
-        if (req.file) {
-            const imagePath = req.file!.path;
-            const imageUrl = await uploadImage(imagePath);
+  if (req.file) {
+    const imagePath = req.file!.path;
+    const imageUrl = await uploadImage(imagePath);
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename, isdeleted: false }, username);
+    const image = await saveImage(
+      {
+        url: imageUrl,
+        type: 'user',
+        name: req.file.filename,
+        isdeleted: false,
+      },
+      username,
+    );
 
-            req.body.image_id = image.id;
-        }
+    req.body.image_id = image.id;
+  }
 
-        const result = await updateUser(userId, {
-            ...currentUser,
-            username,
-            password,
-            image_id: req.file ? req.body.image_id : currentUser.image_id,
-            updated_by: user.username,
-        });
+  const result = await updateUser(userId, {
+    ...currentUser,
+    username,
+    password,
+    image_id: req.file ? req.body.image_id : currentUser.image_id,
+    updated_by: user.username,
+  });
 
-        return res.json({ status: true, data: result });
-    } catch (error) {
-        return res.status(500).json({ msg: (error as Error).message });
-    }
+  return res.json({ status: true, data: result });
 };
 
 /**
@@ -150,15 +191,15 @@ export const patchUser = async (req: Request, res: Response) => {
  * @returns a JSON response with the data property set to the result of the removeUser function.
  */
 export const deleteUser = async (req: Request, res: Response) => {
-    try {
-        const userId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id);
 
-        if (!userId) throw new Error(userExceptionMessages.INVALID_ID);
+  if (!userId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      userExceptionMessages.INVALID_ID,
+    );
 
-        const result = await removeUser(userId);
+  const result = await removeUser(userId);
 
-        return res.json({ status: true, data: result });
-    } catch (error) {
-        return res.status(500).json({ msg: (error as Error).message });
-    }
+  return res.json({ status: true, data: result });
 };

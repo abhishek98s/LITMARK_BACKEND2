@@ -11,7 +11,19 @@ import { UserModel } from './user.model';
  * matches the `userId` parameter and the `isdeleted` column is `false`.
  */
 export const fetchById = async (userId: number) => {
-    return await knex('users').select('id', 'username', 'email', 'image_id').where('id', userId).andWhere('isdeleted', false).first();
+  return await knex('users')
+    .select('id', 'username', 'email', 'image_id')
+    .where('id', userId)
+    .andWhere('isdeleted', false)
+    .first();
+};
+
+export const fetchByEmail = async (email: string) => {
+  return await knex('users')
+    .select('id', 'username', 'email', 'image_id')
+    .where('email', email)
+    .andWhere('isdeleted', false)
+    .first();
 };
 
 /**
@@ -22,8 +34,8 @@ export const fetchById = async (userId: number) => {
  * @returns { userID: user[0].id }
  */
 export const create = async (userData: UserModel) => {
-    const user = await knex('users').insert(userData).returning('id');
-    return { userID: user[0].id };
+  const user = await knex('users').insert(userData).returning('id');
+  return { userID: user[0].id };
 };
 
 /**
@@ -39,7 +51,7 @@ export const create = async (userData: UserModel) => {
  * user data in the database table `users` where the `id` matches the provided `userId`.
  */
 export const update = async (userData: UserModel, userId: number) => {
-    return await knex('users').select('*').where('id', userId).update(userData);
+  return await knex('users').select('*').where('id', userId).update(userData);
 };
 
 /**
@@ -51,5 +63,5 @@ export const update = async (userData: UserModel, userId: number) => {
  * `isdeleted` field to `true` for the user with the specified `userId` in the `users` table.
  */
 export const remove = async (userId: number) => {
-    return await knex('users').where('id', userId).update('isdeleted', true);
+  return await knex('users').where('id', userId).update('isdeleted', true);
 };

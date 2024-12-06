@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from 'express';import { StatusCodes } from 'http-status-codes';
+import { Request, Response, NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { customHttpError } from '../utils/customHttpError';
 
 const customErrorHandler = (

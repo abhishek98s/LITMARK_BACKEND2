@@ -1,8 +1,8 @@
-import {config} from './config';
+import { config } from './config';
 import knex from 'knex';
 
 const knexConfig = {
-    ...config.database,
+  ...config.database,
 };
 
 export default knex(knexConfig);

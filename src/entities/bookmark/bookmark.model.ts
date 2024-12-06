@@ -1,5 +1,3 @@
-/** @format */
-
 export interface BookmarkModel {
   id?: number;
   image_url?: number;

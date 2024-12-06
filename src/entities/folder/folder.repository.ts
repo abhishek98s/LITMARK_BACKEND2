@@ -1,5 +1,3 @@
-/** @format */
-
 import knex from '../../config/knex.config';
 import { FolderModel } from './folder.model';
 

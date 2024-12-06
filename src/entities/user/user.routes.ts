@@ -11,9 +11,15 @@ const upload = multer({ storage });
 
 router.use(verifyToken);
 
-router.get('/:id', getUser)
-    .patch('/:id', upload.single('litmark_image'), patchUser)
-    .delete('/:id', deleteUser);
-router.post('/', upload.single('litmark_image'), joiValidationMiddleware(userSchema), postUser);
+router
+  .get('/:id', getUser)
+  .patch('/:id', upload.single('litmark_image'), patchUser)
+  .delete('/:id', deleteUser);
+router.post(
+  '/',
+  upload.single('litmark_image'),
+  joiValidationMiddleware(userSchema),
+  postUser,
+);
 
 export default router;

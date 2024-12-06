@@ -13,7 +13,11 @@ import { ChipModel } from './chip.model';
  * matches the provided `chipId` and 'isdeleted' is false.
  */
 export const fetchById = async (chipId: number) => {
-    return await knex('chips').select('id', 'name', 'user_id', 'folder_id').where('id', chipId).andWhere('isdeleted', false).first();
+  return await knex('chips')
+    .select('id', 'name', 'user_id', 'folder_id')
+    .where('id', chipId)
+    .andWhere('isdeleted', false)
+    .first();
 };
 
 /**
@@ -27,7 +31,10 @@ export const fetchById = async (chipId: number) => {
  * specified user and have not been deleted.
  */
 export const fetchAll = async (user_id: number) => {
-    return await knex('chips').select('id', 'name', 'user_id', 'folder_id').where('user_id', user_id).andWhere('isdeleted', false);
+  return await knex('chips')
+    .select('id', 'name', 'user_id', 'folder_id')
+    .where('user_id', user_id)
+    .andWhere('isdeleted', false);
 };
 
 /**
@@ -40,8 +47,8 @@ export const fetchAll = async (user_id: number) => {
  * of the newly inserted chip record in the database.
  */
 export const create = async (chipData: ChipModel) => {
-    const chip = await knex('chips').insert(chipData).returning('id');
-    return { chipID: chip[0].id };
+  const chip = await knex('chips').insert(chipData).returning('id');
+  return { chipID: chip[0].id };
 };
 
 /**
@@ -57,7 +64,7 @@ export const create = async (chipData: ChipModel) => {
  * `chips` table in the database with the provided `chipData` for the chip with the specified `chipId`.
  */
 export const update = async (chipData: ChipModel, chipId: number) => {
-    return await knex('chips').where('id', chipId).update(chipData);
+  return await knex('chips').where('id', chipId).update(chipData);
 };
 
 /**
@@ -70,5 +77,5 @@ export const update = async (chipData: ChipModel, chipId: number) => {
  * in the `chips` table where the `id` matches the `chipId` provided.
  */
 export const remove = async (chipId: number) => {
-    return await knex('chips').update('isdeleted', true).where('id', chipId);
+  return await knex('chips').update('isdeleted', true).where('id', chipId);
 };
