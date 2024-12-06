@@ -406,7 +406,7 @@ export const docs = {
                     description: 'Deleted folder successfully',
                     content: {
                         'application/json': {
-                            schema: { 
+                            schema: {
                                 properties: {
                                     status: { type: 'boolean' },
                                     data: {
@@ -478,7 +478,7 @@ export const docs = {
                     description: 'Deleted folder successfully',
                     content: {
                         'application/json': {
-                            schema: { 
+                            schema: {
                                 properties: {
                                     status: { type: 'boolean' },
                                     data: {

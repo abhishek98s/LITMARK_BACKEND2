@@ -8,4 +8,4 @@ export const userExceptionMessages = {
     UPDATE_FAILED: 'Failed to update user',
     CREATE_FAILED: 'Failed to create user',
     DELETE_FAILED: 'Failed to delete user',
-}
+};

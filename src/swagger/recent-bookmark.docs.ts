@@ -118,8 +118,6 @@
  *
  */
 
-
-
 export const docs = {
     '/bookmark/recent': {
         get: {
@@ -401,4 +399,4 @@ export const schema = {
             },
         },
     },
-}
+};

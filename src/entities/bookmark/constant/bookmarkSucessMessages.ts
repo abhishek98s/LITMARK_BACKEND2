@@ -4,4 +4,4 @@ export const bookmarkSucessMessages = {
     DELETE_SUCESS: 'Sucessfully deleted the bookmark',
     ADDED_RB_SUCESS: 'Sucessfully added the recent bookmark',
     DELETE_RB_SUCESS: 'Sucessfully deleted the recent bookmark',
-}
+};

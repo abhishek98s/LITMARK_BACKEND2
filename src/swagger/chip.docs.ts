@@ -116,7 +116,6 @@
  *         folder_id: 1
  */
 
-
 export const docs = {
     '/chip': {
         get: {

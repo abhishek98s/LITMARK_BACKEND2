@@ -14,7 +14,7 @@ import { ImageModel } from './image.model';
  */
 export const fetchById = async (imageId: number) => {
     return await knex('images').select('id', 'name', 'url', 'type').where('id', imageId).andWhere('isdeleted', false).first();
-}
+};
 
 /**
  * The function creates a new image record in the database and returns the ID of the newly created
@@ -29,7 +29,7 @@ export const create = async (imageData: ImageModel) => {
     const image = await knex('images').insert(imageData).returning('id');
     const id = image[0].id;
     return { image_id: id };
-}
+};
 
 /**
  * The function `update` updates an image record in the database with the provided image data based on
@@ -43,7 +43,7 @@ export const create = async (imageData: ImageModel) => {
  */
 export const update = async (imageData: ImageModel, imageId: number) => {
     return await knex('images').where('id', imageId).update(imageData);
-}
+};
 
 /**
  * The function `remove` updates the `isdeleted` field to true for a specific image in the database
@@ -55,4 +55,4 @@ export const update = async (imageData: ImageModel, imageId: number) => {
  */
 export const remove = async (imageId: number) => {
     return await knex('images').update('isdeleted', true).where('id', imageId);
-}
+};

@@ -1,4 +1,4 @@
-import knex from '../../config/knex.config'
+import knex from '../../config/knex.config';
 import { ChipModel } from './chip.model';
 
 /**
@@ -14,7 +14,7 @@ import { ChipModel } from './chip.model';
  */
 export const fetchById = async (chipId: number) => {
     return await knex('chips').select('id', 'name', 'user_id', 'folder_id').where('id', chipId).andWhere('isdeleted', false).first();
-}
+};
 
 /**
  * This TypeScript function fetches all non-deleted chips belonging to a specific user based on their
@@ -28,7 +28,7 @@ export const fetchById = async (chipId: number) => {
  */
 export const fetchAll = async (user_id: number) => {
     return await knex('chips').select('id', 'name', 'user_id', 'folder_id').where('user_id', user_id).andWhere('isdeleted', false);
-}
+};
 
 /**
  * The function creates a new record in the 'chips' table using the provided data and returns the ID of
@@ -42,7 +42,7 @@ export const fetchAll = async (user_id: number) => {
 export const create = async (chipData: ChipModel) => {
     const chip = await knex('chips').insert(chipData).returning('id');
     return { chipID: chip[0].id };
-}
+};
 
 /**
  * The function `update` updates a chip record in the database with the provided data based on the chip
@@ -58,7 +58,7 @@ export const create = async (chipData: ChipModel) => {
  */
 export const update = async (chipData: ChipModel, chipId: number) => {
     return await knex('chips').where('id', chipId).update(chipData);
-}
+};
 
 /**
  * The function removes a chip by updating its 'isdeleted' field to true in the database.
@@ -71,4 +71,4 @@ export const update = async (chipData: ChipModel, chipId: number) => {
  */
 export const remove = async (chipId: number) => {
     return await knex('chips').update('isdeleted', true).where('id', chipId);
-}
+};

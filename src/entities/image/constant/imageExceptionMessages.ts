@@ -8,4 +8,4 @@ export const imageExceptionMessages = {
     TYPE_REQUIRED: 'Type is required',
     NAME_REQUIRED: 'Name is required',
     INVALID_ID: 'id not valid',
-} 
+};

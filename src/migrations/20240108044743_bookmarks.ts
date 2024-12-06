@@ -24,9 +24,8 @@ export async function up(knex: Knex): Promise<void> {
 
         table.date('click_date');
         table.timestamps(true, true);
-    })
+    });
 }
-
 
 export async function down(knex: Knex): Promise<void> {
     return knex.schema.dropTableIfExists('bookmarks');

@@ -7,4 +7,4 @@ export const chipExceptionMessages = {
     ADD_FAILED: 'Failed to add chip.',
     UPDATE_FAILED: 'Failed to update chip.',
     REMOVE_FAILED: 'Chip does not exist.',
-}
+};

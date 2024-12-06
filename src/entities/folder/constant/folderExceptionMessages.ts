@@ -8,4 +8,4 @@ export const folderExceptionMessages = {
     DELETE_FOLDER: 'Failed to delete folder.',
     REMOVE_FAILED: 'Folder does not exist.',
     INVALID_DATA: 'Invalid Data',
-}
+};

@@ -1,6 +1,6 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 
-dotenv.config()
+dotenv.config();
 
 export const config = {
     app: {
@@ -8,7 +8,7 @@ export const config = {
         port: process.env.SERVER_PORT || '5000',
     },
     database: getActiveDatabase(process.env.ACTIVE_DB || 'mysql2'),
-}
+};
 
 function getActiveDatabase(db: string) {
     if (db === 'mysql2') {

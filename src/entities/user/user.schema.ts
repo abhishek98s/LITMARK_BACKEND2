@@ -11,6 +11,6 @@ const userSchema: Schema = joi.object().keys({
         email: joi.string().required(),
         iat: joi.number(),
     }),
-})
+});
 
 export default userSchema;

@@ -18,11 +18,11 @@ export const getAllChips = async (req: Request, res: Response) => {
     try {
         const result: ChipModel[] = await findAllChips(req.body.user.id);
 
-        res.status(200).json({ status: true, data: result })
+        res.status(200).json({ status: true, data: result });
     } catch (error) {
         res.status(500).json({ msg: (error as Error).message });
     }
-}
+};
 
 /**
  * The `postChip` function is an asynchronous function that handles the creation of a new chip by
@@ -41,7 +41,7 @@ export const postChip = async (req: Request, res: Response) => {
         const { name, folder_id, user } = req.body;
 
         if (!name || !folder_id) {
-            throw new Error(chipExceptionMessages.Folder_NAME_REQUIRED)
+            throw new Error(chipExceptionMessages.Folder_NAME_REQUIRED);
         }
 
         const result: ChipModel = await addChip({
@@ -51,14 +51,14 @@ export const postChip = async (req: Request, res: Response) => {
             isdeleted: false,
             created_by: user.username,
             updated_by: user.username,
-        })
+        });
 
         res.status(200).json({ status: true, data: result });
     }
     catch (error) {
         res.status(500).json({ msg: (error as Error).message });
     }
-}
+};
 
 /**
  * The function `patchChip` is an asynchronous function that handles a PATCH request to update a chip's
@@ -74,28 +74,28 @@ export const postChip = async (req: Request, res: Response) => {
 export const patchChip = async (req: Request, res: Response) => {
     try {
         const chipId: number = parseFloat(req.params.id);
-        if (!chipId) throw new Error(chipExceptionMessages.INVALID_ID)
+        if (!chipId) throw new Error(chipExceptionMessages.INVALID_ID);
 
         const { name, user } = req.body;
 
         if (!name) {
-            throw new Error(chipExceptionMessages.HAME_REQUIRED)
+            throw new Error(chipExceptionMessages.HAME_REQUIRED);
         }
 
         const currentChip = await findChipById(chipId);
 
         if (!currentChip) {
-            throw new Error(chipExceptionMessages.CHIP_NOTFOUND)
+            throw new Error(chipExceptionMessages.CHIP_NOTFOUND);
         }
 
-        const result = await updateChip({ ...currentChip, name, updated_by: user.username }, chipId)
+        const result = await updateChip({ ...currentChip, name, updated_by: user.username }, chipId);
 
-        res.status(200).json({ status: true, data: result })
+        res.status(200).json({ status: true, data: result });
     }
     catch (error) {
         res.status(500).json({ msg: (error as Error).message });
     }
-}
+};
 
 /**
  * The `deleteChip` function is an asynchronous function that handles the deletion of a chip by its ID,
@@ -111,19 +111,19 @@ export const patchChip = async (req: Request, res: Response) => {
 export const deleteChip = async (req: Request, res: Response) => {
     try {
         const chipId: number = parseFloat(req.params.id);
-        if (!chipId) throw new Error('Invalid chip id')
+        if (!chipId) throw new Error('Invalid chip id');
 
         const isChipExist = await findChipById(chipId);
 
         if (!isChipExist) {
-            throw new Error(chipExceptionMessages.CHIP_NOTFOUND)
+            throw new Error(chipExceptionMessages.CHIP_NOTFOUND);
         }
 
         const result = await removeChip(chipId);
 
-        res.status(200).json({ status: true, data: result })
+        res.status(200).json({ status: true, data: result });
     }
     catch (error) {
         res.status(500).json({ msg: (error as Error).message });
     }
-}
+};

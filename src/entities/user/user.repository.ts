@@ -12,7 +12,7 @@ import { UserModel } from './user.model';
  */
 export const fetchById = async (userId: number) => {
     return await knex('users').select('id', 'username', 'email', 'image_id').where('id', userId).andWhere('isdeleted', false).first();
-}
+};
 
 /**
  * The function creates a new user record in a database table and returns the user's ID.
@@ -24,7 +24,7 @@ export const fetchById = async (userId: number) => {
 export const create = async (userData: UserModel) => {
     const user = await knex('users').insert(userData).returning('id');
     return { userID: user[0].id };
-}
+};
 
 /**
  * The function `update` updates a user username or password record in the database with the provided data for a specific
@@ -40,7 +40,7 @@ export const create = async (userData: UserModel) => {
  */
 export const update = async (userData: UserModel, userId: number) => {
     return await knex('users').select('*').where('id', userId).update(userData);
-}
+};
 
 /**
  * This TypeScript function removes a user by updating the 'isdeleted' field to true in the 'users'
@@ -52,4 +52,4 @@ export const update = async (userData: UserModel, userId: number) => {
  */
 export const remove = async (userId: number) => {
     return await knex('users').where('id', userId).update('isdeleted', true);
-}
+};

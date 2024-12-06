@@ -1,7 +1,7 @@
 import { folderExceptionMessages } from './constant/folderExceptionMessages';
 import * as FolderDAO from './folder.repository';
 import * as BookmarkDAO from '../bookmark/bookmark.repository';
-import { FolderModel } from './folder.model'
+import { FolderModel } from './folder.model';
 
 /**
  * The function `findAllFolders` retrieves all folders from a database using Knex and returns them as
@@ -11,18 +11,18 @@ import { FolderModel } from './folder.model'
 export const findAllFolders = async (user_id: number): Promise<FolderModel[]> => {
     const folders: FolderModel[] = await FolderDAO.fetchAllParent(user_id);
 
-    if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
+    if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY);
 
-    return folders
-}
+    return folders;
+};
 
 export const findAllNestedFolders = async (user_id: number, parentFolderId: number): Promise<FolderModel[]> => {
-    const folders: FolderModel[] = await FolderDAO.fetchAllNested(user_id, parentFolderId)
+    const folders: FolderModel[] = await FolderDAO.fetchAllNested(user_id, parentFolderId);
 
-    if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY)
+    if (!folders) throw new Error(folderExceptionMessages.FOLDER_EMPTY);
 
-    return folders
-}
+    return folders;
+};
 
 /**
  * The function `findFolderById` is an asynchronous function that retrieves a folder by its ID from a
@@ -37,7 +37,7 @@ export const findFolderById = async (folderId: number): Promise<FolderModel> => 
     if (!folder) throw new Error(folderExceptionMessages.FOLDER_NOT_FOUND);
 
     return folder;
-}
+};
 
 /**
  * The function `addFolders` inserts folder data into a database table and returns the inserted folder.
@@ -46,13 +46,13 @@ export const findFolderById = async (folderId: number): Promise<FolderModel> => 
  * @returns the inserted folder data.
  */
 export const addFolders = async (folderData: FolderModel) => {
-    const folder = await FolderDAO.create(folderData)
-    if (!folder) throw new Error(folderExceptionMessages.ADD_FAILED)
+    const folder = await FolderDAO.create(folderData);
+    if (!folder) throw new Error(folderExceptionMessages.ADD_FAILED);
 
     const { folder_Id } = folder;
 
     return await FolderDAO.fetchById(folder_Id);
-}
+};
 
 /**
  * The function updates a folder in a database using the provided folder data and folder ID.
@@ -66,11 +66,10 @@ export const addFolders = async (folderData: FolderModel) => {
 export const updateFolder = async (folderData: FolderModel, folderId: number) => {
     const folder = await FolderDAO.update(folderData, folderId);
 
-    if (!folder) throw new Error(folderExceptionMessages.UPDATE_FOLDER)
+    if (!folder) throw new Error(folderExceptionMessages.UPDATE_FOLDER);
 
     return await FolderDAO.fetchById(folderId);
-}
-
+};
 
 /**
  * The function `removeFolder` recursively deletes a folder and its subfolders along with their
@@ -86,13 +85,13 @@ export const removeFolder = async (folderId: number) => {
     const subfolders: FolderModel[] = await FolderDAO.fetchAllByFolderId(folderId);
 
     for (const subfolder of subfolders) {
-        await removeFolder(subfolder.id!)
+        await removeFolder(subfolder.id!);
     }
 
-    await FolderDAO.remove(folderId)
-    await BookmarkDAO.removeByFolderid(folderId)
-    return
-}
+    await FolderDAO.remove(folderId);
+    await BookmarkDAO.removeByFolderid(folderId);
+    return;
+};
 
 /**
  * The function `sortByDate` sorts data from a specific folder by date for a given user based on the
@@ -113,7 +112,7 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
     const sortedData = await FolderDAO.sortBy('created_at', userId, folder_id, sortOrder);
 
     return sortedData;
-}
+};
 
 /**
  * The function sorts folders by title alphabetically for a specific user and folder ID.
@@ -134,4 +133,4 @@ export const sortByAlphabet = async (userId: number, folder_id: number, sortOrde
     const sortedData = await FolderDAO.sortBy('name', userId, folder_id, sortOrder);
 
     return sortedData;
-}
+};

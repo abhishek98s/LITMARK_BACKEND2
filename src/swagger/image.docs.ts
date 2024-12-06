@@ -135,7 +135,6 @@
  *         type: user or Bookmark or folder
  */
 
-
 export const docs = {
     '/image': {
         post: {

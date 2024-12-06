@@ -15,7 +15,7 @@ export const findChipById = async (chipId: number) => {
     if (!chip) throw new Error(chipExceptionMessages.CHIP_NOTFOUND);
 
     return chip;
-}
+};
 
 /**
  * The function `findAllChips` retrieves all chip models from a database using knex and returns them as
@@ -28,7 +28,7 @@ export const findAllChips = async (user_id: number): Promise<ChipModel[]> => {
     if (!chips) throw new Error(chipExceptionMessages.CHIP_NOT_AVAILABLE);
 
     return chips;
-}
+};
 
 /**
  * The function `addChip` inserts a new chip into the database and returns the inserted chip.
@@ -41,10 +41,10 @@ export const addChip = async (chipData: ChipModel) => {
 
     if (!chip) throw new Error(chipExceptionMessages.ADD_FAILED);
 
-    const { chipID } = chip
+    const { chipID } = chip;
 
     return await findChipById(chipID);
-}
+};
 
 /**
  * The function updates a chip record in the database with the provided data and returns the updated
@@ -62,7 +62,7 @@ export const updateChip = async (chipData: ChipModel, chipId: number) => {
     if (!chip) throw new Error(chipExceptionMessages.UPDATE_FAILED);
 
     return await findChipById(chipId);
-}
+};
 
 /**
  * The function removes a chip from the database based on its ID
@@ -72,10 +72,10 @@ export const updateChip = async (chipData: ChipModel, chipId: number) => {
  */
 export const removeChip = async (chipId: number) => {
     const currentChip = await findChipById(chipId);
-    if (!currentChip) throw new Error(chipExceptionMessages.REMOVE_FAILED)
+    if (!currentChip) throw new Error(chipExceptionMessages.REMOVE_FAILED);
 
     const chip = await ChipDAO.remove(chipId);
-    if (!chip) throw new Error('Failed to delete chip')
+    if (!chip) throw new Error('Failed to delete chip');
 
     return currentChip;
-}
+};

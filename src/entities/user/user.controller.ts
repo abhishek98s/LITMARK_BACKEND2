@@ -21,15 +21,15 @@ import { userSucessMessages } from './constant/userSucessMessages';
 export const getUser = async (req: Request, res: Response) => {
     try {
         const userId = parseInt(req.params.id);
-        if (!userId) throw new Error(userExceptionMessages.INVALID_ID)
+        if (!userId) throw new Error(userExceptionMessages.INVALID_ID);
 
         const result = await getUserById(userId);
 
-        return res.json({ status: true, data: result })
+        return res.json({ status: true, data: result });
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
-}
+};
 
 /**
  * The function `postUser` is an asynchronous function that handles the creation of a new user,
@@ -51,16 +51,16 @@ export const postUser = async (req: Request, res: Response) => {
         }
 
         if (!(validator.isEmail(email!) && validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 }))) {
-            throw new Error(userExceptionMessages.INVALID_EMAIL_PASS)
+            throw new Error(userExceptionMessages.INVALID_EMAIL_PASS);
         }
 
         if (req.file) {
             const imagePath = req.file!.path;
-            validateImageType(req.file.originalname)
-            const imageUrl = await uploadImage(imagePath)
+            validateImageType(req.file.originalname);
+            const imageUrl = await uploadImage(imagePath);
             const imageName = req.file.filename;
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: imageName, isdeleted: false }, username)
+            const image = await saveImage({ url: imageUrl, type: 'user', name: imageName, isdeleted: false }, username);
             req.body.image_id = image.id;
         } else {
             req.body.image_id = 0;
@@ -77,11 +77,11 @@ export const postUser = async (req: Request, res: Response) => {
             updated_by: user.username,
         });
 
-        return res.json({ status: true, message: userSucessMessages.POST_SUCESS })
+        return res.json({ status: true, message: userSucessMessages.POST_SUCESS });
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
-}
+};
 
 /**
  * The function `patchUser` is an asynchronous function that updates a user's information, including
@@ -97,7 +97,7 @@ export const patchUser = async (req: Request, res: Response) => {
     try {
         const userId = parseInt(req.params.id);
 
-        if (!userId) throw new Error(userExceptionMessages.INVALID_ID)
+        if (!userId) throw new Error(userExceptionMessages.INVALID_ID);
 
         const { username, password, user } = req.body;
 
@@ -106,20 +106,20 @@ export const patchUser = async (req: Request, res: Response) => {
         }
 
         if (!(validator.isStrongPassword(password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1 }))) {
-            throw new Error(userExceptionMessages.PASS_VALIDATION)
+            throw new Error(userExceptionMessages.PASS_VALIDATION);
         }
 
         const currentUser = await getUserById(userId);
 
         if (!currentUser) {
-            throw new Error(userExceptionMessages.USER_NOT_FOUND)
+            throw new Error(userExceptionMessages.USER_NOT_FOUND);
         }
 
         if (req.file) {
             const imagePath = req.file!.path;
-            const imageUrl = await uploadImage(imagePath)
+            const imageUrl = await uploadImage(imagePath);
 
-            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename, isdeleted: false }, username)
+            const image = await saveImage({ url: imageUrl, type: 'user', name: req.file.filename, isdeleted: false }, username);
 
             req.body.image_id = image.id;
         }
@@ -132,11 +132,11 @@ export const patchUser = async (req: Request, res: Response) => {
             updated_by: user.username,
         });
 
-        return res.json({ status: true, data: result })
+        return res.json({ status: true, data: result });
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
-}
+};
 
 /**
  * The deleteUser function is an asynchronous function that removes a user from the system based on the
@@ -157,8 +157,8 @@ export const deleteUser = async (req: Request, res: Response) => {
 
         const result = await removeUser(userId);
 
-        return res.json({ status: true, data: result })
+        return res.json({ status: true, data: result });
     } catch (error) {
         return res.status(500).json({ msg: (error as Error).message });
     }
-}
+};

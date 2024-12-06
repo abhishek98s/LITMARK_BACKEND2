@@ -9,6 +9,6 @@ const imageSchema: Schema = joi.object().keys({
         email: joi.string().required(),
         iat: joi.number(),
     }),
-})
+});
 
 export default imageSchema;
