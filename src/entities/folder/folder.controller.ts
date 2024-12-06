@@ -48,7 +48,7 @@ const isImage = async (username: string) => {
  */
 export const getAllTopFolders = async (req: Request, res: Response) => {
   const result: FolderModel[] = await findAllFolders(req.body.user.id);
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -66,7 +66,7 @@ export const getAllnestedFolders = async (req: Request, res: Response) => {
     req.body.user.id,
     parentFolderId,
   );
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -118,7 +118,7 @@ export const postFolders = async (req: Request, res: Response) => {
 
   const result = await addFolders(folderData);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -179,7 +179,7 @@ export const patchFolders = async (req: Request, res: Response) => {
 
   const result = await updateFolder(folderData, folderId);
 
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
 
 /**
@@ -202,7 +202,7 @@ export const deleteFolders = async (req: Request, res: Response) => {
 
   await removeFolder(folderId);
 
-  res.status(200).json({ status: true, data: 'Folder deleted sucessfully' });
+  res.status(StatusCodes.OK).json({ status: true, data: 'Folder deleted sucessfully' });
 };
 
 /**
@@ -240,5 +240,5 @@ export const getSortedFolders = async (req: Request, res: Response) => {
       );
       break;
   }
-  res.status(200).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ status: true, data: result });
 };
