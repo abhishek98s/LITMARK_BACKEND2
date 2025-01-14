@@ -199,10 +199,14 @@ Create a .env file in the root directory and add your configuration variables.
     SERVER_PORT=
     NAME=
     ACTIVE_DB=
-    DB_MYSQL=
-    DB_MYSQL_USER=
-    DB_MYSQL_PASSWORD=
     DB_NAME=
+    DB_POSTGRES_STRING=
+    DB_POSTGRES=
+    DB_POSTGRES_USER=
+    DB_POSTGRES_PASSWORD=
+    DB_POSTGRES_NAME=
+    DB_POSTGRES_HOST=
+    DB_POSTGRES_PORT=
     ```
 
 5. **Run the server:**
