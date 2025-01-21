@@ -1,3 +1,5 @@
+/** @format */
+
 import knex from '../../config/knex.config';
 import { BookmarkModel } from './bookmark.model';
 
@@ -323,10 +325,14 @@ export const filterRecentlyClickedBookmarksByChip = async (
  * `bookmarks` where the `title` matches the provided input `title` (case-insensitive search),
  * `isdeleted` is false, and `click_date` is not null.
  */
-export const fetchRecentlyClickedBookmarksByTittle = async (title: string) => {
+export const fetchRecentlyClickedBookmarksByTittle = async (
+  title: string,
+  user_id: number,
+) => {
   return await knex('bookmarks')
     .select('title', 'url')
     .whereRaw('LOWER(title) LIKE LOWER(?)', [`%${title}%`])
     .andWhere('isdeleted', false)
+    .andWhere('user_id', user_id)
     .andWhereNot('click_date', null);
 };

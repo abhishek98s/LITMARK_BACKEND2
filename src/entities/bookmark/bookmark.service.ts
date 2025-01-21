@@ -367,9 +367,9 @@ export const filterRecentBookmarkByChip = async (
  * 2. The `isdeleted` field must be false.
  * 3.
  */
-export const getRecentBookmarksByTitle = async (title: string) => {
+export const getRecentBookmarksByTitle = async (title: string, user_id:number) => {
   const recentbookmarksByTitle =
-    await BookmarkDAO.fetchRecentlyClickedBookmarksByTittle(title);
+    await BookmarkDAO.fetchRecentlyClickedBookmarksByTittle(title, user_id);
 
   return recentbookmarksByTitle;
 };

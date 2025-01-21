@@ -438,6 +438,7 @@ export const filterRecentBookmark = async (req: Request, res: Response) => {
  * with the
  */
 export const searchRecentBookmark = async (req: Request, res: Response) => {
+  const { user } = req.body;
   const title: string = req.query.title as string;
 
   if (!title) {
@@ -447,7 +448,7 @@ export const searchRecentBookmark = async (req: Request, res: Response) => {
     );
   }
 
-  const result = await getRecentBookmarksByTitle(title!);
+  const result = await getRecentBookmarksByTitle(title!, parseInt(user.id));
 
   res.status(StatusCodes.OK).json({ status: true, data: result });
 };
