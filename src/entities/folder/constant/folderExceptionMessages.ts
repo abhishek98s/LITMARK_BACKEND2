@@ -7,5 +7,5 @@ export const folderExceptionMessages = {
   UPDATE_FOLDER: 'Failed to update folder.',
   DELETE_FOLDER: 'Failed to delete folder.',
   REMOVE_FAILED: 'Folder does not exist.',
-  INVALID_DATA: 'Invalid Data',
+  INVALID_DATA: 'Invalid Data.',
 };

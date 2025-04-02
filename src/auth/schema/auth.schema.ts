@@ -1,26 +1,32 @@
 import joi from 'joi';
+import { authExceptionMessages } from '../constant/authExceptionMessages';
 
 const authSchema = {
-  login: joi.object()
-  .keys({
-    email: joi.string().email().required().messages({
-      'string.base': 'Email must be a string.',
-      'string.email': 'Email must be a valid email address.',
-      'any.required': 'Email is required.',
+  login: joi
+    .object()
+    .keys({
+      email: joi.string().email().required().messages({
+        'string.base': authExceptionMessages.EMAIL_STRING,
+        'string.email': authExceptionMessages.EMAIL_INVALID,
+        'string.empty': authExceptionMessages.EMAIL_EMPTY,
+        'any.required': authExceptionMessages.EMAIL_REQUIRED,
+      }),
+      password: joi.string().required().messages({
+        'string.base': authExceptionMessages.PASSWORD_STRING,
+        'string.empty': authExceptionMessages.PASSWORD_EMPTY,
+        'any.required': authExceptionMessages.PASSWORD_REQUIRED,
+      }),
+    })
+    .strict()
+    .messages({
+      'object.unknown': authExceptionMessages.EXTRA_PROPERTY, // Custom error message for extra properties
     }),
-    password: joi.string().required().messages({
-      'string.base': 'Password must be a string.',
-      'any.required': 'Password is required.',
-    }),
-  })
-  .strict().messages({
-  'object.unknown': 'Extra properties are not allowed.', // Custom error message for extra properties
-}),
 
   register: joi.object().keys({
     username: joi.string().required().messages({
-      'string.base': 'Username must be string',
-      'string.required': 'Username is required',
+      'string.base': authExceptionMessages.USERNAME_STRING,
+      'any.required': authExceptionMessages.USERNAME_REQUIRED,
+      'string.empty': authExceptionMessages.USERNAME_EMPTY,
     }),
     password: joi
       .string()
@@ -28,16 +34,17 @@ const authSchema = {
       .pattern(new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/))
       .required()
       .messages({
-        'string.base': 'Password must be a string.',
-        'string.min': 'Password must be at least {#limit} characters long.',
-        'string.pattern.base':
-          'Password must contain at least one uppercase letter, one lowercase letter, and one digit.',
-        'any.required': 'Password is required.',
+        'string.base': authExceptionMessages.PASSWORD_STRING,
+        'string.min': authExceptionMessages.PASSWORD_SHORT,
+        'string.empty': authExceptionMessages.PASSWORD_EMPTY,
+        'string.pattern.base': authExceptionMessages.PASSWORD_INVALID,
+        'any.required': authExceptionMessages.PASSWORD_REQUIRED,
       }),
     email: joi.string().email().required().messages({
-      'string.base': 'Email must be a string.',
-      'string.email': 'Email must be a valid email address.',
-      'any.required': 'Email is required.',
+      'string.base': authExceptionMessages.EMAIL_STRING,
+      'string.email': authExceptionMessages.EMAIL_INVALID,
+      'string.empty': authExceptionMessages.EMAIL_EMPTY,
+      'any.required': authExceptionMessages.EMAIL_REQUIRED,
     }),
   }),
 };

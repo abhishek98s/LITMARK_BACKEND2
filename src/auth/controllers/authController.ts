@@ -58,7 +58,7 @@ export const registerHandler = async (req: Request, res: Response) => {
   if (!validator.isEmail(email)) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      authExceptionMessages.INVALID_EMAIL,
+      authExceptionMessages.EMAIL_INVALID,
     );
   }
 
@@ -72,7 +72,7 @@ export const registerHandler = async (req: Request, res: Response) => {
   ) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      authExceptionMessages.PASS_VALIDATION,
+      authExceptionMessages.PASSWORD_INVALID,
     );
   }
 
@@ -105,5 +105,9 @@ export const registerHandler = async (req: Request, res: Response) => {
     updated_by: username,
   });
 
-  res.json({ data: savedUser });
+  res.json({
+    success: true,
+    data: savedUser,
+    message: authSuccessMessages.REGISTER_SUCCESS,
+  });
 };

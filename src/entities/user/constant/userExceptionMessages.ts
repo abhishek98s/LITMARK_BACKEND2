@@ -6,8 +6,8 @@ export const userExceptionMessages = {
   PASS_VALIDATION:
     'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number.',
   USER_NOT_FOUND: 'User does not exist.',
-  UPDATE_FAILED: 'Failed to update user',
-  CREATE_FAILED: 'Failed to create user',
-  DELETE_FAILED: 'Failed to delete user',
-  EMAIL_EXITS: 'Email already exists',
+  UPDATE_FAILED: 'Failed to update user.',
+  CREATE_FAILED: 'Failed to create user.',
+  DELETE_FAILED: 'Failed to delete user.',
+  EMAIL_EXITS: 'Email already exists.',
 };
