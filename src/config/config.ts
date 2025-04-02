@@ -25,14 +25,22 @@ function getActiveDatabase(db: string) {
   }
 
   if (db === 'pg') {
+    const devlopment = {
+      connectionString: process.env.POSTGRES_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    };
+    const test = {
+      host: process.env.TEST_HOST,
+      database: process.env.TEST_DATABASE,
+      user: process.env.TEST_USER,
+      password: process.env.TEST_PASSWORD,
+      port: process.env.TEST_PORT,
+    };
     return {
       client: db,
-      connection: {
-        connectionString: process.env.POSTGRES_URL,
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      },
+      connection: process.env.NODE_ENV === 'test' ? test : devlopment,
       migrations: {
         directory: `${__dirname}/../migrations`,
       },
