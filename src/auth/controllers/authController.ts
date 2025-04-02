@@ -29,7 +29,7 @@ export const loginHandler = async (req: Request, res: Response) => {
   if (!passordMatched) {
     throw new customHttpError(
       StatusCodes.UNAUTHORIZED,
-      authExceptionMessages.INVALID_ID_CREDENTIALS,
+      authExceptionMessages.INVALID_CREDENTIALS,
     );
   }
 

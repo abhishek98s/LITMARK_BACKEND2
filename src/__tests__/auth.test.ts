@@ -4,6 +4,9 @@ import app from '../app';
 
 import * as UserServices from '../entities/user/user.service';
 import { UsersSeed } from '../seeds/users.seed';
+import { authExceptionMessages } from '../auth/constant/authExceptionMessages';
+import { authSuccessMessages } from '../auth/constant/authSuccessMessages';
+import { userExceptionMessages } from '../entities/user/constant/userExceptionMessages';
 
 const api = supertest(app);
 
@@ -21,7 +24,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Email is required.');
+      expect(response.body.message).toBe(authExceptionMessages.EMAIL_REQUIRED);
     });
 
     it('should return 400 check for missing email', async () => {
@@ -33,7 +36,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Email is required.');
+      expect(response.body.message).toBe(authExceptionMessages.EMAIL_REQUIRED);
     });
 
     it('should return 400 check for email is string', async () => {
@@ -45,7 +48,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Email must be string.');
+      expect(response.body.message).toBe(authExceptionMessages.EMAIL_STRING);
     });
 
     it('should return 400 check for invalid email', async () => {
@@ -57,9 +60,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe(
-        'Email must be a valid email address.',
-      );
+      expect(response.body.message).toBe(authExceptionMessages.EMAIL_INVALID);
     });
 
     it('should return 400 check for missing password', async () => {
@@ -71,7 +72,9 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Password is required.');
+      expect(response.body.message).toBe(
+        authExceptionMessages.PASSWORD_REQUIRED,
+      );
     });
 
     it('should return 400 check for string', async () => {
@@ -84,7 +87,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Password must be a string.');
+      expect(response.body.message).toBe(authExceptionMessages.PASSWORD_STRING);
     });
 
     it('should return 401 check for non existent user', async () => {
@@ -97,7 +100,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(401);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('User doesn\'t exist');
+      expect(response.body.message).toBe(authExceptionMessages.USER_NOT_FOUND);
     });
 
     it('should return 400 for extra property', async () => {
@@ -111,13 +114,13 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Extra properties are not allowed.');
+      expect(response.body.message).toBe(authExceptionMessages.EXTRA_PROPERTY);
     });
 
     describe('When user exits', () => {
       beforeAll(async () => {
         try {
-          const { username, email, password } = UsersSeed[1];
+          const { username, email, password } = UsersSeed[0];
           const user = {
             username,
             email,
@@ -130,7 +133,11 @@ describe('Authentication', () => {
           };
           await UserServices.addUser({ ...user });
         } catch (err) {
-          console.log((err as Error).message);
+          const msg = (err as Error).message;
+
+          if (msg !== userExceptionMessages.USER_NOT_FOUND) {
+            console.log(msg);
+          }
         }
       });
 
@@ -144,7 +151,9 @@ describe('Authentication', () => {
           .set('Accept', 'application/json');
         expect(response.status).toBe(401);
         expect(response.body.success).toBe(false);
-        expect(response.body.message).toBe('Invalid credentials.');
+        expect(response.body.message).toBe(
+          authExceptionMessages.INVALID_CREDENTIALS,
+        );
       });
 
       it('should return 200 check for valid credentials', async () => {
@@ -157,7 +166,7 @@ describe('Authentication', () => {
           .set('Accept', 'application/json');
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe('Login Successful.');
+        expect(response.body.message).toBe(authSuccessMessages.LOGIN_SUCCESS);
       });
     });
   });
@@ -170,7 +179,9 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Username is required.');
+      expect(response.body.message).toBe(
+        authExceptionMessages.USERNAME_REQUIRED,
+      );
     });
 
     it('should return 400 for empty username', async () => {
@@ -180,7 +191,9 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Username is required.');
+      expect(response.body.message).toBe(
+        authExceptionMessages.USERNAME_REQUIRED,
+      );
     });
 
     it('should return 400 for username must be a string', async () => {
@@ -194,7 +207,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Username must be string.');
+      expect(response.body.message).toBe(authExceptionMessages.USERNAME_STRING);
     });
 
     it('should return 400 for missing password', async () => {
@@ -204,7 +217,9 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Password is required.');
+      expect(response.body.message).toBe(
+        authExceptionMessages.PASSWORD_REQUIRED,
+      );
     });
 
     it('should return 400 for empty password', async () => {
@@ -214,7 +229,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Password cannot be empty.');
+      expect(response.body.message).toBe(authExceptionMessages.PASSWORD_EMPTY);
     });
 
     it('should return 400 for password must be 8 characters long', async () => {
@@ -228,9 +243,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe(
-        'Password must be at least 8 characters long.',
-      );
+      expect(response.body.message).toBe(authExceptionMessages.PASSWORD_SHORT);
     });
 
     it('should return 400 for password must be a string', async () => {
@@ -244,7 +257,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Password must be a string.');
+      expect(response.body.message).toBe(authExceptionMessages.PASSWORD_STRING);
     });
 
     it('should return 400 for invalid password', async () => {
@@ -258,9 +271,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe(
-        'Password must be at least 8 characters long.',
-      );
+      expect(response.body.message).toBe(authExceptionMessages.PASSWORD_SHORT);
     });
 
     it('should return 400 for missing email', async () => {
@@ -270,7 +281,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Email is required.');
+      expect(response.body.message).toBe(authExceptionMessages.EMAIL_REQUIRED);
     });
 
     it('should return 400 for empty email', async () => {
@@ -280,7 +291,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Email cannot be empty.');
+      expect(response.body.message).toBe(authExceptionMessages.EMAIL_EMPTY);
     });
 
     it('should return 400 for invalid email', async () => {
@@ -294,9 +305,7 @@ describe('Authentication', () => {
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe(
-        'Email must be a valid email address.',
-      );
+      expect(response.body.message).toBe(authExceptionMessages.EMAIL_INVALID);
     });
 
     describe('When user exits', () => {
@@ -331,7 +340,7 @@ describe('Authentication', () => {
           .set('Accept', 'application/json');
         expect(response.status).toBe(409);
         expect(response.body.success).toBe(false);
-        expect(response.body.message).toBe('Email already exists.');
+        expect(response.body.message).toBe(userExceptionMessages.EMAIL_EXITS);
       });
 
       it('should return 200 for successful operation', async () => {
@@ -345,7 +354,9 @@ describe('Authentication', () => {
           .set('Accept', 'application/json');
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe('Registration Successful.');
+        expect(response.body.message).toBe(
+          authSuccessMessages.REGISTER_SUCCESS,
+        );
       });
     });
   });

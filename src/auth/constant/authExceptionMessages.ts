@@ -1,6 +1,6 @@
 export const authExceptionMessages = {
   EMAIL_PASS_REQUIRED: 'Email or password is required.',
-  INVALID_ID_CREDENTIALS: 'Invalid credentials.',
+  INVALID_CREDENTIALS: 'Invalid credentials.',
   USER_CREDENTIALS: 'Username, email, and password are required.',
   USER_NOT_FOUND: 'User doesn\'t exist.',
   EXTRA_PROPERTY:'Extra properties are not allowed.',
