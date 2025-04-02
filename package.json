@@ -13,7 +13,7 @@
     "migrate:latest": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:latest",
     "migrate:rollback": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:rollback",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles",
-    "migrate:test": "cross-env NODE_ENV=test ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:latest"
+    "migrate:test": "cross-env NODE_ENV=test npm run migrate:latest"
   },
   "author": "Adira",
   "license": "ISC",
