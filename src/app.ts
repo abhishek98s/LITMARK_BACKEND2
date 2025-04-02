@@ -31,7 +31,9 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/s', (request, response) => {
+swagger(app);
+
+app.get('/', (request, response) => {
   response.send('Hello world');
 });
 
@@ -41,8 +43,6 @@ app.use('/api/user', userRoutes);
 app.use('/api/chip', chipRoutes);
 app.use('/api/folder', folderRoutes);
 app.use('/api/bookmark', bookmarkRoutes);
-
-swagger(app);
 
 app.use(customErrorHandler);
 app.use(notFoundHandler);

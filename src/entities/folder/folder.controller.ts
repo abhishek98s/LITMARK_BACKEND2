@@ -30,7 +30,7 @@ const isImage = async (username: string) => {
         name: imageName,
         isdeleted: false,
       },
-      username,
+      username
     );
     return image.id!;
   }
@@ -48,7 +48,7 @@ const isImage = async (username: string) => {
  */
 export const getAllTopFolders = async (req: Request, res: Response) => {
   const result: FolderModel[] = await findAllFolders(req.body.user.id);
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -64,9 +64,9 @@ export const getAllnestedFolders = async (req: Request, res: Response) => {
   const parentFolderId: number = parseInt(req.params.id);
   const result: FolderModel[] = await findAllNestedFolders(
     req.body.user.id,
-    parentFolderId,
+    parentFolderId
   );
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -85,7 +85,7 @@ export const postFolders = async (req: Request, res: Response) => {
   if (!name) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      folderExceptionMessages.NAME_REQUIRED,
+      folderExceptionMessages.NAME_REQUIRED
     );
   }
 
@@ -100,7 +100,7 @@ export const postFolders = async (req: Request, res: Response) => {
         name: req.file.filename,
         isdeleted: false,
       },
-      user.username,
+      user.username
     );
 
     req.body.image_id = image.id;
@@ -118,7 +118,7 @@ export const postFolders = async (req: Request, res: Response) => {
 
   const result = await addFolders(folderData);
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -136,7 +136,7 @@ export const patchFolders = async (req: Request, res: Response) => {
   if (!folderId)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      folderExceptionMessages.INVALID_ID,
+      folderExceptionMessages.INVALID_ID
     );
 
   const { name, user } = req.body;
@@ -144,7 +144,7 @@ export const patchFolders = async (req: Request, res: Response) => {
   if (!name) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      folderExceptionMessages.NAME_REQUIRED,
+      folderExceptionMessages.NAME_REQUIRED
     );
   }
 
@@ -159,7 +159,7 @@ export const patchFolders = async (req: Request, res: Response) => {
         name: req.file.filename,
         isdeleted: false,
       },
-      user.username,
+      user.username
     );
 
     req.body.image_id = image.id;
@@ -179,7 +179,7 @@ export const patchFolders = async (req: Request, res: Response) => {
 
   const result = await updateFolder(folderData, folderId);
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -197,12 +197,14 @@ export const deleteFolders = async (req: Request, res: Response) => {
   if (!folderId)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      folderExceptionMessages.INVALID_ID,
+      folderExceptionMessages.INVALID_ID
     );
 
   await removeFolder(folderId);
 
-  res.status(StatusCodes.OK).json({ status: true, data: 'Folder deleted sucessfully' });
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, data: 'Folder deleted sucessfully' });
 };
 
 /**
@@ -236,9 +238,9 @@ export const getSortedFolders = async (req: Request, res: Response) => {
     default:
       new customHttpError(
         StatusCodes.BAD_REQUEST,
-        folderExceptionMessages.INVALID_DATA,
+        folderExceptionMessages.INVALID_DATA
       );
       break;
   }
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };

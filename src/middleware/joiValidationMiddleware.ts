@@ -12,9 +12,7 @@ const joiValidationMiddleware = (schema: Schema) => {
     } else {
       const { details } = error;
       const message = details.map((i) => i.message).join(',');
-      res
-        .status(StatusCodes.UNPROCESSABLE_ENTITY)
-        .json({ status: false, message });
+      res.status(StatusCodes.BAD_REQUEST).json({ success: false, message });
     }
   };
 };

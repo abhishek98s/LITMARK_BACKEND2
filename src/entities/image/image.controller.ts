@@ -26,7 +26,7 @@ export const isValidType = ({ type }: ImageModel) => {
   if (!isNameValid)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      imageExceptionMessages.INVALID_TYPE,
+      imageExceptionMessages.INVALID_TYPE
     );
   return true;
 };
@@ -47,7 +47,7 @@ export const uploadImage = async (imgPath: string) => {
   if (!imgUrl)
     throw new customHttpError(
       StatusCodes.CONFLICT,
-      imageExceptionMessages.UPLOAD_FAILED,
+      imageExceptionMessages.UPLOAD_FAILED
     );
 
   return imgUrl;
@@ -69,7 +69,7 @@ export const validateImageType = (fileName: string) => {
   if (!isValidType)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      imageExceptionMessages.INVALID_IMAGE_TYPE,
+      imageExceptionMessages.INVALID_IMAGE_TYPE
     );
   return;
 };
@@ -92,12 +92,12 @@ export const getImage = async (req: Request, res: Response) => {
   if (!imageId)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      imageExceptionMessages.INVALID_ID,
+      imageExceptionMessages.INVALID_ID
     );
 
   const result = await findImage(imageId);
 
-  return res.status(StatusCodes.OK).json({ status: true, data: result });
+  return res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -115,7 +115,7 @@ export const postImage = async (req: Request, res: Response) => {
   if (!req.file) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      imageExceptionMessages.FILE_REQUIRED,
+      imageExceptionMessages.FILE_REQUIRED
     );
   }
   const imgPath = req.file!.path;
@@ -128,7 +128,7 @@ export const postImage = async (req: Request, res: Response) => {
   if (!type)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      imageExceptionMessages.TYPE_REQUIRED,
+      imageExceptionMessages.TYPE_REQUIRED
     );
 
   isValidType(req.body);
@@ -136,10 +136,10 @@ export const postImage = async (req: Request, res: Response) => {
 
   const result = await saveImage(
     { type, url, name, isdeleted: false },
-    user.username,
+    user.username
   );
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -161,7 +161,7 @@ export const patchImage = async (req: Request, res: Response) => {
   if (!name)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      imageExceptionMessages.NAME_REQUIRED,
+      imageExceptionMessages.NAME_REQUIRED
     );
 
   const currentImage = await findImage(imageId);
@@ -179,10 +179,10 @@ export const patchImage = async (req: Request, res: Response) => {
       updated_by: user.username,
       url: req.file ? req.body.url : currentImage.url,
     },
-    imageId,
+    imageId
   );
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -201,10 +201,10 @@ export const deleteImage = async (req: Request, res: Response) => {
   if (!imageId)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      imageExceptionMessages.INVALID_ID,
+      imageExceptionMessages.INVALID_ID
     );
 
   const result = await removeImage(imageId);
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
