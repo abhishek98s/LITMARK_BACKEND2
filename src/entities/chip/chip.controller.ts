@@ -25,7 +25,7 @@ import { StatusCodes } from 'http-status-codes';
 export const getAllChips = async (req: Request, res: Response) => {
   const result: ChipModel[] = await findAllChips(req.body.user.id);
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -46,7 +46,7 @@ export const postChip = async (req: Request, res: Response) => {
   if (!name || !folder_id) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      chipExceptionMessages.Folder_NAME_REQUIRED,
+      chipExceptionMessages.Folder_NAME_REQUIRED
     );
   }
 
@@ -59,7 +59,7 @@ export const postChip = async (req: Request, res: Response) => {
     updated_by: user.username,
   });
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -78,7 +78,7 @@ export const patchChip = async (req: Request, res: Response) => {
   if (!chipId)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      chipExceptionMessages.INVALID_ID,
+      chipExceptionMessages.INVALID_ID
     );
 
   const { name, user } = req.body;
@@ -86,7 +86,7 @@ export const patchChip = async (req: Request, res: Response) => {
   if (!name) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      chipExceptionMessages.NAME_REQUIRED,
+      chipExceptionMessages.NAME_REQUIRED
     );
   }
 
@@ -95,16 +95,16 @@ export const patchChip = async (req: Request, res: Response) => {
   if (!currentChip) {
     throw new customHttpError(
       StatusCodes.NOT_FOUND,
-      chipExceptionMessages.CHIP_NOTFOUND,
+      chipExceptionMessages.CHIP_NOTFOUND
     );
   }
 
   const result = await updateChip(
     { ...currentChip, name, updated_by: user.username },
-    chipId,
+    chipId
   );
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };
 
 /**
@@ -123,7 +123,7 @@ export const deleteChip = async (req: Request, res: Response) => {
   if (!chipId)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      chipExceptionMessages.INVALID_ID,
+      chipExceptionMessages.INVALID_ID
     );
 
   const isChipExist = await findChipById(chipId);
@@ -131,11 +131,11 @@ export const deleteChip = async (req: Request, res: Response) => {
   if (!isChipExist) {
     throw new customHttpError(
       StatusCodes.NOT_FOUND,
-      chipExceptionMessages.CHIP_NOTFOUND,
+      chipExceptionMessages.CHIP_NOTFOUND
     );
   }
 
   const result = await removeChip(chipId);
 
-  res.status(StatusCodes.OK).json({ status: true, data: result });
+  res.status(StatusCodes.OK).json({ success: true, data: result });
 };

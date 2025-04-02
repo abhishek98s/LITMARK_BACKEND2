@@ -30,7 +30,7 @@ export const getUser = async (req: Request, res: Response) => {
 
   const result = await getUserById(userId);
 
-  return res.json({ status: true, data: result });
+  return res.json({ success: true, data: result });
 };
 
 /**
@@ -97,7 +97,7 @@ export const postUser = async (req: Request, res: Response) => {
     updated_by: user.username,
   });
 
-  return res.json({ status: true, message: userSucessMessages.POST_SUCESS });
+  return res.json({ success: true, message: userSucessMessages.POST_SUCESS });
 };
 
 /**
@@ -176,7 +176,7 @@ export const patchUser = async (req: Request, res: Response) => {
     updated_by: user.username,
   });
 
-  return res.json({ status: true, data: result });
+  return res.json({ success: true, data: result });
 };
 
 /**
@@ -201,5 +201,5 @@ export const deleteUser = async (req: Request, res: Response) => {
 
   const result = await removeUser(userId);
 
-  return res.json({ status: true, data: result });
+  return res.json({ success: true, data: result });
 };

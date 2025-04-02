@@ -13,7 +13,7 @@ export const findUserByEmail = async (email: string) => {
     .first();
   if (!user)
     throw new customHttpError(
-      StatusCodes.NOT_FOUND,
+      StatusCodes.UNAUTHORIZED,
       authExceptionMessages.USER_NOT_FOUND,
     );
 

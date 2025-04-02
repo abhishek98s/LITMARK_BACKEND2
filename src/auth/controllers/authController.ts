@@ -6,6 +6,7 @@ import { findUserByEmail, register } from '../services/authService';
 import { uploadImage } from '../../entities/image/image.controller';
 import { saveImage } from '../../entities/image/image.service';
 import { authExceptionMessages } from '../constant/authExceptionMessages';
+import { authSuccessMessages } from '../constant/authSuccessMessages';
 import { customHttpError } from '../../utils/customHttpError';
 import { StatusCodes } from 'http-status-codes';
 
@@ -27,7 +28,7 @@ export const loginHandler = async (req: Request, res: Response) => {
 
   if (!passordMatched) {
     throw new customHttpError(
-      StatusCodes.BAD_REQUEST,
+      StatusCodes.UNAUTHORIZED,
       authExceptionMessages.INVALID_ID_CREDENTIALS,
     );
   }
@@ -37,7 +38,11 @@ export const loginHandler = async (req: Request, res: Response) => {
     process.env.JWT_TOKEN as string,
   );
 
-  res.status(StatusCodes.OK).json({ data: token });
+  res.status(StatusCodes.OK).json({
+    success: true,
+    data: token,
+    message: authSuccessMessages.LOGIN_SUCCESS,
+  });
 };
 
 export const registerHandler = async (req: Request, res: Response) => {
