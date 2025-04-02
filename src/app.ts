@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
 import bodyParser from 'body-parser';
-// import pathToSwaggerUi from 'swagger-ui-dist';
+import pathToSwaggerUi from 'swagger-ui-dist';
 
 import { swagger } from './swagger/swagger';
 
@@ -25,7 +25,7 @@ app.use(
   }),
 );
 
-// app.use(express.static(pathToSwaggerUi.absolutePath()));
+app.use(express.static(pathToSwaggerUi.absolutePath()));
 
 app.use(express.json());
 app.use(bodyParser.json());
