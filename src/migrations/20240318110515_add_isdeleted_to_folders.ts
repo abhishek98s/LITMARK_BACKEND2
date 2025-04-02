@@ -7,7 +7,11 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-  return knex.schema.table('folders', function (table) {
-    table.dropColumn('isdeleted');
-  });
+  const exits = await knex.schema.hasTable('folders');
+
+  if (exits) {
+    return knex.schema.table('folders', function (table) {
+      table.dropColumn('isdeleted');
+    });
+  }
 }

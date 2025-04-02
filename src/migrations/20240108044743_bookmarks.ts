@@ -1,7 +1,7 @@
 import type { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
-  return knex.schema.createTable('bookmarks', (table) => {
+  return knex.schema.createTableIfNotExists('bookmarks', (table) => {
     table.increments('id').primary();
     table.string('title').notNullable();
     table.string('url').notNullable();
