@@ -128,20 +128,6 @@ export const patchUser = async (req: Request, res: Response) => {
     );
   }
 
-  if (
-    !validator.isStrongPassword(password, {
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-    })
-  ) {
-    throw new customHttpError(
-      StatusCodes.BAD_REQUEST,
-      userExceptionMessages.PASS_VALIDATION,
-    );
-  }
-
   const currentUser = await getUserById(userId);
 
   if (!currentUser) {
