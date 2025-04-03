@@ -9,6 +9,12 @@ const api = supertest(app);
 
 describe('User Entitity', () => {
   const { username, email, password } = UsersSeed[0];
+  const {
+    username: username2,
+    email: email2,
+    password: password2,
+  } = UsersSeed[1];
+
   let token: string;
 
   beforeAll(async () => {
@@ -20,6 +26,13 @@ describe('User Entitity', () => {
       email,
       password,
     });
+
+    await api.post('/api/auth/register').send({
+      username2,
+      email2,
+      password2,
+    });
+
     const response = await api.post('/api/auth/login').send({
       email,
       password,
@@ -247,7 +260,57 @@ describe('User Entitity', () => {
       });
     });
   });
-  describe('DELETE /api/user/:id', () => {});
+
+  describe('DELETE /api/user/:id', () => {
+    it('should return 401 for token not sent', async () => {
+      const response = await api.delete('/api/user/1');
+      expect(response.status).toBe(401);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe(authExceptionMessages.ACCESS_DENIED);
+    });
+
+    it('should return 401 for token not valid', async () => {
+      const response = await api
+        .delete('/api/user/1')
+        .set('Authorization', 'Bearer invalid_token');
+      expect(response.status).toBe(403);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toBe(authExceptionMessages.TOKEN_INVALID);
+    });
+
+    describe('User is authenticated', () => {
+      it('should return 400 for invalid ID', async () => {
+        const response = await api
+          .delete('/api/user/invalid_id') // Invalid ID format
+          .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(400);
+        expect(response.body.success).toBe(false);
+        expect(response.body.message).toBe(userExceptionMessages.INVALID_ID);
+      });
+
+      it('should return 404 for ID not given', async () => {
+        const response = await api
+          .delete('/api/user/') // No ID provided
+          .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(404);
+        expect(response.body.success).toBe(false);
+        expect(response.body.message).toBe(
+          authExceptionMessages.ROUTE_NOT_EXISTS,
+        );
+      });
+
+      it('should return 404 for user not found', async () => {
+        const response = await api
+          .delete('/api/user/9999')
+          .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(404);
+        expect(response.body.success).toBe(false);
+        expect(response.body.message).toBe(
+          userExceptionMessages.USER_NOT_FOUND,
+        );
+      });
+    });
+  });
   describe('POST /api/user', () => {});
 
   afterAll(async () => {

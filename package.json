@@ -5,15 +5,17 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "npx kill-port 3000 5000 9000 && npx nodemon",
-    "dev": "node build/index.js",
+    "dev": "cross-env NODE_ENV=test node build/index.js",
     "build": "rimraf ./build && tsc",
     "start": "nodemon src/index.ts",
     "knex": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts",
     "migrate:make": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:make",
     "migrate:latest": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:latest",
     "migrate:rollback": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:rollback",
-    "test": "cross-env NODE_ENV=test jest --detectOpenHandles",
-    "migrate:test": "cross-env NODE_ENV=test npm run migrate:latest"
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles --verbose",
+    "start:test": "cross-env NODE_ENV=test node build/index.js",
+    "latest:test": "cross-env NODE_ENV=test npm run migrate:latest",
+    "rollback:test": "cross-env NODE_ENV=test npm run migrate:latest"
   },
   "author": "Adira",
   "license": "ISC",
