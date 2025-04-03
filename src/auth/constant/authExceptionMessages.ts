@@ -3,7 +3,7 @@ export const authExceptionMessages = {
   INVALID_CREDENTIALS: 'Invalid credentials.',
   USER_CREDENTIALS: 'Username, email, and password are required.',
   USER_NOT_FOUND: 'User doesn\'t exist.',
-  EXTRA_PROPERTY:'Extra properties are not allowed.',
+  EXTRA_PROPERTY: 'Extra properties are not allowed.',
 
   EMAIL_STRING: 'Email must be a string.',
   EMAIL_INVALID: 'Email must be a valid email address.',
@@ -20,4 +20,8 @@ export const authExceptionMessages = {
   USERNAME_STRING: 'Username must be a string.',
   USERNAME_REQUIRED: 'Username is required.',
   USERNAME_EMPTY: 'Username cannot be empty.',
+
+  TOKEN_INVALID: 'Unauthorized.',
+  ACCESS_DENIED: 'Access Denied.',
+  ROUTE_NOT_EXISTS: 'Route does not exist.',
 };
