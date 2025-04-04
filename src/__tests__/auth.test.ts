@@ -14,6 +14,7 @@ describe('Authentication', () => {
   beforeAll(async () => {
     await knex.migrate.rollback();
     await knex.migrate.latest();
+    await knex.seed.run({ directory: 'src/seeds' });
   });
 
   describe('POST /api/auth/login', () => {
