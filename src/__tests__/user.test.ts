@@ -2,14 +2,14 @@ import supertest from 'supertest';
 import knex from '../config/knex.config';
 import app from '../app';
 import { authExceptionMessages } from '../auth/constant/authExceptionMessages';
-import { UsersSeed } from '../seeds/users.seed';
+import { UserSeed } from '../seeds/2_users';
 import { userExceptionMessages } from '../entities/user/constant/userExceptionMessages';
 import { userSucessMessages } from '../entities/user/constant/userSucessMessages';
 
 const api = supertest(app);
 
 describe('User Entitity', () => {
-  const { username, email, password } = UsersSeed[0];
+  const { username, email, password } = UserSeed[0];
 
   let token: string;
 
@@ -17,7 +17,7 @@ describe('User Entitity', () => {
     await knex.migrate.rollback();
     await knex.migrate.latest();
 
-    const userPromises = UsersSeed.map(async (user) => {
+    const userPromises = UserSeed.map(async (user) => {
       const { username, email, password } = user;
       return api.post('/api/auth/register').send({
         username,
