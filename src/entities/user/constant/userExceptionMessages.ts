@@ -10,4 +10,9 @@ export const userExceptionMessages = {
   CREATE_FAILED: 'Failed to create user.',
   DELETE_FAILED: 'Failed to delete user.',
   EMAIL_EXITS: 'Email already exists.',
+
+  IMAGE_ID_NUMBER: 'Image id must be a number.',
+
+  ROLE_STRING: 'Role must be a string.',
+  ROLE_VALID: 'Role must be either "normal" or "admin".',
 };
