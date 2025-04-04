@@ -7,6 +7,11 @@ export const knexConfig = {
     directory: '../migrations',
     extensions: ['ts'],
   },
+  seeds: {
+    tableName: 'seeds',
+    directory: '../seeds',
+    extensions: ['ts'],
+  },
 };
 
 module.exports = knexConfig;

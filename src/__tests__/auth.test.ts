@@ -3,7 +3,7 @@ import knex from '../config/knex.config';
 import app from '../app';
 
 import * as UserServices from '../entities/user/user.service';
-import { UsersSeed } from '../seeds/users.seed';
+import { UserSeed } from '../seeds/2_users';
 import { authExceptionMessages } from '../auth/constant/authExceptionMessages';
 import { authSuccessMessages } from '../auth/constant/authSuccessMessages';
 import { userExceptionMessages } from '../entities/user/constant/userExceptionMessages';
@@ -118,7 +118,7 @@ describe('Authentication', () => {
     });
 
     describe('When user exits', () => {
-      const { username, email, password } = UsersSeed[1];
+      const { username, email, password } = UserSeed[1];
       beforeAll(async () => {
         try {
           const user = {
@@ -309,7 +309,7 @@ describe('Authentication', () => {
     });
 
     describe('When user exits', () => {
-      const { username, email, password } = UsersSeed[0];
+      const { username, email, password } = UserSeed[0];
 
       beforeAll(async () => {
         try {

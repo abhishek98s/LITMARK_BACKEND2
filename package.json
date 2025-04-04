@@ -15,7 +15,9 @@
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles --verbose",
     "start:test": "cross-env NODE_ENV=test node build/index.js",
     "latest:test": "cross-env NODE_ENV=test npm run migrate:latest",
-    "rollback:test": "cross-env NODE_ENV=test npm run migrate:latest"
+    "rollback:test": "cross-env NODE_ENV=test npm run migrate:rollback",
+    "seed:test": "cross-env NODE_ENV=test npm run knex seed:run",
+    "reset:test": "npm run rollback:test && npm run latest:test && npm run seed:test"
   },
   "author": "Adira",
   "license": "ISC",
