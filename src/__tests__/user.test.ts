@@ -8,6 +8,8 @@ import { userSucessMessages } from '../entities/user/constant/userSucessMessages
 
 const api = supertest(app);
 
+export type SupertestAPI = typeof api;
+
 describe('User Entitity', () => {
   const { username, email, password } = UserSeed[0];
 
@@ -16,6 +18,7 @@ describe('User Entitity', () => {
   beforeAll(async () => {
     await knex.migrate.rollback();
     await knex.migrate.latest();
+    await knex.seed.run({ directory: 'src/seeds' });
 
     const userPromises = UserSeed.map(async (user) => {
       const { username, email, password } = user;
@@ -59,7 +62,6 @@ describe('User Entitity', () => {
         const response = await api
           .get(`/api/user/${invalidUserId}`)
           .set('Authorization', `Bearer ${token}`);
-
         expect(response.status).toBe(400);
         expect(response.body.message).toBe(userExceptionMessages.INVALID_ID);
       });
