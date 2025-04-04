@@ -118,9 +118,9 @@ describe('Authentication', () => {
     });
 
     describe('When user exits', () => {
+      const { username, email, password } = UsersSeed[1];
       beforeAll(async () => {
         try {
-          const { username, email, password } = UsersSeed[0];
           const user = {
             username,
             email,
@@ -135,7 +135,7 @@ describe('Authentication', () => {
         } catch (err) {
           const msg = (err as Error).message;
 
-          if (msg !== userExceptionMessages.USER_NOT_FOUND) {
+          if (msg !== userExceptionMessages.EMAIL_EXITS) {
             console.log(msg);
           }
         }
@@ -145,7 +145,7 @@ describe('Authentication', () => {
         const response = await api
           .post('/api/auth/login')
           .send({
-            email: 'jhon@example.com',
+            email,
             password: 'password',
           })
           .set('Accept', 'application/json');
@@ -160,8 +160,8 @@ describe('Authentication', () => {
         const response = await api
           .post('/api/auth/login')
           .send({
-            email: 'jhon@example.com',
-            password: 'John123!',
+            email,
+            password,
           })
           .set('Accept', 'application/json');
         expect(response.status).toBe(200);
@@ -363,6 +363,5 @@ describe('Authentication', () => {
 
   afterAll(async () => {
     await knex.migrate.rollback();
-    await knex.destroy();
   });
 });
