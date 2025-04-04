@@ -162,7 +162,11 @@ export const patchUser = async (req: Request, res: Response) => {
     updated_by: user.username,
   });
 
-  return res.json({ success: true, data: result });
+  return res.json({
+    success: true,
+    data: result,
+    message: userSucessMessages.PATCH_SUCCESS,
+  });
 };
 
 /**
@@ -187,5 +191,9 @@ export const deleteUser = async (req: Request, res: Response) => {
 
   const result = await removeUser(userId);
 
-  return res.json({ success: true, data: result });
+  return res.json({
+    success: true,
+    data: result,
+    message: userSucessMessages.DELETE_SUCCESS,
+  });
 };
