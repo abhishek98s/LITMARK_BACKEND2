@@ -20,17 +20,6 @@ describe('User Entitity', () => {
     await knex.migrate.latest();
     await knex.seed.run({ directory: 'src/seeds' });
 
-    const userPromises = UserSeed.map(async (user) => {
-      const { username, email, password } = user;
-      return api.post('/api/auth/register').send({
-        username,
-        email,
-        password,
-      });
-    });
-
-    await Promise.all(userPromises);
-
     const response = await api.post('/api/auth/login').send({
       email,
       password,
