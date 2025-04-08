@@ -1,8 +1,16 @@
 import { Request, Response } from 'express';
 
-import { addChip, findAllChips, findChipById, removeChip, updateChip } from './chip.service';
+import {
+  addChip,
+  findAllChips,
+  findChipById,
+  removeChip,
+  updateChip,
+} from './chip.service';
 import { ChipModel } from './chip.model';
 import { chipExceptionMessages } from './constant/chipExceptionMessages';
+import { customHttpError } from '../../utils/customHttpError';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * The function `getAllChips` is an asynchronous function that retrieves all chips and sends the result
@@ -15,14 +23,10 @@ import { chipExceptionMessages } from './constant/chipExceptionMessages';
  * code, headers, and send the response body.
  */
 export const getAllChips = async (req: Request, res: Response) => {
-    try {
-        const result: ChipModel[] = await findAllChips(req.body.user.id);
+  const result: ChipModel[] = await findAllChips(req.body.user.id);
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * The `postChip` function is an asynchronous function that handles the creation of a new chip by
@@ -37,28 +41,26 @@ export const getAllChips = async (req: Request, res: Response) => {
  * response
  */
 export const postChip = async (req: Request, res: Response) => {
-    try {
-        const { name, folder_id, user } = req.body;
+  const { name, folder_id, user } = req.body;
 
-        if (!name|| !folder_id) {
-            throw new Error(chipExceptionMessages.Folder_NAME_REQUIRED)
-        }
+  if (!name || !folder_id) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      chipExceptionMessages.Folder_NAME_REQUIRED
+    );
+  }
 
-        const result: ChipModel = await addChip({
-            name,
-            user_id: user.id,
-            folder_id,
-            isdeleted: false,
-            created_by: user.username,
-            updated_by: user.username,
-        })
+  const result: ChipModel = await addChip({
+    name,
+    user_id: user.id,
+    folder_id,
+    isdeleted: false,
+    created_by: user.username,
+    updated_by: user.username,
+  });
 
-        res.status(200).json({ data: result });
-    }
-    catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * The function `patchChip` is an asynchronous function that handles a PATCH request to update a chip's
@@ -72,30 +74,38 @@ export const postChip = async (req: Request, res: Response) => {
  * response with
  */
 export const patchChip = async (req: Request, res: Response) => {
-    try {
-        const chipId: number = parseFloat(req.params.id);
-        if (!chipId) throw new Error(chipExceptionMessages.INVALID_ID)
+  const chipId: number = parseFloat(req.params.id);
+  if (!chipId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      chipExceptionMessages.INVALID_ID
+    );
 
-        const { name, user } = req.body;
+  const { name, user } = req.body;
 
-        if (!name) {
-            throw new Error(chipExceptionMessages.HAME_REQUIRED)
-        }
+  if (!name) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      chipExceptionMessages.NAME_REQUIRED
+    );
+  }
 
-        const currentChip = await findChipById(chipId);
+  const currentChip = await findChipById(chipId);
 
-        if (!currentChip) {
-            throw new Error(chipExceptionMessages.CHIP_NOTFOUND)
-        }
+  if (!currentChip) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      chipExceptionMessages.CHIP_NOTFOUND
+    );
+  }
 
-        const result = await updateChip({ ...currentChip, name, updated_by: user.username }, chipId)
+  const result = await updateChip(
+    { ...currentChip, name, updated_by: user.username },
+    chipId
+  );
 
-        res.status(200).json({ data: result })
-    }
-    catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * The `deleteChip` function is an asynchronous function that handles the deletion of a chip by its ID,
@@ -109,21 +119,23 @@ export const patchChip = async (req: Request, res: Response) => {
  * status code of
  */
 export const deleteChip = async (req: Request, res: Response) => {
-    try {
-        const chipId: number = parseFloat(req.params.id);
-        if (!chipId) throw new Error('Invalid chip id')
+  const chipId: number = parseFloat(req.params.id);
+  if (!chipId)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      chipExceptionMessages.INVALID_ID
+    );
 
-        const isChipExist = await findChipById(chipId);
+  const isChipExist = await findChipById(chipId);
 
-        if (!isChipExist) {
-            throw new Error(chipExceptionMessages.CHIP_NOTFOUND)
-        }
+  if (!isChipExist) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      chipExceptionMessages.CHIP_NOTFOUND
+    );
+  }
 
-        const result = await removeChip(chipId);
+  const result = await removeChip(chipId);
 
-        res.status(200).json({ data: result })
-    }
-    catch (error) {
-        res.status(500).json({ msg: (error as Error).message });
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};

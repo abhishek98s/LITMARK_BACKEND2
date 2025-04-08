@@ -1,12 +1,17 @@
-import {config} from './config';
+import { config } from './config';
 
 export const knexConfig = {
-    ...config.database,
-    migrations: {
-        tableName: 'migrations',
-        directory: '../migrations',
-        extensions: ['ts'],
-    },
-}
+  ...config.database,
+  migrations: {
+    tableName: 'migrations',
+    directory: '../migrations',
+    extensions: ['ts'],
+  },
+  seeds: {
+    tableName: 'seeds',
+    directory: '../seeds',
+    extensions: ['ts'],
+  },
+};
 
-module.exports = knexConfig
+module.exports = knexConfig;

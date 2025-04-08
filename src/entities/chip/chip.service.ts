@@ -1,3 +1,5 @@
+import { StatusCodes } from 'http-status-codes';
+import { customHttpError } from '../../utils/customHttpError';
 import { ChipModel } from './chip.model';
 import * as ChipDAO from './chip.repository';
 import { chipExceptionMessages } from './constant/chipExceptionMessages';
@@ -10,12 +12,16 @@ import { chipExceptionMessages } from './constant/chipExceptionMessages';
  * @returns a Promise that resolves to a ChipModel object.
  */
 export const findChipById = async (chipId: number) => {
-    const chip: ChipModel = await ChipDAO.fetchById(chipId);
+  const chip: ChipModel = await ChipDAO.fetchById(chipId);
 
-    if (!chip) throw new Error(chipExceptionMessages.CHIP_NOTFOUND);
+  if (!chip)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      chipExceptionMessages.CHIP_NOTFOUND,
+    );
 
-    return chip;
-}
+  return chip;
+};
 
 /**
  * The function `findAllChips` retrieves all chip models from a database using knex and returns them as
@@ -23,12 +29,9 @@ export const findChipById = async (chipId: number) => {
  * @returns an array of ChipModel objects.
  */
 export const findAllChips = async (user_id: number): Promise<ChipModel[]> => {
-    const chips: ChipModel[] = await ChipDAO.fetchAll(user_id);
-
-    if (!chips) throw new Error(chipExceptionMessages.CHIP_NOT_AVAILABLE);
-
-    return chips;
-}
+  const chips: ChipModel[] = await ChipDAO.fetchAll(user_id);
+  return chips;
+};
 
 /**
  * The function `addChip` inserts a new chip into the database and returns the inserted chip.
@@ -37,14 +40,18 @@ export const findAllChips = async (user_id: number): Promise<ChipModel[]> => {
  * @returns a Promise that resolves to a ChipModel object.
  */
 export const addChip = async (chipData: ChipModel) => {
-    const chip = await ChipDAO.create(chipData);
+  const chip = await ChipDAO.create(chipData);
 
-    if (!chip) throw new Error(chipExceptionMessages.ADD_FAILED);
+  if (!chip)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      chipExceptionMessages.ADD_FAILED,
+    );
 
-    const [chipID] = chip
+  const { chipID } = chip;
 
-    return await findChipById(chipID);
-}
+  return await findChipById(chipID);
+};
 
 /**
  * The function updates a chip record in the database with the provided data and returns the updated
@@ -57,12 +64,16 @@ export const addChip = async (chipData: ChipModel) => {
  * @returns the updated chip data.
  */
 export const updateChip = async (chipData: ChipModel, chipId: number) => {
-    const chip = await ChipDAO.update(chipData, chipId);
+  const chip = await ChipDAO.update(chipData, chipId);
 
-    if (!chip) throw new Error(chipExceptionMessages.UPDATE_FAILED);
+  if (!chip)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      chipExceptionMessages.UPDATE_FAILED,
+    );
 
-    return await findChipById(chipId);
-}
+  return await findChipById(chipId);
+};
 
 /**
  * The function removes a chip from the database based on its ID
@@ -71,11 +82,19 @@ export const updateChip = async (chipData: ChipModel, chipId: number) => {
  * @returns the deleted chip.
  */
 export const removeChip = async (chipId: number) => {
-    const currentChip = await findChipById(chipId);
-    if (!currentChip) throw new Error(chipExceptionMessages.REMOVE_FAILED)
+  const currentChip = await findChipById(chipId);
+  if (!currentChip)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      chipExceptionMessages.REMOVE_FAILED,
+    );
 
-    const chip = await ChipDAO.remove(chipId);
-    if (!chip) throw new Error('Failed to delete chip')
+  const chip = await ChipDAO.remove(chipId);
+  if (!chip)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      chipExceptionMessages.REMOVE_FAILED,
+    );
 
-    return currentChip;
-}
+  return currentChip;
+};

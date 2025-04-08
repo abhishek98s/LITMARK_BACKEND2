@@ -1,6 +1,9 @@
+import { StatusCodes } from 'http-status-codes';
+
+import { customHttpError } from '../../utils/customHttpError';
 import * as ImageDAO from '../image/image.repository';
-import { BookmarkModel } from './bookmark.model'
-import * as BookmarkDAO from './bookmark.repository'
+import { BookmarkModel } from './bookmark.model';
+import * as BookmarkDAO from './bookmark.repository';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
 
 /**
@@ -12,11 +15,15 @@ import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages'
  * @returns a bookmark object with the specified bookmarkId.
  */
 export const findBookmarkById = async (bookmarkId: number) => {
-    const bookmarks: BookmarkModel = await BookmarkDAO.fetchById(bookmarkId)
-    if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND)
+  const bookmarks: BookmarkModel = await BookmarkDAO.fetchById(bookmarkId);
+  if (!bookmarks)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.BOOKMARK_NOT_FOUND,
+    );
 
-    return bookmarks;
-}
+  return bookmarks;
+};
 
 /**
  * The function `findBookmarks` retrieves all bookmarks from a database table and returns them while filtering out
@@ -24,11 +31,10 @@ export const findBookmarkById = async (bookmarkId: number) => {
  * @returns an array of BookmarkModel objects.
  */
 export const findBookmarks = async (user_id: number) => {
-    const bookmarks: BookmarkModel[] = await BookmarkDAO.fetchAll(user_id);
-    if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+  const bookmarks: BookmarkModel[] = await BookmarkDAO.fetchAll(user_id);
 
-    return bookmarks;
-}
+  return bookmarks;
+};
 
 /**
  * This function finds bookmarks by folder ID for a specific user while filtering out
@@ -40,12 +46,17 @@ export const findBookmarks = async (user_id: number) => {
  * @returns The function `findBookmarksByFolderId` returns an array of `BookmarkModel` objects that
  * match the provided `user_id` and `folder_id`.
  */
-export const findBookmarksByFolderId = async (user_id: number, folder_id: number) => {
-    const bookmarks: BookmarkModel[] = await BookmarkDAO.fetchByFolderId(user_id, folder_id);
-    if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
+export const findBookmarksByFolderId = async (
+  user_id: number,
+  folder_id: number,
+) => {
+  const bookmarks: BookmarkModel[] = await BookmarkDAO.fetchByFolderId(
+    user_id,
+    folder_id,
+  );
 
-    return bookmarks;
-}
+  return bookmarks;
+};
 
 /**
  * The function `addBookmark` inserts a bookmark into a database table and returns the inserted
@@ -55,13 +66,17 @@ export const findBookmarksByFolderId = async (user_id: number, folder_id: number
  * @returns the bookmark that was inserted into the 'bookmarks' table.
  */
 export const addBookmark = async (bookmarkData: BookmarkModel) => {
-    const bookmark = await BookmarkDAO.create(bookmarkData);
-    if (!bookmark) throw new Error(bookmarkExceptionMessages.ADD_FAILED);
+  const bookmark = await BookmarkDAO.create(bookmarkData);
+  if (!bookmark)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      bookmarkExceptionMessages.ADD_FAILED,
+    );
 
-    const [bookmarkId] = bookmark;
+  const { bookmarkId } = bookmark;
 
-    return findBookmarkById(bookmarkId)
-}
+  return findBookmarkById(bookmarkId);
+};
 
 /**
  * The function updates a bookmark in the database with the provided data and returns the updated
@@ -73,12 +88,19 @@ export const addBookmark = async (bookmarkData: BookmarkModel) => {
  * needs to be updated.
  * @returns the updated bookmark data.
  */
-export const updateBookmark = async (bookmarkData: BookmarkModel, bookmarkId: number) => {
-    const bookmark = await BookmarkDAO.updateTitle(bookmarkData, bookmarkId)
-    if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
+export const updateBookmark = async (
+  bookmarkData: BookmarkModel,
+  bookmarkId: number,
+) => {
+  const bookmark = await BookmarkDAO.updateTitle(bookmarkData, bookmarkId);
+  if (!bookmark)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      bookmarkExceptionMessages.UPDATE_FAILED,
+    );
 
-    return findBookmarkById(bookmarkId);
-}
+  return findBookmarkById(bookmarkId);
+};
 
 /**
  * The function removes a bookmark from the database based on its ID.
@@ -87,15 +109,24 @@ export const updateBookmark = async (bookmarkData: BookmarkModel, bookmarkId: nu
  * @returns the deleted bookmark.
  */
 export const removeBookmark = async (bookmarkId: number) => {
-    const currentBookmark: BookmarkModel = await BookmarkDAO.fetchById(bookmarkId)
-    if (!currentBookmark) throw new Error(bookmarkExceptionMessages.BOOKMARK_NOT_FOUND);
+  const currentBookmark: BookmarkModel = await BookmarkDAO.fetchById(
+    bookmarkId,
+  );
+  if (!currentBookmark)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.BOOKMARK_NOT_FOUND,
+    );
+  delete currentBookmark.image_url;
 
-    const bookmark = await BookmarkDAO.remove({ ...currentBookmark, isdeleted: true });
-    if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED);
+  await BookmarkDAO.remove({
+    ...currentBookmark,
+    isdeleted: true,
+  });
 
-    ImageDAO.remove(currentBookmark.image_id)
-    return currentBookmark;
-}
+  ImageDAO.remove(currentBookmark.image_id);
+  return currentBookmark;
+};
 
 /**
  * The function `getBookmarksByTitle` retrieves bookmarks by title and folder ID while filtering out
@@ -111,9 +142,9 @@ export const removeBookmark = async (bookmarkId: number) => {
  * `folderId
  */
 export const getBookmarksByTitle = async (title: string, folderId: number) => {
-    const bookmarksByTitle = await BookmarkDAO.fetchByTitle(title, folderId)
-    return bookmarksByTitle
-}
+  const bookmarksByTitle = await BookmarkDAO.fetchByTitle(title, folderId);
+  return bookmarksByTitle;
+};
 /**
  * The function `sortByDate` sorts bookmarks by date for a specific user and folder based on the
  * specified order.
@@ -129,12 +160,20 @@ export const getBookmarksByTitle = async (title: string, folderId: number) => {
  * `userId`, `folder_id`, and `sortOrder`. If there are no bookmarks found for the given criteria, it
  * will throw an error with the message "bookmarkExceptionMessages.BOOKMARK_EMPTY".
  */
-export const sortByDate = async (userId: number, folder_id: number, sortOrder: string) => {
+export const sortByDate = async (
+  userId: number,
+  folder_id: number,
+  sortOrder: string,
+) => {
+  const sortedData = await BookmarkDAO.sortBy(
+    'created_at',
+    userId,
+    folder_id,
+    sortOrder,
+  );
 
-    const sortedData = await BookmarkDAO.sortBy('created_at', userId, folder_id, sortOrder)
-
-    return sortedData;
-}
+  return sortedData;
+};
 
 /**
  * This TypeScript function sorts bookmarks by title alphabetically for a specific user and folder
@@ -152,11 +191,20 @@ export const sortByDate = async (userId: number, folder_id: number, sortOrder: s
  * `isdeleted` condition. If the sorted data is empty, it will throw an error with the message
  * "BOOKMARK_EMPTY".
  */
-export const sortByAlphabet = async (userId: number, folder_id: number, sortOrder: string) => {
-    const sortedData = await BookmarkDAO.sortBy('title', userId, folder_id, sortOrder)
+export const sortByAlphabet = async (
+  userId: number,
+  folder_id: number,
+  sortOrder: string,
+) => {
+  const sortedData = await BookmarkDAO.sortBy(
+    'title',
+    userId,
+    folder_id,
+    sortOrder,
+  );
 
-    return sortedData;
-}
+  return sortedData;
+};
 /*
  * The function `updateClickedDate` updates a bookmark click_date in the database with the provided data.
  * @param {BookmarkModel} bookmarkData - BookmarkModel is a type representing the data structure of a
@@ -165,12 +213,10 @@ export const sortByAlphabet = async (userId: number, folder_id: number, sortOrde
  * @returns The `updateClickedDate` function is returning nothing (`undefined`).
  */
 export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
-    const bookmark = await BookmarkDAO.updateClickedDate(bookmarkData);
+  await BookmarkDAO.updateClickedDate(bookmarkData);
 
-    if (!bookmark) throw new Error(bookmarkExceptionMessages.UPDATE_FAILED);
-
-    return
-}
+  return;
+};
 /*
  * This TypeScript function retrieves recent clicked bookmarks for a specific user ID.
  * @param {number} user_id - The `user_id` parameter is a number that represents the unique identifier
@@ -179,12 +225,14 @@ export const updateClickedDate = async (bookmarkData: BookmarkModel) => {
  * representing the recent clicked bookmarks for a specific user, based on the provided `user_id`.
  */
 export const findRecentClickedBookmarks = async (user_id: number) => {
-    const bookmarks = await BookmarkDAO.sortRecentlyClickedBookmarkBy('click_date', user_id, 'desc');
+  const bookmarks = await BookmarkDAO.sortRecentlyClickedBookmarkBy(
+    'click_date',
+    user_id,
+    'desc',
+  );
 
-    if (!bookmarks) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY)
-
-    return bookmarks;
-}
+  return bookmarks;
+};
 
 /**
  * The function `deleteRecentBookmarkById` updates a bookmark's click_date to null in the database for
@@ -196,15 +244,25 @@ export const findRecentClickedBookmarks = async (user_id: number) => {
  * be deleted from the database.
  * @returns The `deleteRecentBookmarkById` function is returning nothing (`undefined`).
  */
-export const deleteRecentBookmarkById = async (bookmarkData: BookmarkModel, user_id: number) => {
-    const newbookmarkData: BookmarkModel = { ...bookmarkData, click_date: null };
+export const deleteRecentBookmarkById = async (
+  bookmarkData: BookmarkModel,
+  user_id: number,
+) => {
+  const newbookmarkData: BookmarkModel = { ...bookmarkData, click_date: null };
 
-    const bookmark = await BookmarkDAO.removeRecentlyClickedBookmark(newbookmarkData, user_id);
+  const bookmark = await BookmarkDAO.removeRecentlyClickedBookmark(
+    newbookmarkData,
+    user_id,
+  );
 
-    if (!bookmark) throw new Error(bookmarkExceptionMessages.DELETE_FAILED)
+  if (!bookmark)
+    throw new customHttpError(
+      StatusCodes.CONFLICT,
+      bookmarkExceptionMessages.DELETE_FAILED,
+    );
 
-    return
-}
+  return;
+};
 
 /**
  * The function `sortRecentBookmarkByDate` retrieves recent bookmarks for a specific user and sorts
@@ -219,13 +277,25 @@ export const deleteRecentBookmarkById = async (bookmarkData: BookmarkModel, user
  * or descending) for a specific `userId`. If there are no recent bookmarks found, it throws an error
  * with the message `EMPTY_RECENT_BOOKMARK`.
  */
-export const sortRecentBookmarkByDate = async (userId: number, sortOrder: string) => {
-    const recentBookmarks: BookmarkModel[] = await BookmarkDAO.sortRecentlyClickedBookmarkBy('click_date', userId, sortOrder);
+export const sortRecentBookmarkByDate = async (
+  userId: number,
+  sortOrder: string,
+) => {
+  const recentBookmarks: BookmarkModel[] =
+    await BookmarkDAO.sortRecentlyClickedBookmarkBy(
+      'click_date',
+      userId,
+      sortOrder,
+    );
 
-    if (recentBookmarks.length === 0) throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
+  if (recentBookmarks.length === 0)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK,
+    );
 
-    return recentBookmarks
-}
+  return recentBookmarks;
+};
 
 /**
  * The function sorts recent bookmarks by title alphabetically in a specified order for a specific user and filtering out deleted bookmarks.
@@ -239,13 +309,22 @@ export const sortRecentBookmarkByDate = async (userId: number, sortOrder: string
  * bookmarks that are marked as deleted or have a null click date. If the sorted data is empty, an
  * error with the message "Bookmark empty" will be thrown.
  */
-export const sortRecentBookmarkByAlphabet = async (userId: number, sortOrder: string) => {
-    const sortedData: BookmarkModel[] = await BookmarkDAO.sortRecentlyClickedBookmarkBy('title', userId, sortOrder);
+export const sortRecentBookmarkByAlphabet = async (
+  userId: number,
+  sortOrder: string,
+) => {
+  const sortedData: BookmarkModel[] =
+    await BookmarkDAO.sortRecentlyClickedBookmarkBy('title', userId, sortOrder);
 
-    if (sortedData.length === 0) throw new Error(bookmarkExceptionMessages.BOOKMARK_EMPTY);
+  if (sortedData.length === 0) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK,
+    );
+  }
 
-    return sortedData;
-}
+  return sortedData;
+};
 
 /**
  * The function `filterRecentBookmarkByChip` filters recent bookmarks by user ID and chip ID while
@@ -258,13 +337,22 @@ export const sortRecentBookmarkByAlphabet = async (userId: number, sortOrder: st
  * the provided `userId`, `chipId`, and additional conditions. If there are no bookmarks that match the
  * criteria, it will throw an error with the message `EMPTY_RECENT_BOOKMARK`.
  */
-export const filterRecentBookmarkByChip = async (userId: number, chipId: number) => {
-    const filteredData: BookmarkModel[] = await BookmarkDAO.filterRecentlyClickedBookmarksByChip(userId, chipId);
+export const filterRecentBookmarkByChip = async (
+  userId: number,
+  chipId: number,
+) => {
+  const filteredData: BookmarkModel[] =
+    await BookmarkDAO.filterRecentlyClickedBookmarksByChip(userId, chipId);
 
-    if (filteredData.length === 0) throw new Error(bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK);
+  if (filteredData.length === 0) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK,
+    );
+  }
 
-    return filteredData
-}
+  return filteredData;
+};
 
 /**
  * The function `getRecentBookmarksByTitle` retrieves recent bookmarks by title from a database using a
@@ -279,8 +367,9 @@ export const filterRecentBookmarkByChip = async (userId: number, chipId: number)
  * 2. The `isdeleted` field must be false.
  * 3.
  */
-export const getRecentBookmarksByTitle = async (title: string) => {
-    const recentbookmarksByTitle = await BookmarkDAO.fetchRecentlyClickedBookmarksByTittle(title);
+export const getRecentBookmarksByTitle = async (title: string, user_id:number) => {
+  const recentbookmarksByTitle =
+    await BookmarkDAO.fetchRecentlyClickedBookmarksByTittle(title, user_id);
 
-    return recentbookmarksByTitle
-}
+  return recentbookmarksByTitle;
+};

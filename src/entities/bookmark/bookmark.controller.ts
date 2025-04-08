@@ -1,9 +1,27 @@
 import { Request, Response } from 'express';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import crypto from 'crypto';
+import { StatusCodes } from 'http-status-codes';
 
 import { BookmarkModel } from './bookmark.model';
-import { addBookmark, deleteRecentBookmarkById, filterRecentBookmarkByChip, findBookmarkById, findBookmarks, findBookmarksByFolderId, findRecentClickedBookmarks, getBookmarksByTitle, getRecentBookmarksByTitle, removeBookmark, sortByAlphabet, sortByDate, sortRecentBookmarkByAlphabet, sortRecentBookmarkByDate, updateBookmark, updateClickedDate } from './bookmark.service';
+import {
+  addBookmark,
+  deleteRecentBookmarkById,
+  filterRecentBookmarkByChip,
+  findBookmarkById,
+  findBookmarks,
+  findBookmarksByFolderId,
+  findRecentClickedBookmarks,
+  getBookmarksByTitle,
+  getRecentBookmarksByTitle,
+  removeBookmark,
+  sortByAlphabet,
+  sortByDate,
+  sortRecentBookmarkByAlphabet,
+  sortRecentBookmarkByDate,
+  updateBookmark,
+  updateClickedDate,
+} from './bookmark.service';
 
 import { uploadImage } from '../image/image.controller';
 import { saveImage } from '../image/image.service';
@@ -12,11 +30,11 @@ import { addChip } from '../chip/chip.service';
 import { findFolderById } from '../folder/folder.service';
 import { FolderModel } from '../folder/folder.model';
 import { ChipModel } from '../chip/chip.model';
-import { logger } from '../../logger/logger';
 import { getThumbnailFromURL, getTitleFromURL } from '../../utils/bookmark';
+import { bookmarkSucessMessages } from './constant/bookmarkSucessMessages';
+import { customHttpError } from '../../utils/customHttpError';
 
-dotenv.config()
-
+dotenv.config();
 
 /**
  * The function `getBookmarks` is an asynchronous function that retrieves bookmarks and sends them as a
@@ -29,16 +47,12 @@ dotenv.config()
  * code, headers, and send the response body.
  */
 export const getBookmarks = async (req: Request, res: Response) => {
-    try {
-        const { user } = req.body;
+  const { user } = req.body;
 
-        const result: BookmarkModel[] = await findBookmarks(user.id);
+  const result: BookmarkModel[] = await findBookmarks(user.id);
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * The function `getBookmarksByFolderId` retrieves bookmarks by folder ID for a specific user and sends
@@ -52,17 +66,16 @@ export const getBookmarks = async (req: Request, res: Response) => {
  * In this function, we are using `res` to send a JSON response with the bookmarks data or
  */
 export const getBookmarksByFolderId = async (req: Request, res: Response) => {
-    try {
-        const { user } = req.body;
-        const folder_id = parseInt(req.params.folder_id);
+  const { user } = req.body;
+  const folder_id = parseInt(req.params.folder_id);
 
-        const result: BookmarkModel[] = await findBookmarksByFolderId(user.id, folder_id);
+  const result: BookmarkModel[] = await findBookmarksByFolderId(
+    user.id,
+    folder_id
+  );
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * The `postBookmark` function is an asynchronous function that handles the creation of a new bookmark,
@@ -75,50 +88,57 @@ export const getBookmarksByFolderId = async (req: Request, res: Response) => {
  * as setting the status code, headers, and sending the response body.
  */
 export const postBookmark = async (req: Request, res: Response) => {
-    try {
-        const { url, folder_id, user } = req.body;
+  const { url, folder_id, user } = req.body;
 
-        if (!url || !folder_id) {
-            throw new Error(bookmarkExceptionMessages.LINK_FOLDER_REQUIRED)
-        }
+  if (!url || !folder_id) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      bookmarkExceptionMessages.LINK_FOLDER_REQUIRED
+    );
+  }
 
-        const isFolder: FolderModel = await findFolderById(folder_id);
-        if (!isFolder) throw new Error('Folder does\'nt exist.')
+  const isFolder: FolderModel = await findFolderById(folder_id);
+  if (!isFolder)
+    throw new customHttpError(StatusCodes.NOT_FOUND, "Folder does'nt exist.");
 
-        const imageName = crypto.randomUUID();
-        const imageUrl = await getThumbnailFromURL(url);
-        const imageFromDB = await saveImage({ url: imageUrl, type: 'bookmark', name: imageName, isdeleted: false }, user.username)
+  const imageName = crypto.randomUUID();
+  const imageUrl = await getThumbnailFromURL(url);
+  const imageFromDB = await saveImage(
+    { url: imageUrl, type: 'bookmark', name: imageName, isdeleted: false },
+    user.username
+  );
 
-        const chipData = {
-            name: isFolder.name,
-            user_id: user.id,
-            folder_id,
-            isdeleted: false,
-            created_by: user.username,
-            updated_by: user.username,
-        }
-        const chip: ChipModel = await addChip(chipData)
+  const chipData = {
+    name: isFolder.name,
+    user_id: user.id,
+    folder_id,
+    isdeleted: false,
+    created_by: user.username,
+    updated_by: user.username,
+  };
+  const chip: ChipModel = await addChip(chipData);
 
-        const bookmarkData: BookmarkModel = {
-            url,
-            folder_id,
-            title: await getTitleFromURL(url),
-            image_id: imageFromDB.id || 1,
-            chip_id: chip.id || 1,
-            user_id: user.id,
-            date: new Date(),
-            isdeleted: false,
-            created_by: user.username,
-            updated_by: user.username,
-        }
+  const bookmarkData: BookmarkModel = {
+    url,
+    folder_id,
+    title: await getTitleFromURL(url),
+    image_id: imageFromDB.id || 1,
+    chip_id: chip.id || 1,
+    user_id: user.id,
+    date: new Date(),
+    isdeleted: false,
+    created_by: user.username,
+    updated_by: user.username,
+  };
 
-        const result = await addBookmark(bookmarkData);
+  const result = await addBookmark(bookmarkData);
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: bookmarkSucessMessages.POST_SUCESS,
+    data: result,
+  });
+};
 
 /**
  * The function `patchBookmark` updates a bookmark with the provided data, including the title and
@@ -131,42 +151,59 @@ export const postBookmark = async (req: Request, res: Response) => {
  * bookmark data or
  */
 export const patchBookmark = async (req: Request, res: Response) => {
-    try {
-        const bookmarkId = parseInt(req.params.id);
+  const bookmarkId = parseInt(req.params.id);
 
-        if (!bookmarkId) {
-            throw new Error(bookmarkExceptionMessages.INVALID_ID)
-        }
+  if (!bookmarkId) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.INVALID_ID
+    );
+  }
 
-        const { title, user, folder_id } = req.body;
+  const { title, user, folder_id } = req.body;
 
-        const currentBookmark = await findBookmarkById(bookmarkId);
-        const { title: currentBookmarkTitle, image_id: currentBookmarkImage, folder_id: currentBookmarkFolderId } = currentBookmark;
+  const currentBookmark = await findBookmarkById(bookmarkId);
+  delete currentBookmark.image_url;
 
-        if (req.file) {
-            const imagePath = req.file!.path;
-            const imageUrl = await uploadImage(imagePath)
+  const {
+    title: currentBookmarkTitle,
+    image_id: currentBookmarkImage,
+    folder_id: currentBookmarkFolderId,
+  } = currentBookmark;
 
-            const image = await saveImage({ url: imageUrl, type: 'bookmark', name: req.file.filename, isdeleted: false }, user.username)
+  if (req.file) {
+    const imagePath = req.file!.path;
+    const imageUrl = await uploadImage(imagePath);
 
-            req.body.image_id = image.id;
-        }
+    const image = await saveImage(
+      {
+        url: imageUrl,
+        type: 'bookmark',
+        name: req.file.filename,
+        isdeleted: false,
+      },
+      user.username
+    );
 
-        const bookmarkData: BookmarkModel = {
-            ...currentBookmark,
-            title: title || currentBookmarkTitle,
-            folder_id: folder_id || currentBookmarkFolderId,
-            image_id: req.body.image_id || currentBookmarkImage,
-            updated_by: user.username,
-        }
+    req.body.image_id = image.id;
+  }
 
-        const result = await updateBookmark(bookmarkData, bookmarkId);
+  const bookmarkData: BookmarkModel = {
+    ...currentBookmark,
+    title: title || currentBookmarkTitle,
+    folder_id: folder_id || currentBookmarkFolderId,
+    image_id: req.body.image_id || currentBookmarkImage,
+    updated_by: user.username,
+  };
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  const result = await updateBookmark(bookmarkData, bookmarkId);
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: bookmarkSucessMessages.PATCH_SUCESS,
+    data: result,
+  });
+};
 
 /**
  * The function `deleteBookmark` is an asynchronous function that handles the deletion of a bookmark by
@@ -179,20 +216,23 @@ export const patchBookmark = async (req: Request, res: Response) => {
  * code, headers, and send the response body.
  */
 export const deleteBookmark = async (req: Request, res: Response) => {
-    try {
-        const bookmarkId = parseInt(req.params.id);
+  const bookmarkId = parseInt(req.params.id);
 
-        if (!bookmarkId) {
-            throw new Error(bookmarkExceptionMessages.INVALID_ID)
-        }
+  if (!bookmarkId) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.INVALID_ID
+    );
+  }
 
-        const result = await removeBookmark(bookmarkId);
+  const result = await removeBookmark(bookmarkId);
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: bookmarkSucessMessages.DELETE_SUCESS,
+    data: result,
+  });
+};
 
 /**
 
@@ -206,23 +246,20 @@ export const deleteBookmark = async (req: Request, res: Response) => {
  */
 
 export const searchByTitle = async (req: Request, res: Response) => {
-    try {
-        const title: string = req.query.title as string;
-        const folder_id: number = req.query.folder_id as unknown as number;
+  const title: string = req.query.title as string;
+  const folder_id: number = req.query.folder_id as unknown as number;
 
-        if (!title) {
-            throw new Error(bookmarkExceptionMessages.SEARCH_QUERY_EMPTY)
-        }
+  if (!title) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.SEARCH_QUERY_EMPTY
+    );
+  }
 
-        const result = await getBookmarksByTitle(title!, folder_id!);
-        logger.error(result)
+  const result = await getBookmarksByTitle(title!, folder_id!);
 
-
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 /*
  * The function `getSortedData` in TypeScript fetches and sorts data based on specified criteria like
  * date or alphabet for a given user and folder.
@@ -236,44 +273,41 @@ export const searchByTitle = async (req: Request, res: Response) => {
  * has methods like `
  */
 export const getSortedData = async (req: Request, res: Response) => {
-    try {
-        const sortBy = req.query.sort as string;
-        const folder_id = req.query.folder_id as unknown as number;
-        const sortOrder = req.query.order as string || 'asc';
+  const sortBy = req.query.sort as string;
+  const folder_id = req.query.folder_id as unknown as number;
+  const sortOrder = (req.query.order as string) || 'asc';
 
-        const { user } = req.body;
+  const { user } = req.body;
 
-        let result;
+  if (!folder_id)
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.FOLDER_REQUIRED
+    );
 
-        switch (sortBy) {
-            case 'date':
-                result = await sortByDate(user.id, folder_id, sortOrder);
-                break;
-            case 'alphabet':
-                result = await sortByAlphabet(user.id, folder_id, sortOrder);
-                break;
-            default:
-                new Error(bookmarkExceptionMessages.INVALID_DATA);
-                break;
-        }
-        res.status(200).json({ data: result })
+  let result;
 
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  switch (sortBy) {
+    case 'date':
+      result = await sortByDate(user.id, folder_id, sortOrder);
+      break;
+    case 'alphabet':
+      result = await sortByAlphabet(user.id, folder_id, sortOrder);
+      break;
+    default:
+      result = await sortByAlphabet(user.id, folder_id, sortOrder);
+      break;
+  }
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 export const getRecentBookmarks = async (req: Request, res: Response) => {
-    try {
-        const { user } = req.body;
+  const { user } = req.body;
 
-        const result = await findRecentClickedBookmarks(user.id);
+  const result = await findRecentClickedBookmarks(user.id);
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * The function `bookmarkClick` updates the click_date of a bookmark based on the provided ID.
@@ -287,21 +321,23 @@ export const getRecentBookmarks = async (req: Request, res: Response) => {
  * has methods like `status
  */
 export const addRecentBookmark = async (req: Request, res: Response) => {
-    try {
-        const bookmarkId = parseInt(req.params.id);
+  const bookmarkId = parseInt(req.params.id);
 
-        if (!bookmarkId) {
-            throw new Error(bookmarkExceptionMessages.INVALID_ID)
-        }
-        const isBookmarkPresent = await findBookmarkById(bookmarkId);
+  if (!bookmarkId) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.INVALID_ID
+    );
+  }
+  const isBookmarkPresent = await findBookmarkById(bookmarkId);
+  delete isBookmarkPresent.image_url;
 
-        await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
+  await updateClickedDate({ ...isBookmarkPresent, click_date: new Date() });
 
-        res.status(200).json({ data: { msg: 'Bookmark date updated.' } })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res
+    .status(200)
+    .json({ success: true, message: bookmarkSucessMessages.ADDED_RB_SUCESS });
+};
 
 /**
  * The function `deleteRecentBookmark` deletes a recent bookmark associated with a user based on the
@@ -313,19 +349,18 @@ export const addRecentBookmark = async (req: Request, res: Response) => {
  * back to the client, set
  */
 export const deleteRecentBookmark = async (req: Request, res: Response) => {
-    try {
-        const { user } = req.body;
-        const bookmarkId = parseInt(req.params.id);
+  const { user } = req.body;
+  const bookmarkId = parseInt(req.params.id);
 
-        const currentBookmark = await findBookmarkById(bookmarkId);
+  const currentBookmark = await findBookmarkById(bookmarkId);
+  delete currentBookmark.image_url;
 
-        await deleteRecentBookmarkById(currentBookmark, user.id)
+  await deleteRecentBookmarkById(currentBookmark, user.id);
 
-        res.status(200).json({ data: { msg: 'Recent bookmark deleted' } })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res
+    .status(200)
+    .json({ success: true, message: bookmarkSucessMessages.DELETE_RB_SUCESS });
+};
 /**
  * The function `sortRecentBookmark` sorts recent bookmarks based on a specified criteria and order.
  * @param {Request} req - The `req` parameter in the `sortRecentBookmark` function stands for the
@@ -339,32 +374,27 @@ export const deleteRecentBookmark = async (req: Request, res: Response) => {
  */
 
 export const sortRecentBookmark = async (req: Request, res: Response) => {
-    try {
-        const { user } = req.body;
+  const { user } = req.body;
 
-        const sortType = req.query.sortBy as string;
-        const sortOrder = req.query.order as string || 'asc';
+  const sortType = req.query.sortBy as string;
+  const sortOrder = (req.query.order as string) || 'asc';
 
-        let result;
+  let result;
 
-        switch (sortType) {
-            case 'date':
-                result = await sortRecentBookmarkByDate(user.id, sortOrder)
-                break;
-            case 'alphabet':
-                result = await sortRecentBookmarkByAlphabet(user.id, sortOrder)
-                break;
-            default:
-                result = await sortRecentBookmarkByDate(user.id, 'desc')
-                break;
-        }
+  switch (sortType) {
+    case 'date':
+      result = await sortRecentBookmarkByDate(user.id, sortOrder);
+      break;
+    case 'alphabet':
+      result = await sortRecentBookmarkByAlphabet(user.id, sortOrder);
+      break;
+    default:
+      result = await sortRecentBookmarkByDate(user.id, 'desc');
+      break;
+  }
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
-
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * The function `filterRecentBookmark` filters recent bookmarks based on a specified sort type and chip
@@ -379,28 +409,24 @@ export const sortRecentBookmark = async (req: Request, res: Response) => {
  * `status()` to set
  */
 export const filterRecentBookmark = async (req: Request, res: Response) => {
-    try {
-        const { user } = req.body;
+  const { user } = req.body;
 
-        const sortType = req.query.filterBy as string;
-        const chipId = req.query.chip_id as unknown as number;
+  const sortType = req.query.filterBy as string;
+  const chipId = req.query.chip_id as unknown as number;
 
-        let result;
+  let result;
 
-        switch (sortType) {
-            case 'chips':
-                result = await filterRecentBookmarkByChip(user.id, chipId)
-                break;
-            default:
-                result = await findRecentClickedBookmarks(user.id);
-                break;
-        }
+  switch (sortType) {
+    case 'chips':
+      result = await filterRecentBookmarkByChip(user.id, chipId);
+      break;
+    default:
+      result = await findRecentClickedBookmarks(user.id);
+      break;
+  }
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
 
 /**
  * This TypeScript function searches for recent bookmarks by title and returns the result in a JSON
@@ -412,17 +438,17 @@ export const filterRecentBookmark = async (req: Request, res: Response) => {
  * with the
  */
 export const searchRecentBookmark = async (req: Request, res: Response) => {
-    try {
-        const title: string = req.query.title as string;
+  const { user } = req.body;
+  const title: string = req.query.title as string;
 
-        if (!title) {
-            throw new Error(bookmarkExceptionMessages.SEARCH_QUERY_EMPTY)
-        }
+  if (!title) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.SEARCH_QUERY_EMPTY
+    );
+  }
 
-        const result = await getRecentBookmarksByTitle(title!);
+  const result = await getRecentBookmarksByTitle(title!, parseInt(user.id));
 
-        res.status(200).json({ data: result })
-    } catch (error) {
-        res.status(500).json({ msg: (error as Error).message })
-    }
-}
+  res.status(StatusCodes.OK).json({ success: true, data: result });
+};
