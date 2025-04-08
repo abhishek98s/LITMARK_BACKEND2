@@ -5,14 +5,14 @@ const folderSchema: Schema = joi
   .object()
   .keys({
     name: joi.string().required().messages({
-      'string.base': folderExceptionMessages.FOLDER_ID_NUMBER,
-      'any.required': folderExceptionMessages.FOLDER_ID_REQUIRED,
-      'string.empty': folderExceptionMessages.NAME_REQUIRED,
-    }),
-    folder_id: joi.number().allow(null).required().messages({
       'string.base': folderExceptionMessages.NAME_STRING,
       'any.required': folderExceptionMessages.NAME_REQUIRED,
       'string.empty': folderExceptionMessages.NAME_REQUIRED,
+    }),
+    folder_id: joi.number().allow(null).required().messages({
+      'number.base': folderExceptionMessages.FOLDER_ID_NUMBER,
+      'any.required': folderExceptionMessages.FOLDER_ID_REQUIRED,
+      'number.empty': folderExceptionMessages.NAME_REQUIRED,
     }),
     user: joi.object().keys({
       id: joi.number().required(),
@@ -50,5 +50,24 @@ const folderQuerySchema = joi
     'object.unknown': folderExceptionMessages.EXTRA_PROPERTY,
   });
 
+const folderPatchSchema: Schema = joi
+  .object()
+  .keys({
+    name: joi.string().required().messages({
+      'string.base': folderExceptionMessages.NAME_STRING,
+      'any.required': folderExceptionMessages.NAME_REQUIRED,
+      'string.empty': folderExceptionMessages.NAME_REQUIRED,
+    }),
+    user: joi.object().keys({
+      id: joi.number().required(),
+      username: joi.string().required(),
+      email: joi.string().required(),
+      iat: joi.number(),
+    }),
+  })
+  .messages({
+    'object.unknown': folderExceptionMessages.EXTRA_PROPERTY,
+  });
+
 export default folderSchema;
-export { folderQuerySchema };
+export { folderQuerySchema, folderPatchSchema };

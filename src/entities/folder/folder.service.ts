@@ -22,6 +22,13 @@ export const findAllNestedFolders = async (
   user_id: number,
   parentFolderId: number,
 ): Promise<FolderModel[]> => {
+  const folder: FolderModel = await FolderDAO.fetchById(parentFolderId);
+
+  if (!folder)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      folderExceptionMessages.FOLDER_NOT_FOUND,
+    );
   const folders: FolderModel[] = await FolderDAO.fetchAllNested(
     user_id,
     parentFolderId,
@@ -105,6 +112,13 @@ export const updateFolder = async (
  * without any value.
  */
 export const removeFolder = async (folderId: number) => {
+  const folder: FolderModel = await FolderDAO.fetchById(folderId);
+
+  if (!folder)
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      folderExceptionMessages.FOLDER_NOT_FOUND,
+    );
   const subfolders: FolderModel[] = await FolderDAO.fetchAllByFolderId(
     folderId,
   );
