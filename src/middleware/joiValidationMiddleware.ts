@@ -17,4 +17,20 @@ const joiValidationMiddleware = (schema: Schema) => {
   };
 };
 
+const joiQueryValidationMiddleware = (schema: Schema) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const { error } = await schema.validate(req.query);
+    const valid = error == null;
+
+    if (valid) {
+      next();
+    } else {
+      const { details } = error;
+      const message = details.map((i) => i.message).join(',');
+      res.status(StatusCodes.BAD_REQUEST).json({ success: false, message });
+    }
+  };
+};
+
 export default joiValidationMiddleware;
+export { joiQueryValidationMiddleware };

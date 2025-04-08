@@ -9,15 +9,21 @@ import {
 } from './folder.controller';
 import { verifyToken } from '../../middleware/authentication.middleware';
 import multer from 'multer';
-import joiValidationMiddleware from '../../middleware/joiValidationMiddleware';
-import folderSchema from './folder.schema';
+import joiValidationMiddleware, {
+  joiQueryValidationMiddleware,
+} from '../../middleware/joiValidationMiddleware';
+import folderSchema, { folderQuerySchema } from './folder.schema';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.use(verifyToken);
-router.get('/sort', getSortedFolders);
+router.get(
+  '/sort',
+  joiQueryValidationMiddleware(folderQuerySchema),
+  getSortedFolders,
+);
 router
   .get('/', getAllTopFolders)
   .get('/:id', getAllnestedFolders)
