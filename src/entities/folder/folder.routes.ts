@@ -9,7 +9,9 @@ import {
 } from './folder.controller';
 import { verifyToken } from '../../middleware/authentication.middleware';
 import multer from 'multer';
-import joiValidationMiddleware, { joiQueryValidationMiddleware } from '../../middleware/joiValidationMiddleware';
+import joiValidationMiddleware, {
+  joiQueryValidationMiddleware,
+} from '../../middleware/joiValidationMiddleware';
 import folderSchema, { folderQuerySchema } from './folder.schema';
 
 const router = express.Router();
