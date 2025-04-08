@@ -16,6 +16,7 @@ import { folderExceptionMessages } from './constant/folderExceptionMessages';
 import crypto from 'crypto';
 import { StatusCodes } from 'http-status-codes';
 import { customHttpError } from '../../utils/customHttpError';
+import { folderSuccessMessages } from './constant/folderSuccessMessages';
 
 const isImage = async (username: string) => {
   try {
@@ -62,6 +63,13 @@ export const getAllTopFolders = async (req: Request, res: Response) => {
  */
 export const getAllnestedFolders = async (req: Request, res: Response) => {
   const parentFolderId: number = parseInt(req.params.id);
+
+  if (isNaN(parentFolderId)) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      folderExceptionMessages.INVALID_ID,
+    );
+  }
   const result: FolderModel[] = await findAllNestedFolders(
     req.body.user.id,
     parentFolderId,
@@ -81,13 +89,6 @@ export const getAllnestedFolders = async (req: Request, res: Response) => {
  */
 export const postFolders = async (req: Request, res: Response) => {
   const { name, folder_id, user } = req.body;
-
-  if (!name) {
-    throw new customHttpError(
-      StatusCodes.BAD_REQUEST,
-      folderExceptionMessages.NAME_REQUIRED,
-    );
-  }
 
   if (req.file) {
     const imagePath = req.file!.path;
@@ -133,7 +134,7 @@ export const postFolders = async (req: Request, res: Response) => {
  */
 export const patchFolders = async (req: Request, res: Response) => {
   const folderId: number = parseInt(req.params.id);
-  if (!folderId)
+  if (!folderId || isNaN(folderId))
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
       folderExceptionMessages.INVALID_ID,
@@ -194,7 +195,7 @@ export const patchFolders = async (req: Request, res: Response) => {
  */
 export const deleteFolders = async (req: Request, res: Response) => {
   const folderId: number = parseInt(req.params.id);
-  if (!folderId)
+  if (!folderId || isNaN(folderId))
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
       folderExceptionMessages.INVALID_ID,
@@ -204,7 +205,7 @@ export const deleteFolders = async (req: Request, res: Response) => {
 
   res
     .status(StatusCodes.OK)
-    .json({ success: true, data: 'Folder deleted sucessfully' });
+    .json({ success: true, message: folderSuccessMessages.DELETE_SUCCESS });
 };
 
 /**

@@ -12,7 +12,10 @@ import multer from 'multer';
 import joiValidationMiddleware, {
   joiQueryValidationMiddleware,
 } from '../../middleware/joiValidationMiddleware';
-import folderSchema, { folderQuerySchema } from './folder.schema';
+import folderSchema, {
+  folderPatchSchema,
+  folderQuerySchema,
+} from './folder.schema';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -29,7 +32,13 @@ router
   .get('/:id', getAllnestedFolders)
   .post('/', joiValidationMiddleware(folderSchema), verifyToken, postFolders);
 router
-  .patch('/:id', upload.single('litmark_image'), verifyToken, patchFolders)
+  .patch(
+    '/:id',
+    upload.single('litmark_image'),
+    joiValidationMiddleware(folderPatchSchema),
+    verifyToken,
+    patchFolders,
+  )
   .delete('/:id', deleteFolders);
 
 export default router;
