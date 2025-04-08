@@ -138,6 +138,14 @@ export const sortByDate = async (
   folder_id: number,
   sortOrder: string,
 ) => {
+  const isFolderExits = await FolderDAO.fetchById(folder_id);
+
+  if (!isFolderExits) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      folderExceptionMessages.FOLDER_NOT_FOUND,
+    );
+  }
   const sortedData = await FolderDAO.sortBy(
     'created_at',
     userId,
@@ -168,6 +176,14 @@ export const sortByAlphabet = async (
   folder_id: number,
   sortOrder: string,
 ) => {
+  const isFolderExits = await FolderDAO.fetchById(folder_id);
+
+  if (!isFolderExits) {
+    throw new customHttpError(
+      StatusCodes.NOT_FOUND,
+      folderExceptionMessages.FOLDER_NOT_FOUND,
+    );
+  }
   const sortedData = await FolderDAO.sortBy(
     'name',
     userId,
