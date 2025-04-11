@@ -458,7 +458,7 @@ describe('Bookmark Enitity', () => {
           expect(response.status).toBe(400);
           expect(response.body).toMatchObject({
             success: false,
-            message: bookmarkExceptionMessages.SEARCH_QUERY_EMPTY,
+            message: bookmarkExceptionMessages.TITLE_REQUIRED,
           });
         });
 
@@ -471,7 +471,7 @@ describe('Bookmark Enitity', () => {
           expect(response.status).toBe(400);
           expect(response.body).toMatchObject({
             success: false,
-            message: bookmarkExceptionMessages.SEARCH_QUERY_EMPTY,
+            message: bookmarkExceptionMessages.TITLE_REQUIRED,
           });
         });
 
@@ -500,40 +500,89 @@ describe('Bookmark Enitity', () => {
   });
 
   describe('Bookmark', () => {
-    // describe('GET api/bookmark/search', () => {
-    //   it('should return 401 for token not sent', async () => {
-    //     const response = await api.get('/api/bookmark/search');
-    //     expect(response.status).toBe(401);
-    //     expect(response.body).toMatchObject({
-    //       success: false,
-    //       message: authExceptionMessages.ACCESS_DENIED,
-    //     });
-    //   });
+    describe('GET api/bookmark/search', () => {
+      it('should return 401 for token not sent', async () => {
+        const response = await api.get('/api/bookmark/search');
+        expect(response.status).toBe(401);
+        expect(response.body).toMatchObject({
+          success: false,
+          message: authExceptionMessages.ACCESS_DENIED,
+        });
+      });
 
-    //   it('should return 403 for token not valid', async () => {
-    //     const response = await api
-    //       .get('/api/bookmark/search')
-    //       .set('Authorization', 'Bearer invalid_token');
-    //     expect(response.status).toBe(403);
-    //     expect(response.body).toMatchObject({
-    //       success: false,
-    //       message: authExceptionMessages.TOKEN_INVALID,
-    //     });
-    //   });
+      it('should return 403 for token not valid', async () => {
+        const response = await api
+          .get('/api/bookmark/search')
+          .set('Authorization', 'Bearer invalid_token');
+        expect(response.status).toBe(403);
+        expect(response.body).toMatchObject({
+          success: false,
+          message: authExceptionMessages.TOKEN_INVALID,
+        });
+      });
 
-    //   describe('User is authenticated', () => {
-    //     it('should return bookmarks based on search query', async () => {
-    //       const response = await api
-    //         .get('/api/bookmark/search')
-    //         .query({ title: 'des' })
-    //         .set('Authorization', `Bearer ${token}`); // Use a valid token
+      describe('User is authenticated', () => {
+        it('should return 400 for missing folder_id', async () => {
+          const response = await api
+            .get('/api/bookmark/search')
+            .query({ title: 'des' })
+            .set('Authorization', `Bearer ${token}`); // Use a valid token
 
-    //       expect(response.status).toBe(200);
-    //       expect(response.body).toHaveProperty('data');
-    //       // Add more assertions based on expected response
-    //     });
-    //   });
-    // });
+          expect(response.status).toBe(400);
+          expect(response.body).toMatchObject({
+            success: false,
+            message: bookmarkExceptionMessages.FOLDER_ID_REQUIRED,
+          });
+        });
+
+        it('should return 400 for invalid folder_id format', async () => {
+          const response = await api
+            .get('/api/bookmark/search')
+            .query({ folder_id: '111as', title: 'des' })
+            .set('Authorization', `Bearer ${token}`); // Use a valid token
+
+          expect(response.status).toBe(400);
+          expect(response.body).toMatchObject({
+            success: false,
+            message: bookmarkExceptionMessages.FOLDER_ID_NUMBER,
+          });
+        });
+
+        it('should return 400 for missing title', async () => {
+          const response = await api
+            .get('/api/bookmark/search')
+            .query({ folder_id: 1 })
+            .set('Authorization', `Bearer ${token}`); // Use a valid token
+
+          expect(response.status).toBe(400);
+          expect(response.body).toMatchObject({
+            success: false,
+            message: bookmarkExceptionMessages.TITLE_REQUIRED,
+          });
+        });
+
+        it('should return 200 for empty array of bookmarks not found', async () => {
+          const response = await api
+            .get('/api/bookmark/search')
+            .query({ folder_id: 1, title: 'non_existent_bookmark_title' })
+            .set('Authorization', `Bearer ${token}`); // Use a valid token
+
+          expect(response.status).toBe(200);
+          expect(response.body).toHaveProperty('data');
+          expect(response.body.data.length).toBe(0);
+        });
+
+        it('should return 200 for bookmarks based on search query', async () => {
+          const response = await api
+            .get('/api/bookmark/search')
+            .query({ title: 'des', folder_id: 1 })
+            .set('Authorization', `Bearer ${token}`); // Use a valid token
+
+          expect(response.status).toBe(200);
+          expect(response.body).toHaveProperty('data');
+        });
+      });
+    });
 
     // describe('GET api/bookmark/sort', () => {
     //   it('should return 401 for token not sent', async () => {
