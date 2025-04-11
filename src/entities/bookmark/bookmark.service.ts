@@ -4,7 +4,9 @@ import { customHttpError } from '../../utils/customHttpError';
 import * as ImageDAO from '../image/image.repository';
 import { BookmarkModel } from './bookmark.model';
 import * as BookmarkDAO from './bookmark.repository';
+import * as ChipDAO from '../chip/chip.repository';
 import { bookmarkExceptionMessages } from './constant/bookmarkExceptionMessages';
+import { chipExceptionMessages } from '../chip/constant/chipExceptionMessages';
 
 /**
  * The function finds a bookmark by its ID and returns it, or throws an error if the bookmark is not
@@ -341,15 +343,16 @@ export const filterRecentBookmarkByChip = async (
   userId: number,
   chipId: number,
 ) => {
-  const filteredData: BookmarkModel[] =
-    await BookmarkDAO.filterRecentlyClickedBookmarksByChip(userId, chipId);
+  const isChipExists = await ChipDAO.fetchById(chipId);
 
-  if (filteredData.length === 0) {
+  if (!isChipExists) {
     throw new customHttpError(
-      StatusCodes.NOT_FOUND,
-      bookmarkExceptionMessages.EMPTY_RECENT_BOOKMARK,
+      StatusCodes.BAD_REQUEST,
+      chipExceptionMessages.CHIP_NOT_FOUND,
     );
   }
+  const filteredData: BookmarkModel[] =
+    await BookmarkDAO.filterRecentlyClickedBookmarksByChip(userId, chipId);
 
   return filteredData;
 };
@@ -367,7 +370,10 @@ export const filterRecentBookmarkByChip = async (
  * 2. The `isdeleted` field must be false.
  * 3.
  */
-export const getRecentBookmarksByTitle = async (title: string, user_id:number) => {
+export const getRecentBookmarksByTitle = async (
+  title: string,
+  user_id: number,
+) => {
   const recentbookmarksByTitle =
     await BookmarkDAO.fetchRecentlyClickedBookmarksByTittle(title, user_id);
 
