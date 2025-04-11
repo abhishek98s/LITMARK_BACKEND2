@@ -17,7 +17,7 @@ export const findChipById = async (chipId: number) => {
   if (!chip)
     throw new customHttpError(
       StatusCodes.NOT_FOUND,
-      chipExceptionMessages.CHIP_NOTFOUND,
+      chipExceptionMessages.CHIP_NOT_FOUND,
     );
 
   return chip;

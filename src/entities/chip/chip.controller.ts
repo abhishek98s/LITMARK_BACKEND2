@@ -95,7 +95,7 @@ export const patchChip = async (req: Request, res: Response) => {
   if (!currentChip) {
     throw new customHttpError(
       StatusCodes.NOT_FOUND,
-      chipExceptionMessages.CHIP_NOTFOUND
+      chipExceptionMessages.CHIP_NOT_FOUND
     );
   }
 
@@ -131,7 +131,7 @@ export const deleteChip = async (req: Request, res: Response) => {
   if (!isChipExist) {
     throw new customHttpError(
       StatusCodes.NOT_FOUND,
-      chipExceptionMessages.CHIP_NOTFOUND
+      chipExceptionMessages.CHIP_NOT_FOUND
     );
   }
 
