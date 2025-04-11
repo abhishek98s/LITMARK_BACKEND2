@@ -12,7 +12,7 @@ export const bookmarkExceptionMessages = {
   EMPTY_RECENT_BOOKMARK: 'No recent bookmark available.',
   INVALID_SORT: 'SortBy should be either date or alphabet.',
   TITLE_REQUIRED: 'title is required.',
-  TITLE_STRING:'title must be a string.',
+  TITLE_STRING: 'title must be a string.',
 
   SORT_STRING: 'sort must be a string.',
   SORT_INVALID: 'sort must be either "date" or "alphabet".',
@@ -24,6 +24,9 @@ export const bookmarkExceptionMessages = {
 
   CHIP_ID_NUMBER: 'chip_id must be a number',
   CHIP_ID_REQUIRED: 'chip_id is required.',
+
+  FOLDER_ID_NUMBER: 'folder_id must be a number',
+  FOLDER_ID_REQUIRED: 'folder_id is required.',
 
   EXTRA_PROPERTY: 'Extra properties are not allowed.',
 };

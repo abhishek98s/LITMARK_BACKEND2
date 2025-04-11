@@ -249,13 +249,6 @@ export const searchByTitle = async (req: Request, res: Response) => {
   const title: string = req.query.title as string;
   const folder_id: number = req.query.folder_id as unknown as number;
 
-  if (!title) {
-    throw new customHttpError(
-      StatusCodes.BAD_REQUEST,
-      bookmarkExceptionMessages.SEARCH_QUERY_EMPTY,
-    );
-  }
-
   const result = await getBookmarksByTitle(title!, folder_id!);
 
   res.status(StatusCodes.OK).json({ success: true, data: result });

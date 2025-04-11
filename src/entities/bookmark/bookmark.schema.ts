@@ -63,8 +63,8 @@ const searchRecentBookmarkQuerySchema: Schema = joi
   .keys({
     title: joi.string().required().messages({
       'string.base': bookmarkExceptionMessages.TITLE_STRING,
-      'any.required': bookmarkExceptionMessages.SEARCH_QUERY_EMPTY,
-      'string.empty': bookmarkExceptionMessages.SEARCH_QUERY_EMPTY,
+      'any.required': bookmarkExceptionMessages.TITLE_REQUIRED,
+      'string.empty': bookmarkExceptionMessages.TITLE_REQUIRED,
     }),
     user: joi.object().keys({
       id: joi.number().required(),
@@ -77,9 +77,34 @@ const searchRecentBookmarkQuerySchema: Schema = joi
     'object.unknown': bookmarkExceptionMessages.EXTRA_PROPERTY,
   });
 
-export default bookmarkSchema;
+const searchBookmarkByTitleQuerySchema: Schema = joi
+  .object()
+  .keys({
+    title: joi.string().required().messages({
+      'string.base': bookmarkExceptionMessages.TITLE_STRING,
+      'any.required': bookmarkExceptionMessages.TITLE_REQUIRED,
+      'string.empty': bookmarkExceptionMessages.TITLE_REQUIRED,
+    }),
+    folder_id: joi.number().required().messages({
+      'number.base': bookmarkExceptionMessages.FOLDER_ID_NUMBER,
+      'any.required': bookmarkExceptionMessages.FOLDER_ID_REQUIRED,
+      'number.empty': bookmarkExceptionMessages.FOLDER_ID_REQUIRED,
+    }),
+    user: joi.object().keys({
+      id: joi.number().required(),
+      username: joi.string().required(),
+      email: joi.string().required(),
+      iat: joi.number(),
+    }),
+  })
+  .messages({
+    'object.unknown': bookmarkExceptionMessages.EXTRA_PROPERTY,
+  });
+
 export {
+  bookmarkSchema,
   recentBookmarkSortQuerySchema,
   recentBookmarkFilterQuerySchema,
   searchRecentBookmarkQuerySchema,
+  searchBookmarkByTitleQuerySchema,
 };
