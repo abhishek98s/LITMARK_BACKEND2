@@ -5,11 +5,8 @@ import { verifyToken } from '../../middleware/authentication.middleware';
 import joiValidationMiddleware, {
   joiQueryValidationMiddleware,
 } from '../../middleware/joiValidationMiddleware';
-import bookmarkSchema, {
-  recentBookmarkFilterQuerySchema,
-  recentBookmarkSortQuerySchema,
-  searchRecentBookmarkQuerySchema,
-} from './bookmark.schema';
+
+import * as schema from './bookmark.schema';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -23,21 +20,25 @@ router
   .patch('/recent/:id', bookmarkController.addRecentBookmark)
   .get(
     '/recent/sort',
-    joiQueryValidationMiddleware(recentBookmarkSortQuerySchema),
+    joiQueryValidationMiddleware(schema.recentBookmarkSortQuerySchema),
     bookmarkController.sortRecentBookmark,
   )
   .get(
     '/recent/filter',
-    joiQueryValidationMiddleware(recentBookmarkFilterQuerySchema),
+    joiQueryValidationMiddleware(schema.recentBookmarkFilterQuerySchema),
     bookmarkController.filterRecentBookmark,
   )
   .get(
     '/recent/search',
-    joiQueryValidationMiddleware(searchRecentBookmarkQuerySchema),
+    joiQueryValidationMiddleware(schema.searchRecentBookmarkQuerySchema),
     bookmarkController.searchRecentBookmark,
   );
 
-router.get('/search', bookmarkController.searchByTitle);
+router.get(
+  '/search',
+  joiQueryValidationMiddleware(schema.searchBookmarkByTitleQuerySchema),
+  bookmarkController.searchByTitle,
+);
 router.get('/sort', bookmarkController.getSortedData);
 
 router
@@ -45,7 +46,7 @@ router
   .get('/:folder_id', bookmarkController.getBookmarksByFolderId)
   .post(
     '/',
-    joiValidationMiddleware(bookmarkSchema),
+    joiValidationMiddleware(schema.bookmarkSchema),
     verifyToken,
     bookmarkController.postBookmark,
   );
