@@ -71,7 +71,7 @@ export const getBookmarksByFolderId = async (req: Request, res: Response) => {
 
   const result: BookmarkModel[] = await findBookmarksByFolderId(
     user.id,
-    folder_id
+    folder_id,
   );
 
   res.status(StatusCodes.OK).json({ success: true, data: result });
@@ -93,19 +93,19 @@ export const postBookmark = async (req: Request, res: Response) => {
   if (!url || !folder_id) {
     throw new customHttpError(
       StatusCodes.NOT_FOUND,
-      bookmarkExceptionMessages.LINK_FOLDER_REQUIRED
+      bookmarkExceptionMessages.LINK_FOLDER_REQUIRED,
     );
   }
 
   const isFolder: FolderModel = await findFolderById(folder_id);
   if (!isFolder)
-    throw new customHttpError(StatusCodes.NOT_FOUND, "Folder does'nt exist.");
+    throw new customHttpError(StatusCodes.NOT_FOUND, 'Folder does\'nt exist.');
 
   const imageName = crypto.randomUUID();
   const imageUrl = await getThumbnailFromURL(url);
   const imageFromDB = await saveImage(
     { url: imageUrl, type: 'bookmark', name: imageName, isdeleted: false },
-    user.username
+    user.username,
   );
 
   const chipData = {
@@ -156,7 +156,7 @@ export const patchBookmark = async (req: Request, res: Response) => {
   if (!bookmarkId) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      bookmarkExceptionMessages.INVALID_ID
+      bookmarkExceptionMessages.INVALID_ID,
     );
   }
 
@@ -182,7 +182,7 @@ export const patchBookmark = async (req: Request, res: Response) => {
         name: req.file.filename,
         isdeleted: false,
       },
-      user.username
+      user.username,
     );
 
     req.body.image_id = image.id;
@@ -221,7 +221,7 @@ export const deleteBookmark = async (req: Request, res: Response) => {
   if (!bookmarkId) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      bookmarkExceptionMessages.INVALID_ID
+      bookmarkExceptionMessages.INVALID_ID,
     );
   }
 
@@ -252,7 +252,7 @@ export const searchByTitle = async (req: Request, res: Response) => {
   if (!title) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      bookmarkExceptionMessages.SEARCH_QUERY_EMPTY
+      bookmarkExceptionMessages.SEARCH_QUERY_EMPTY,
     );
   }
 
@@ -282,7 +282,7 @@ export const getSortedData = async (req: Request, res: Response) => {
   if (!folder_id)
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      bookmarkExceptionMessages.FOLDER_REQUIRED
+      bookmarkExceptionMessages.FOLDER_REQUIRED,
     );
 
   let result;
@@ -323,10 +323,10 @@ export const getRecentBookmarks = async (req: Request, res: Response) => {
 export const addRecentBookmark = async (req: Request, res: Response) => {
   const bookmarkId = parseInt(req.params.id);
 
-  if (!bookmarkId) {
+  if (!bookmarkId || isNaN(bookmarkId)) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      bookmarkExceptionMessages.INVALID_ID
+      bookmarkExceptionMessages.INVALID_ID,
     );
   }
   const isBookmarkPresent = await findBookmarkById(bookmarkId);
@@ -351,6 +351,13 @@ export const addRecentBookmark = async (req: Request, res: Response) => {
 export const deleteRecentBookmark = async (req: Request, res: Response) => {
   const { user } = req.body;
   const bookmarkId = parseInt(req.params.id);
+
+  if (!bookmarkId || isNaN(bookmarkId)) {
+    throw new customHttpError(
+      StatusCodes.BAD_REQUEST,
+      bookmarkExceptionMessages.INVALID_ID,
+    );
+  }
 
   const currentBookmark = await findBookmarkById(bookmarkId);
   delete currentBookmark.image_url;
@@ -411,19 +418,18 @@ export const sortRecentBookmark = async (req: Request, res: Response) => {
 export const filterRecentBookmark = async (req: Request, res: Response) => {
   const { user } = req.body;
 
-  const sortType = req.query.filterBy as string;
+  // const sortType = req.query.filterBy as string;
   const chipId = req.query.chip_id as unknown as number;
+  const result = await filterRecentBookmarkByChip(user.id, chipId);
 
-  let result;
-
-  switch (sortType) {
-    case 'chips':
-      result = await filterRecentBookmarkByChip(user.id, chipId);
-      break;
-    default:
-      result = await findRecentClickedBookmarks(user.id);
-      break;
-  }
+  // switch (sortType) {
+  //   case 'chips':
+  //     result = await filterRecentBookmarkByChip(user.id, chipId);
+  //     break;
+  //   default:
+  //     result = await findRecentClickedBookmarks(user.id);
+  //     break;
+  // }
 
   res.status(StatusCodes.OK).json({ success: true, data: result });
 };
@@ -439,14 +445,7 @@ export const filterRecentBookmark = async (req: Request, res: Response) => {
  */
 export const searchRecentBookmark = async (req: Request, res: Response) => {
   const { user } = req.body;
-  const title: string = req.query.title as string;
-
-  if (!title) {
-    throw new customHttpError(
-      StatusCodes.BAD_REQUEST,
-      bookmarkExceptionMessages.SEARCH_QUERY_EMPTY
-    );
-  }
+  const title: string = String(req.query.title) as string;
 
   const result = await getRecentBookmarksByTitle(title!, parseInt(user.id));
 
