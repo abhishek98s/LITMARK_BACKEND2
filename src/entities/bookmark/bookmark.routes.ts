@@ -1,23 +1,12 @@
 import express from 'express';
 import multer from 'multer';
-import {
-  deleteBookmark,
-  getBookmarks,
-  patchBookmark,
-  postBookmark,
-  getBookmarksByFolderId,
-  searchByTitle,
-  getSortedData,
-  addRecentBookmark,
-  getRecentBookmarks,
-  deleteRecentBookmark,
-  sortRecentBookmark,
-  filterRecentBookmark,
-  searchRecentBookmark,
-} from './bookmark.controller';
+import * as bookmarkController from './bookmark.controller';
 import { verifyToken } from '../../middleware/authentication.middleware';
-import joiValidationMiddleware from '../../middleware/joiValidationMiddleware';
-import bookmarkSchema from './bookmark.schema';
+import joiValidationMiddleware, {
+  joiQueryValidationMiddleware,
+} from '../../middleware/joiValidationMiddleware';
+
+import * as schema from './bookmark.schema';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -26,28 +15,49 @@ const upload = multer({ storage });
 router.use(verifyToken);
 
 router
-  .get('/recent', getRecentBookmarks)
-  .delete('/recent/:id', deleteRecentBookmark)
-  .patch('/recent/:id', addRecentBookmark)
-  .get('/recent/sort', sortRecentBookmark)
-  .get('/recent/filter', filterRecentBookmark)
-  .get('/recent/search', searchRecentBookmark);
+  .get('/recent', bookmarkController.getRecentBookmarks)
+  .delete('/recent/:id', bookmarkController.deleteRecentBookmark)
+  .patch('/recent/:id', bookmarkController.addRecentBookmark)
+  .get(
+    '/recent/sort',
+    joiQueryValidationMiddleware(schema.recentBookmarkSortQuerySchema),
+    bookmarkController.sortRecentBookmark,
+  )
+  .get(
+    '/recent/filter',
+    joiQueryValidationMiddleware(schema.recentBookmarkFilterQuerySchema),
+    bookmarkController.filterRecentBookmark,
+  )
+  .get(
+    '/recent/search',
+    joiQueryValidationMiddleware(schema.searchRecentBookmarkQuerySchema),
+    bookmarkController.searchRecentBookmark,
+  );
 
-router.get('/search', searchByTitle);
-router.get('/sort', getSortedData);
+router.get(
+  '/search',
+  joiQueryValidationMiddleware(schema.searchBookmarkByTitleQuerySchema),
+  bookmarkController.searchByTitle,
+);
+router.get('/sort', bookmarkController.getSortedData);
 
 router
-  .get('/', getBookmarks)
-  .get('/:folder_id', getBookmarksByFolderId)
+  .get('/', bookmarkController.getBookmarks)
+  .get('/:folder_id', bookmarkController.getBookmarksByFolderId)
   .post(
     '/',
-    joiValidationMiddleware(bookmarkSchema),
+    joiValidationMiddleware(schema.bookmarkSchema),
     verifyToken,
-    postBookmark,
+    bookmarkController.postBookmark,
   );
 
 router
-  .patch('/:id', upload.single('litmark_image'), verifyToken, patchBookmark)
-  .delete('/:id', deleteBookmark);
+  .patch(
+    '/:id',
+    upload.single('litmark_image'),
+    verifyToken,
+    bookmarkController.patchBookmark,
+  )
+  .delete('/:id', bookmarkController.deleteBookmark);
 
 export default router;
