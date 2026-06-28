@@ -1,5 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import { config } from '../config/config';
 
 export const getHostnameFromUrl = (url: string) => {
   const pattern = /https?:\/\/(?:www\.)?([^/?]+)/i;
@@ -13,8 +12,8 @@ export const getHostnameFromUrl = (url: string) => {
 
 export const getTitleFromURL = async (url: string) => {
   try {
-    const searchAPIKey = process.env.GOOGLE_SEARCH_API_KEY;
-    const searchID = process.env.GOOGLE_SEARCH_ID;
+    const searchAPIKey = config.google.searchApiKey;
+    const searchID = config.google.searchId;
 
     const encodedUrl = encodeURIComponent(url);
     const response = await fetch(
@@ -34,8 +33,8 @@ export const getTitleFromURL = async (url: string) => {
 
 export const getThumbnailFromURL = async (url: string) => {
   try {
-    const searchAPIKey = process.env.GOOGLE_SEARCH_API_KEY;
-    const searchID = process.env.GOOGLE_SEARCH_ID;
+    const searchAPIKey = config.google.searchApiKey;
+    const searchID = config.google.searchId;
 
     const response = await fetch(
       `https://www.googleapis.com/customsearch/v1?key=${searchAPIKey}&cx=${searchID}&q=${url}`,

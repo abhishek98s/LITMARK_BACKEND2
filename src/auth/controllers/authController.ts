@@ -3,6 +3,8 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
+
+import { config } from '../../config/config';
 import { uploadImage } from '../../entities/image/image.controller';
 import { saveImage } from '../../entities/image/image.service';
 import { customHttpError } from '../../utils/customHttpError';
@@ -35,7 +37,7 @@ export const loginHandler = async (req: Request, res: Response) => {
 
   const token = jwt.sign(
     { username, id, email: dBEmail },
-    process.env.JWT_TOKEN as string
+    config.jwt.token
   );
 
   res.status(StatusCodes.OK).json({
