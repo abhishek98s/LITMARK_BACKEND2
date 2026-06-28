@@ -7,6 +7,19 @@ export const config = {
     name: process.env.NAME || 'LITMARK_BACKEND',
     port: process.env.SERVER_PORT || '5000',
   },
+  jwt: {
+    token: process.env.JWT_TOKEN as string,
+  },
+  cloudinary: {
+    cloudName: process.env.CLOUDNARY_NAME,
+    apiKey: process.env.CLOUDNARY_KEY,
+    apiSecret: process.env.CLOUDNARY_SECRET,
+  },
+  google: {
+    searchApiKey: process.env.GOOGLE_SEARCH_API_KEY,
+    searchId: process.env.GOOGLE_SEARCH_ID,
+  },
+  nodeEnv: process.env.NODE_ENV,
   database: getActiveDatabase(process.env.ACTIVE_DB || 'mysql2'),
 };
 

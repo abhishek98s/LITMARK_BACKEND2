@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
 import { NextFunction, Request, Response } from 'express';
 
+import { config } from '../config/config';
 import { customHttpError } from '../utils/customHttpError';
 import { authExceptionMessages } from '../auth/constant/authExceptionMessages';
 
@@ -19,7 +20,7 @@ export const verifyToken = (
 
   jwt.verify(
     token.replace('Bearer ', ''),
-    process.env.JWT_TOKEN as string,
+    config.jwt.token,
     (err, decoded) => {
       if (err) {
         throw new customHttpError(

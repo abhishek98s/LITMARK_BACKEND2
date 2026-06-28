@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import dotenv from 'dotenv';
 import crypto from 'crypto';
 import { StatusCodes } from 'http-status-codes';
 
@@ -34,7 +33,6 @@ import { getThumbnailFromURL, getTitleFromURL } from '../../utils/bookmark';
 import { bookmarkSucessMessages } from './constant/bookmarkSucessMessages';
 import { customHttpError } from '../../utils/customHttpError';
 
-dotenv.config();
 
 /**
  * The function `getBookmarks` is an asynchronous function that retrieves bookmarks and sends them as a
