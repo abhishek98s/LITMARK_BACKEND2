@@ -1,10 +1,10 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
-import { userExceptionMessages } from './constant/userExceptionMessages';
-import * as UserDAO from './user.repository';
-import { UserModel } from './user.model';
-import { customHttpError } from '../../utils/customHttpError';
 import { StatusCodes } from 'http-status-codes';
+import { customHttpError } from '../../utils/customHttpError';
+import { userExceptionMessages } from './constant/userExceptionMessages';
+import { UserModel } from './user.model';
+import * as UserDAO from './user.repository';
 
 /**
  * The function `getUserById` retrieves a user from a database based on their ID and returns it.

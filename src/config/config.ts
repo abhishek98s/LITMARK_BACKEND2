@@ -32,11 +32,11 @@ function getActiveDatabase(db: string) {
       },
     };
     const test = {
-      host: process.env.TEST_HOST,
-      database: process.env.TEST_DATABASE,
-      user: process.env.TEST_USER,
-      password: process.env.TEST_PASSWORD,
-      port: process.env.TEST_PORT,
+      host: process.env.POSTGRES_HOST,
+      database: process.env.POSTGRES_DB,
+      user: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      port: 600,
     };
     return {
       client: db,

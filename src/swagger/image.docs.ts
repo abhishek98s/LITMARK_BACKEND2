@@ -299,7 +299,7 @@ export const schema = {
     },
     required: ['litmark_image', 'type'],
     example: {
-      type: 'user' || 'Bookmark' || 'folder',
+      type: 'user | Bookmark | folder',
     },
   },
 };
