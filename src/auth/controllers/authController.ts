@@ -1,14 +1,14 @@
+import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
+import { StatusCodes } from 'http-status-codes';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
-import { findUserByEmail, register } from '../services/authService';
 import { uploadImage } from '../../entities/image/image.controller';
 import { saveImage } from '../../entities/image/image.service';
+import { customHttpError } from '../../utils/customHttpError';
 import { authExceptionMessages } from '../constant/authExceptionMessages';
 import { authSuccessMessages } from '../constant/authSuccessMessages';
-import { customHttpError } from '../../utils/customHttpError';
-import { StatusCodes } from 'http-status-codes';
+import { findUserByEmail, register } from '../services/authService';
 
 export const loginHandler = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -16,7 +16,7 @@ export const loginHandler = async (req: Request, res: Response) => {
   if (!email || !password) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      authExceptionMessages.EMAIL_PASS_REQUIRED,
+      authExceptionMessages.EMAIL_PASS_REQUIRED
     );
   }
 
@@ -29,13 +29,13 @@ export const loginHandler = async (req: Request, res: Response) => {
   if (!passordMatched) {
     throw new customHttpError(
       StatusCodes.UNAUTHORIZED,
-      authExceptionMessages.INVALID_CREDENTIALS,
+      authExceptionMessages.INVALID_CREDENTIALS
     );
   }
 
   const token = jwt.sign(
     { username, id, email: dBEmail },
-    process.env.JWT_TOKEN as string,
+    process.env.JWT_TOKEN as string
   );
 
   res.status(StatusCodes.OK).json({
@@ -51,14 +51,14 @@ export const registerHandler = async (req: Request, res: Response) => {
   if (!username || !email || !password) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      authExceptionMessages.USER_CREDENTIALS,
+      authExceptionMessages.USER_CREDENTIALS
     );
   }
 
   if (!validator.isEmail(email)) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      authExceptionMessages.EMAIL_INVALID,
+      authExceptionMessages.EMAIL_INVALID
     );
   }
 
@@ -72,7 +72,7 @@ export const registerHandler = async (req: Request, res: Response) => {
   ) {
     throw new customHttpError(
       StatusCodes.BAD_REQUEST,
-      authExceptionMessages.PASSWORD_INVALID,
+      authExceptionMessages.PASSWORD_INVALID
     );
   }
 
@@ -87,7 +87,7 @@ export const registerHandler = async (req: Request, res: Response) => {
 
     const image = await saveImage(
       { url: imageUrl, type: 'user', name: imageName, isdeleted: false },
-      username,
+      username
     );
     req.body.image_id = image.id;
   } else {
