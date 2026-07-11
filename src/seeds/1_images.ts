@@ -2,6 +2,9 @@ import { Knex } from 'knex';
 
 export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
+  await knex('bookmarks').del();
+  await knex('chips').del();
+  await knex('folders').del();
   await knex('images').del();
 
   // Inserts seed entries

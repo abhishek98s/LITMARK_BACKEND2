@@ -49,7 +49,7 @@ function getActiveDatabase(db: string) {
       database: process.env.POSTGRES_DB,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      port: 600,
+      port: process.env.POSTGRES_PORT,
     };
     return {
       client: db,
