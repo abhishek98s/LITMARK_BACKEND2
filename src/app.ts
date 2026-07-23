@@ -16,6 +16,7 @@ import bookmarkRoutes from './entities/bookmark/bookmark.routes';
 import authRoutes from './auth/routes/auth.routes';
 import notFoundHandler from './middleware/notFoundMiddleware';
 import customErrorHandler from './middleware/customErrorHandler';
+import { routes } from './utils/routeConfig';
 
 const app = express();
 
@@ -41,12 +42,12 @@ app.get('/', (request, response) => {
   response.send('Hello world');
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/image', imageRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/chip', chipRoutes);
-app.use('/api/folder', folderRoutes);
-app.use('/api/bookmark', bookmarkRoutes);
+app.use(routes.api.auth, authRoutes);
+app.use(routes.api.image, imageRoutes);
+app.use(routes.api.user, userRoutes);
+app.use(routes.api.chip, chipRoutes);
+app.use(routes.api.folder, folderRoutes);
+app.use(routes.api.bookmark, bookmarkRoutes);
 
 app.use(customErrorHandler);
 app.use(notFoundHandler);

@@ -7,6 +7,7 @@ import { UserSeed } from '../seeds/2_users';
 import { authExceptionMessages } from '../auth/constant/authExceptionMessages';
 import { authSuccessMessages } from '../auth/constant/authSuccessMessages';
 import { userExceptionMessages } from '../entities/user/constant/userExceptionMessages';
+import { routes } from '../utils/routeConfig';
 
 const api = supertest(app);
 
@@ -20,7 +21,7 @@ describe('Authentication', () => {
   describe('POST /api/auth/login', () => {
     it('should return 400 for empty email and password', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({})
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
@@ -30,7 +31,7 @@ describe('Authentication', () => {
 
     it('should return 400 check for missing email', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({
           password: 'password',
         })
@@ -42,7 +43,7 @@ describe('Authentication', () => {
 
     it('should return 400 check for email is string', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({
           email: 111,
         })
@@ -54,7 +55,7 @@ describe('Authentication', () => {
 
     it('should return 400 check for invalid email', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({
           email: 'user',
         })
@@ -66,7 +67,7 @@ describe('Authentication', () => {
 
     it('should return 400 check for missing password', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({
           email: 'user@gmail.com',
         })
@@ -80,7 +81,7 @@ describe('Authentication', () => {
 
     it('should return 400 check for string', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({
           email: 'user@gmail.com',
           password: 111,
@@ -93,7 +94,7 @@ describe('Authentication', () => {
 
     it('should return 401 check for non existent user', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({
           email: 'user@gmail.com',
           password: 'password',
@@ -106,7 +107,7 @@ describe('Authentication', () => {
 
     it('should return 400 for extra property', async () => {
       const response = await api
-        .post('/api/auth/login')
+        .post(`${routes.api.auth}${routes.auth.login}`)
         .send({
           email: 'user@gmail.com',
           password: 'password',
@@ -144,7 +145,7 @@ describe('Authentication', () => {
 
       it('should return 401 check for invalid credentials', async () => {
         const response = await api
-          .post('/api/auth/login')
+          .post(`${routes.api.auth}${routes.auth.login}`)
           .send({
             email,
             password: 'password',
@@ -159,7 +160,7 @@ describe('Authentication', () => {
 
       it('should return 200 check for valid credentials', async () => {
         const response = await api
-          .post('/api/auth/login')
+          .post(`${routes.api.auth}${routes.auth.login}`)
           .send({
             email,
             password,
@@ -175,7 +176,7 @@ describe('Authentication', () => {
   describe('POST /api/auth/register', () => {
     it('should return 400 for empty username, email, and password', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({})
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
@@ -187,7 +188,7 @@ describe('Authentication', () => {
 
     it('should return 400 for empty username', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({ email: 'test@example.com', password: 'password123' })
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
@@ -199,7 +200,7 @@ describe('Authentication', () => {
 
     it('should return 400 for username must be a string', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({
           username: 123,
           email: 'test@example.com',
@@ -213,7 +214,7 @@ describe('Authentication', () => {
 
     it('should return 400 for missing password', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({ username: 'testuser', email: 'test@example.com' })
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
@@ -225,7 +226,7 @@ describe('Authentication', () => {
 
     it('should return 400 for empty password', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({ username: 'testuser', email: 'test@example.com', password: '' })
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
@@ -235,7 +236,7 @@ describe('Authentication', () => {
 
     it('should return 400 for password must be 8 characters long', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({
           username: 'testuser',
           email: 'test@example.com',
@@ -249,7 +250,7 @@ describe('Authentication', () => {
 
     it('should return 400 for password must be a string', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({
           username: 'testuser',
           email: 'test@example.com',
@@ -263,7 +264,7 @@ describe('Authentication', () => {
 
     it('should return 400 for invalid password', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({
           username: 'testuser',
           email: 'test@example.com',
@@ -277,7 +278,7 @@ describe('Authentication', () => {
 
     it('should return 400 for missing email', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({ username: 'testuser', password: 'Password123!' })
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
@@ -287,7 +288,7 @@ describe('Authentication', () => {
 
     it('should return 400 for empty email', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({ username: 'testuser', email: '', password: 'Password123!' })
         .set('Accept', 'application/json');
       expect(response.status).toBe(400);
@@ -297,7 +298,7 @@ describe('Authentication', () => {
 
     it('should return 400 for invalid email', async () => {
       const response = await api
-        .post('/api/auth/register')
+        .post(`${routes.api.auth}${routes.auth.register}`)
         .send({
           username: 'testuser',
           email: 'invalid-email',
@@ -332,7 +333,7 @@ describe('Authentication', () => {
 
       it('should return 409 for email already exists', async () => {
         const response = await api
-          .post('/api/auth/register')
+          .post(`${routes.api.auth}${routes.auth.register}`)
           .send({
             username,
             email,
@@ -346,7 +347,7 @@ describe('Authentication', () => {
 
       it('should return 200 for successful operation', async () => {
         const response = await api
-          .post('/api/auth/register')
+          .post(`${routes.api.auth}${routes.auth.register}`)
           .send({
             username: 'newuser',
             email: 'newuser@example.com',

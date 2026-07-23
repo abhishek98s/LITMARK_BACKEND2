@@ -7,6 +7,7 @@ import joiValidationMiddleware, {
 } from '../../middleware/joiValidationMiddleware';
 
 import * as schema from './bookmark.schema';
+import { routes } from '../../utils/routeConfig';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -15,37 +16,37 @@ const upload = multer({ storage });
 router.use(verifyToken);
 
 router
-  .get('/recent', bookmarkController.getRecentBookmarks)
-  .delete('/recent/:id', bookmarkController.deleteRecentBookmark)
-  .patch('/recent/:id', bookmarkController.addRecentBookmark)
+  .get(routes.bookmark.recent, bookmarkController.getRecentBookmarks)
+  .delete(routes.bookmark.recentById, bookmarkController.deleteRecentBookmark)
+  .patch(routes.bookmark.recentById, bookmarkController.addRecentBookmark)
   .get(
-    '/recent/sort',
+    routes.bookmark.recentSort,
     joiQueryValidationMiddleware(schema.recentBookmarkSortQuerySchema),
     bookmarkController.sortRecentBookmark,
   )
   .get(
-    '/recent/filter',
+    routes.bookmark.recentFilter,
     joiQueryValidationMiddleware(schema.recentBookmarkFilterQuerySchema),
     bookmarkController.filterRecentBookmark,
   )
   .get(
-    '/recent/search',
+    routes.bookmark.recentSearch,
     joiQueryValidationMiddleware(schema.searchRecentBookmarkQuerySchema),
     bookmarkController.searchRecentBookmark,
   );
 
 router.get(
-  '/search',
+  routes.bookmark.search,
   joiQueryValidationMiddleware(schema.searchBookmarkByTitleQuerySchema),
   bookmarkController.searchByTitle,
 );
-router.get('/sort', bookmarkController.getSortedData);
+router.get(routes.bookmark.sort, bookmarkController.getSortedData);
 
 router
-  .get('/', bookmarkController.getBookmarks)
-  .get('/:folder_id', bookmarkController.getBookmarksByFolderId)
+  .get(routes.bookmark.root, bookmarkController.getBookmarks)
+  .get(routes.bookmark.byFolderId, bookmarkController.getBookmarksByFolderId)
   .post(
-    '/',
+    routes.bookmark.root,
     joiValidationMiddleware(schema.bookmarkSchema),
     verifyToken,
     bookmarkController.postBookmark,
@@ -53,11 +54,11 @@ router
 
 router
   .patch(
-    '/:id',
+    routes.bookmark.byId,
     upload.single('litmark_image'),
     verifyToken,
     bookmarkController.patchBookmark,
   )
-  .delete('/:id', bookmarkController.deleteBookmark);
+  .delete(routes.bookmark.byId, bookmarkController.deleteBookmark);
 
 export default router;
