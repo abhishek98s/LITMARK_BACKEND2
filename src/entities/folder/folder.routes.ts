@@ -16,6 +16,7 @@ import folderSchema, {
   folderPatchSchema,
   folderQuerySchema,
 } from './folder.schema';
+import { routes } from '../../utils/routeConfig';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -23,22 +24,22 @@ const upload = multer({ storage });
 
 router.use(verifyToken);
 router.get(
-  '/sort',
+  routes.folder.sort,
   joiQueryValidationMiddleware(folderQuerySchema),
   getSortedFolders,
 );
 router
-  .get('/', getAllTopFolders)
-  .get('/:id', getAllnestedFolders)
-  .post('/', joiValidationMiddleware(folderSchema), verifyToken, postFolders);
+  .get(routes.folder.root, getAllTopFolders)
+  .get(routes.folder.byId, getAllnestedFolders)
+  .post(routes.folder.root, joiValidationMiddleware(folderSchema), verifyToken, postFolders);
 router
   .patch(
-    '/:id',
+    routes.folder.byId,
     upload.single('litmark_image'),
     joiValidationMiddleware(folderPatchSchema),
     verifyToken,
     patchFolders,
   )
-  .delete('/:id', deleteFolders);
+  .delete(routes.folder.byId, deleteFolders);
 
 export default router;

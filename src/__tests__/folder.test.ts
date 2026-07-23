@@ -5,6 +5,7 @@ import { authExceptionMessages } from '../auth/constant/authExceptionMessages';
 import { UserSeed } from '../seeds/2_users';
 import { folderExceptionMessages } from '../entities/folder/constant/folderExceptionMessages';
 import { folderSuccessMessages } from '../entities/folder/constant/folderSuccessMessages';
+import { routes } from '../utils/routeConfig';
 
 const api = supertest(app);
 
@@ -17,7 +18,7 @@ describe('Folder Entity', () => {
     await knex.migrate.rollback();
     await knex.migrate.latest();
     await knex.seed.run({ directory: 'src/seeds' });
-    const response = await api.post('/api/auth/login').send({
+    const response = await api.post(`${routes.api.auth}${routes.auth.login}`).send({
       email,
       password,
     });
@@ -27,7 +28,7 @@ describe('Folder Entity', () => {
 
   describe('GET /api/folder/sort', () => {
     it('should return 401 for token not sent', async () => {
-      const response = await api.get('/api/folder/sort');
+      const response = await api.get(`${routes.api.folder}${routes.folder.sort}`);
       expect(response.status).toBe(401);
       expect(response.body).toMatchObject({
         success: false,
@@ -37,7 +38,7 @@ describe('Folder Entity', () => {
 
     it('should return 403 for token not valid', async () => {
       const response = await api
-        .get('/api/folder/sort')
+        .get(`${routes.api.folder}${routes.folder.sort}`)
         .set('Authorization', 'Bearer invalid_token');
       expect(response.status).toBe(403);
       expect(response.body).toMatchObject({
@@ -49,7 +50,7 @@ describe('Folder Entity', () => {
     describe('User is authenticated', () => {
       it('should return 400 for missing query parameters', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`);
         expect(response.status).toBe(400);
         expect(response.body).toMatchObject({
@@ -60,7 +61,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for missing sort query parameter', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ order: 'asc' });
         expect(response.status).toBe(400);
@@ -72,7 +73,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for invalid sort query parameters', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'invalid_sort', order: 'asc' });
         expect(response.status).toBe(400);
@@ -84,7 +85,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for empty sort query parameter', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: '', order: 'asc' });
         expect(response.status).toBe(400);
@@ -96,7 +97,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for invalid sort format', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 11, order: 'asc' });
         expect(response.status).toBe(400);
@@ -108,7 +109,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for missing order query parameter', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date' });
         expect(response.status).toBe(400);
@@ -120,7 +121,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for invalid order query parameters', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: 'invalid_sort' });
         expect(response.status).toBe(400);
@@ -132,7 +133,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for empty order query parameter', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: '' });
         expect(response.status).toBe(400);
@@ -144,7 +145,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for invalid order format', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: 11 });
         expect(response.status).toBe(400);
@@ -156,7 +157,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for missing folder_id query parameter', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: 'asc' });
         expect(response.status).toBe(400);
@@ -168,7 +169,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for invalid folder_id query parameters', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: 'asc', folder_id: 'asdasd' });
         expect(response.status).toBe(400);
@@ -180,7 +181,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for empty folder_id query parameter', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: 'desc', folder_id: '' });
         expect(response.status).toBe(400);
@@ -192,7 +193,7 @@ describe('Folder Entity', () => {
 
       it('should return 404 for folder that doesnot exits', async () => {
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: 'desc', folder_id: 23 });
         expect(response.status).toBe(404);
@@ -205,7 +206,7 @@ describe('Folder Entity', () => {
       it('should return 200 for sorted list of folders by date', async () => {
         const folderId = 1;
         const response = await api
-          .get('/api/folder/sort')
+          .get(`${routes.api.folder}${routes.folder.sort}`)
           .set('Authorization', `Bearer ${token}`)
           .query({ sort: 'date', order: 'asc', folder_id: folderId });
         expect(response.status).toBe(200);
@@ -223,7 +224,7 @@ describe('Folder Entity', () => {
 
   describe('GET /api/folder/', () => {
     it('should return 401 for token not sent', async () => {
-      const response = await api.get('/api/folder');
+      const response = await api.get(`${routes.api.folder}/`);
       expect(response.status).toBe(401);
       expect(response.body).toMatchObject({
         success: false,
@@ -233,7 +234,7 @@ describe('Folder Entity', () => {
 
     it('should return 403 for token not valid', async () => {
       const response = await api
-        .get('/api/folder')
+        .get(`${routes.api.folder}/`)
         .set('Authorization', 'Bearer invalid_token');
       expect(response.status).toBe(403);
       expect(response.body).toMatchObject({
@@ -250,7 +251,7 @@ describe('Folder Entity', () => {
 
         it('should return 200 and empty array of folders', async () => {
           const response = await api
-            .get('/api/folder/')
+            .get(`${routes.api.folder}${routes.folder.root}`)
             .set('Authorization', `Bearer ${token}`);
           expect(response.status).toBe(200);
           expect(response.body.success).toBe(true);
@@ -268,7 +269,7 @@ describe('Folder Entity', () => {
         });
         it('should return 200 and an array of folders', async () => {
           const response = await api
-            .get('/api/folder/')
+            .get(`${routes.api.folder}${routes.folder.root}`)
             .set('Authorization', `Bearer ${token}`);
           expect(response.status).toBe(200);
           expect(response.body.success).toBe(true);
@@ -288,7 +289,7 @@ describe('Folder Entity', () => {
 
   describe('GET /api/folder/:id', () => {
     it('should return 401 for token not sent', async () => {
-      const response = await api.get('/api/folder/1');
+      const response = await api.get(`${routes.api.folder}/1`);
       expect(response.status).toBe(401);
       expect(response.body.success).toBe(false);
       expect(response.body.message).toBe(authExceptionMessages.ACCESS_DENIED);
@@ -296,7 +297,7 @@ describe('Folder Entity', () => {
 
     it('should return 401 for token not valid', async () => {
       const response = await api
-        .get('/api/folder/1')
+        .get(`${routes.api.folder}/1`)
         .set('Authorization', 'Bearer invalid_token');
       expect(response.status).toBe(403);
       expect(response.body.success).toBe(false);
@@ -308,7 +309,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 for a invalid folder ID', async () => {
         const response = await api
-          .get('/api/folder/invalid_id')
+          .get(`${routes.api.folder}/invalid_id`)
           .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(400);
@@ -318,7 +319,7 @@ describe('Folder Entity', () => {
 
       it('should return 404 for a non-existent folder ID', async () => {
         const response = await api
-          .get('/api/folder/99999')
+          .get(`${routes.api.folder}/99999`)
           .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(404);
@@ -329,7 +330,7 @@ describe('Folder Entity', () => {
       });
       it('should return 200 and the folder details for a valid ID', async () => {
         const response = await api
-          .get(`/api/folder/${folderId}`)
+          .get(`${routes.api.folder}/${folderId}`)
           .set('Authorization', `Bearer ${token}`);
 
         expect(response.status).toBe(200);
@@ -348,7 +349,7 @@ describe('Folder Entity', () => {
 
   describe('POST /api/folder/', () => {
     it('should return 401 for token not sent', async () => {
-      const response = await api.post('/api/folder/').send({
+      const response = await api.post(`${routes.api.folder}${routes.folder.root}`).send({
         name: 'New Folder',
         folder_id: null,
         user: {
@@ -364,7 +365,7 @@ describe('Folder Entity', () => {
 
     it('should return 401 for token not valid', async () => {
       const response = await api
-        .post('/api/folder/')
+        .post(`${routes.api.folder}${routes.folder.root}`)
         .set('Authorization', 'Bearer invalid_token')
         .send({
           name: 'New Folder',
@@ -383,7 +384,7 @@ describe('Folder Entity', () => {
     describe('User is authenticated', () => {
       it('should return 400 if name is missing', async () => {
         const response = await api
-          .post('/api/folder/')
+          .post(`${routes.api.folder}${routes.folder.root}`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             folder_id: null,
@@ -397,7 +398,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 if folder_id is not a number', async () => {
         const response = await api
-          .post('/api/folder/')
+          .post(`${routes.api.folder}${routes.folder.root}`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'New Folder',
@@ -412,7 +413,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 if extra properties are included in the request body', async () => {
         const response = await api
-          .post('/api/folder/')
+          .post(`${routes.api.folder}${routes.folder.root}`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'New Folder',
@@ -428,7 +429,7 @@ describe('Folder Entity', () => {
 
       it('should return 200 and create a new folder with valid data', async () => {
         const response = await api
-          .post('/api/folder/')
+          .post(`${routes.api.folder}${routes.folder.root}`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'New Folder',
@@ -445,7 +446,7 @@ describe('Folder Entity', () => {
   describe('PATCH /api/folder/:id', () => {
     const folderId = 1;
     it('should return 401 for token not sent', async () => {
-      const response = await api.patch(`/api/folder/${folderId}`).send({
+      const response = await api.patch(`${routes.api.folder}/${folderId}`).send({
         name: 'Updated Folder',
         user: {
           id: 1,
@@ -460,7 +461,7 @@ describe('Folder Entity', () => {
 
     it('should return 401 for token not valid', async () => {
       const response = await api
-        .patch(`/api/folder/${folderId}`)
+        .patch(`${routes.api.folder}/${folderId}`)
         .set('Authorization', 'Bearer invalid_token')
         .send({
           name: 'Updated Folder',
@@ -478,7 +479,7 @@ describe('Folder Entity', () => {
     describe('User is authenticated', () => {
       it('should return 400 if folder ID is invalid', async () => {
         const response = await api
-          .patch('/api/folder/invalid_id')
+          .patch(`${routes.api.folder}/invalid_id`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'Updated Folder',
@@ -490,7 +491,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 if name is missing', async () => {
         const response = await api
-          .patch(`/api/folder/${folderId}`)
+          .patch(`${routes.api.folder}/${folderId}`)
           .set('Authorization', `Bearer ${token}`)
           .send({});
         expect(response.status).toBe(400);
@@ -502,7 +503,7 @@ describe('Folder Entity', () => {
 
       it('should return 400 if extra properties are included in the request body', async () => {
         const response = await api
-          .patch(`/api/folder/${folderId}`)
+          .patch(`${routes.api.folder}/${folderId}`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'Updated Folder',
@@ -517,7 +518,7 @@ describe('Folder Entity', () => {
 
       it('should return 404 if folder doesnot exists', async () => {
         const response = await api
-          .patch('/api/folder/99999')
+          .patch(`${routes.api.folder}/99999`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'Updated Folder',
@@ -531,7 +532,7 @@ describe('Folder Entity', () => {
 
       it('should return 200 and update the folder with valid data', async () => {
         const response = await api
-          .patch(`/api/folder/${folderId}`)
+          .patch(`${routes.api.folder}/${folderId}`)
           .set('Authorization', `Bearer ${token}`)
           .send({
             name: 'Updated Folder',
@@ -546,7 +547,7 @@ describe('Folder Entity', () => {
   describe('DELETE /api/folder/:id', () => {
     const folderId = 1;
     it('should return 401 for token not sent', async () => {
-      const response = await api.delete(`/api/folder/${folderId}`);
+      const response = await api.delete(`${routes.api.folder}/${folderId}`);
       expect(response.status).toBe(401);
       expect(response.body.success).toBe(false);
       expect(response.body.message).toBe(authExceptionMessages.ACCESS_DENIED);
@@ -554,7 +555,7 @@ describe('Folder Entity', () => {
 
     it('should return 401 for token not valid', async () => {
       const response = await api
-        .delete(`/api/folder/${folderId}`)
+        .delete(`${routes.api.folder}/${folderId}`)
         .set('Authorization', 'Bearer invalid_token');
       expect(response.status).toBe(403);
       expect(response.body.success).toBe(false);
@@ -564,7 +565,7 @@ describe('Folder Entity', () => {
     describe('User is authenticated', () => {
       it('should return 400 if folder ID is invalid', async () => {
         const response = await api
-          .delete('/api/folder/invalid_id')
+          .delete(`${routes.api.folder}/invalid_id`)
           .set('Authorization', `Bearer ${token}`);
         expect(response.status).toBe(400);
         expect(response.body.success).toBe(false);
@@ -573,7 +574,7 @@ describe('Folder Entity', () => {
 
       it('should return 404 if folder does not exist', async () => {
         const response = await api
-          .delete('/api/folder/99999')
+          .delete(`${routes.api.folder}/99999`)
           .set('Authorization', `Bearer ${token}`);
         expect(response.status).toBe(404);
         expect(response.body.success).toBe(false);
@@ -584,7 +585,7 @@ describe('Folder Entity', () => {
 
       it('should return 200 and delete the folder with valid ID', async () => {
         const response = await api
-          .delete(`/api/folder/${folderId}`)
+          .delete(`${routes.api.folder}/${folderId}`)
           .set('Authorization', `Bearer ${token}`);
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
@@ -593,7 +594,7 @@ describe('Folder Entity', () => {
         );
 
         const checkResponse = await api
-          .get(`/api/folder/${folderId}`)
+          .get(`${routes.api.folder}/${folderId}`)
           .set('Authorization', `Bearer ${token}`);
         expect(checkResponse.status).toBe(404);
       });

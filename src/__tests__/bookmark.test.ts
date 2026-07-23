@@ -6,6 +6,7 @@ import { UserSeed } from '../seeds/2_users';
 import { bookmarkExceptionMessages } from '../entities/bookmark/constant/bookmarkExceptionMessages';
 import { bookmarkSucessMessages } from '../entities/bookmark/constant/bookmarkSucessMessages';
 import { chipExceptionMessages } from '../entities/chip/constant/chipExceptionMessages';
+import { routes } from '../utils/routeConfig';
 
 const api = supertest(app);
 
@@ -18,7 +19,7 @@ describe('Bookmark Enitity', () => {
     await knex.migrate.rollback();
     await knex.migrate.latest();
     await knex.seed.run({ directory: 'src/seeds' });
-    const response = await api.post('/api/auth/login').send({
+    const response = await api.post(`${routes.api.auth}${routes.auth.login}`).send({
       email,
       password,
     });
@@ -29,7 +30,7 @@ describe('Bookmark Enitity', () => {
   describe('Recent Bookmark', () => {
     describe('GET api/bookmark/recent', () => {
       it('should return 401 for token not sent', async () => {
-        const response = await api.get('/api/bookmark/recent');
+        const response = await api.get(`${routes.api.bookmark}${routes.bookmark.recent}`);
         expect(response.status).toBe(401);
         expect(response.body).toMatchObject({
           success: false,
@@ -39,7 +40,7 @@ describe('Bookmark Enitity', () => {
 
       it('should return 403 for token not valid', async () => {
         const response = await api
-          .get('/api/bookmark/recent')
+          .get(`${routes.api.bookmark}${routes.bookmark.recent}`)
           .set('Authorization', 'Bearer invalid_token');
         expect(response.status).toBe(403);
         expect(response.body).toMatchObject({
@@ -51,7 +52,7 @@ describe('Bookmark Enitity', () => {
       describe('User is authenticated', () => {
         it('should return 200 for recent bookmark array', async () => {
           const response = await api
-            .get('/api/bookmark/recent')
+            .get(`${routes.api.bookmark}${routes.bookmark.recent}`)
             .set('Authorization', `Bearer ${token}`);
 
           expect(response.status).toBe(200);
@@ -73,7 +74,7 @@ describe('Bookmark Enitity', () => {
           });
           it('should return 200 for empty recent bookmark array', async () => {
             const response = await api
-              .get('/api/bookmark/recent')
+              .get(`${routes.api.bookmark}${routes.bookmark.recent}`)
               .set('Authorization', `Bearer ${token}`);
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
@@ -84,7 +85,7 @@ describe('Bookmark Enitity', () => {
     });
     describe('DELETE api/bookmark/recent/:id', () => {
       const bookmarkId = 1;
-      const BASE_URL = '/api/bookmark/recent';
+      const BASE_URL = `${routes.api.bookmark}${routes.bookmark.recent}`;
 
       it('should return 401 for token not sent', async () => {
         const response = await api.delete(`${BASE_URL}/${bookmarkId}`);
@@ -148,7 +149,7 @@ describe('Bookmark Enitity', () => {
     });
     describe('PATCH api/bookmark/recent/:id', () => {
       const bookmarkId = 1;
-      const BASE_URL = '/api/bookmark/recent';
+      const BASE_URL = `${routes.api.bookmark}${routes.bookmark.recent}`;
 
       it('should return 401 for token not sent', async () => {
         const response = await api.patch(`${BASE_URL}/${bookmarkId}`);
@@ -207,7 +208,7 @@ describe('Bookmark Enitity', () => {
 
     describe('GET api/bookmark/recent/sort', () => {
       it('should return 401 for token not sent', async () => {
-        const response = await api.get('/api/bookmark/recent/sort');
+        const response = await api.get(`${routes.api.bookmark}${routes.bookmark.recentSort}`);
         expect(response.status).toBe(401);
         expect(response.body).toMatchObject({
           success: false,
@@ -217,7 +218,7 @@ describe('Bookmark Enitity', () => {
 
       it('should return 403 for token not valid', async () => {
         const response = await api
-          .get('/api/bookmark/recent/sort')
+          .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
           .set('Authorization', 'Bearer invalid_token');
         expect(response.status).toBe(403);
         expect(response.body).toMatchObject({
@@ -229,7 +230,7 @@ describe('Bookmark Enitity', () => {
       describe('User  is authenticated', () => {
         it('should return 400 for missing sortBy', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ order: 'asc' }); // Missing sortBy
 
@@ -242,7 +243,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for invalid sortBy', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: 'invalid_field', order: 'asc' });
 
@@ -255,7 +256,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for empty sortBy', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: '', order: 'asc' }); // Empty sortBy
 
@@ -268,7 +269,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for invalid data format in sortBy', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: 123, order: 'asc' });
 
@@ -281,7 +282,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for missing order', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: 'date' });
 
@@ -294,7 +295,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for invalid order', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: 'date', order: 'invalid_order' });
 
@@ -307,7 +308,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for empty order', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: 'date', order: '' });
 
@@ -320,7 +321,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for invalid data format in order', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: 'date', order: 123 });
 
@@ -333,7 +334,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 200 for successful operation', async () => {
           const response = await api
-            .get('/api/bookmark/recent/sort')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSort}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ sortBy: 'date', order: 'asc' });
 
@@ -345,7 +346,7 @@ describe('Bookmark Enitity', () => {
     });
     describe('GET api/bookmark/recent/filter', () => {
       it('should return 401 for token not sent', async () => {
-        const response = await api.get('/api/bookmark/recent/filter');
+        const response = await api.get(`${routes.api.bookmark}${routes.bookmark.recentFilter}`);
         expect(response.status).toBe(401);
         expect(response.body).toMatchObject({
           success: false,
@@ -355,7 +356,7 @@ describe('Bookmark Enitity', () => {
 
       it('should return 403 for token not valid', async () => {
         const response = await api
-          .get('/api/bookmark/recent/filter')
+          .get(`${routes.api.bookmark}${routes.bookmark.recentFilter}`)
           .set('Authorization', 'Bearer invalid_token');
         expect(response.status).toBe(403);
         expect(response.body).toMatchObject({
@@ -367,7 +368,7 @@ describe('Bookmark Enitity', () => {
       describe('User authenticated', () => {
         it('should return 400 for empty body', async () => {
           const response = await api
-            .get('/api/bookmark/recent/filter')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentFilter}`)
             .set('Authorization', `Bearer ${token}`)
             .send({});
 
@@ -380,7 +381,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for missing chip_id', async () => {
           const response = await api
-            .get('/api/bookmark/recent/filter')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentFilter}`)
             .set('Authorization', `Bearer ${token}`)
             .send({}); // Missing chip_id
 
@@ -393,7 +394,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for empty chip_id', async () => {
           const response = await api
-            .get('/api/bookmark/recent/filter')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentFilter}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ chip_id: '' }); // Empty chip_id
 
@@ -406,7 +407,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for chip_id not found', async () => {
           const response = await api
-            .get('/api/bookmark/recent/filter')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentFilter}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ chip_id: 9999 });
 
@@ -419,7 +420,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 200 for successful operation', async () => {
           const response = await api
-            .get('/api/bookmark/recent/filter')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentFilter}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ chip_id: 1 });
 
@@ -431,7 +432,7 @@ describe('Bookmark Enitity', () => {
 
     describe('GET /api/bookmark/recent/search', () => {
       it('should return 401 for token not sent', async () => {
-        const response = await api.get('/api/bookmark/recent/search');
+        const response = await api.get(`${routes.api.bookmark}${routes.bookmark.recentSearch}`);
         expect(response.status).toBe(401);
         expect(response.body).toMatchObject({
           success: false,
@@ -441,7 +442,7 @@ describe('Bookmark Enitity', () => {
 
       it('should return 403 for token not valid', async () => {
         const response = await api
-          .get('/api/bookmark/recent/search')
+          .get(`${routes.api.bookmark}${routes.bookmark.recentSearch}`)
           .set('Authorization', 'Bearer invalid_token');
         expect(response.status).toBe(403);
         expect(response.body).toMatchObject({
@@ -453,7 +454,7 @@ describe('Bookmark Enitity', () => {
       describe('User  is authenticated', () => {
         it('should return 400 for missing title', async () => {
           const response = await api
-            .get('/api/bookmark/recent/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSearch}`)
             .set('Authorization', `Bearer ${token}`);
           expect(response.status).toBe(400);
           expect(response.body).toMatchObject({
@@ -464,7 +465,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for empty title', async () => {
           const response = await api
-            .get('/api/bookmark/recent/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSearch}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ title: '' }); // Empty title
 
@@ -477,7 +478,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 200 for successful search with valid title', async () => {
           const response = await api
-            .get('/api/bookmark/recent/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSearch}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ title: 'd' });
 
@@ -487,7 +488,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 200 for successful search with no results', async () => {
           const response = await api
-            .get('/api/bookmark/recent/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.recentSearch}`)
             .set('Authorization', `Bearer ${token}`)
             .query({ title: 'non_existent_title' });
 
@@ -502,7 +503,7 @@ describe('Bookmark Enitity', () => {
   describe('Bookmark', () => {
     describe('GET api/bookmark/search', () => {
       it('should return 401 for token not sent', async () => {
-        const response = await api.get('/api/bookmark/search');
+        const response = await api.get(`${routes.api.bookmark}${routes.bookmark.search}`);
         expect(response.status).toBe(401);
         expect(response.body).toMatchObject({
           success: false,
@@ -512,7 +513,7 @@ describe('Bookmark Enitity', () => {
 
       it('should return 403 for token not valid', async () => {
         const response = await api
-          .get('/api/bookmark/search')
+          .get(`${routes.api.bookmark}${routes.bookmark.search}`)
           .set('Authorization', 'Bearer invalid_token');
         expect(response.status).toBe(403);
         expect(response.body).toMatchObject({
@@ -524,7 +525,7 @@ describe('Bookmark Enitity', () => {
       describe('User is authenticated', () => {
         it('should return 400 for missing folder_id', async () => {
           const response = await api
-            .get('/api/bookmark/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.search}`)
             .query({ title: 'des' })
             .set('Authorization', `Bearer ${token}`); // Use a valid token
 
@@ -537,7 +538,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for invalid folder_id format', async () => {
           const response = await api
-            .get('/api/bookmark/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.search}`)
             .query({ folder_id: '111as', title: 'des' })
             .set('Authorization', `Bearer ${token}`); // Use a valid token
 
@@ -550,7 +551,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 400 for missing title', async () => {
           const response = await api
-            .get('/api/bookmark/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.search}`)
             .query({ folder_id: 1 })
             .set('Authorization', `Bearer ${token}`); // Use a valid token
 
@@ -563,7 +564,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 200 for empty array of bookmarks not found', async () => {
           const response = await api
-            .get('/api/bookmark/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.search}`)
             .query({ folder_id: 1, title: 'non_existent_bookmark_title' })
             .set('Authorization', `Bearer ${token}`); // Use a valid token
 
@@ -574,7 +575,7 @@ describe('Bookmark Enitity', () => {
 
         it('should return 200 for bookmarks based on search query', async () => {
           const response = await api
-            .get('/api/bookmark/search')
+            .get(`${routes.api.bookmark}${routes.bookmark.search}`)
             .query({ title: 'des', folder_id: 1 })
             .set('Authorization', `Bearer ${token}`); // Use a valid token
 

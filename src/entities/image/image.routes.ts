@@ -10,6 +10,7 @@ import {
 import { verifyToken } from '../../middleware/authentication.middleware';
 import joiValidationMiddleware from '../../middleware/joiValidationMiddleware';
 import imageSchema from './image.schema';
+import { routes } from '../../utils/routeConfig';
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -17,11 +18,11 @@ const upload = multer({ storage });
 router.use(verifyToken);
 
 router
-  .get('/:id', getImage)
-  .delete('/:id', deleteImage)
-  .patch('/:id', upload.single('litmark_image'), verifyToken, patchImage);
+  .get(routes.image.byId, getImage)
+  .delete(routes.image.byId, deleteImage)
+  .patch(routes.image.byId, upload.single('litmark_image'), verifyToken, patchImage);
 router.post(
-  '/',
+  routes.image.root,
   upload.single('litmark_image'),
   joiValidationMiddleware(imageSchema),
   verifyToken,
