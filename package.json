@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "npx kill-port 3000 5000 9000 && npx nodemon",
-    "dev": "cross-env NODE_ENV=test node build/index.js",
+    "dev": "nodemon",
     "build": "rimraf ./build && tsc",
-    "start": "nodemon src/index.ts",
+    "start": "cross-env NODE_ENV=test node build/index.js",
     "knex": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts",
     "migrate:make": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:make",
     "migrate:latest": "ts-node -r ./node_modules/dotenv/config ./node_modules/knex/bin/cli.js  --knexfile src/config/knexfile.ts migrate:latest",
